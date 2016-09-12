@@ -1,0 +1,15 @@
+<ion-popover-view>
+    <ion-header-bar> 
+        <h1 class="title">My Popover Title</h1>
+    </ion-header-bar> 
+    <ion-content>
+        <ion-list>
+            <ion-item ui-sref="about" ng-click="closePopover(popover)">
+                About
+            </ion-item>
+            <ion-item ng-repeat="item in range(1,5)">
+                Hello, {{ item }}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-popover-view>

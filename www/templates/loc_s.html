@@ -1,0 +1,20 @@
+<ion-header-bar class="bar bar-stable item-input-inset">
+    <button class="button icon button-clear ion-reply" ui-sref="about"></button>
+    <!-- <div class="h1 title">{{ title }}</div>  -->
+    <label class="item-input-wrapper">
+	    <i class="icon ion-ios-search placeholder-icon"></i>
+	    <input id="searchBox" type="search" placeholder="Search" ng-model="searchBox.name"/>
+	</label>
+	<button class="button button-clear" ng-click="cleartext('searchBox')">
+	    Cancel
+	</button>
+	
+</ion-header-bar>
+
+<ion-content class="has-header padding">
+	<ul class="container" ng-hide="!searchBox.name">
+		  <li class="" ng-repeat="l in locate| filter: searchBox">
+		    <button class="button-block button-positive button button-balanced padding" ng-click="addloc(l.name, l.lat, l.lng, l.pid)">{{ l.name }}</button>
+		  </li>
+	</ul>
+</ion-content> 

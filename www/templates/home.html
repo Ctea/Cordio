@@ -1,0 +1,27 @@
+<ion-header-bar class="bar-stable">
+    <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
+    <h1 class="title" >{{ title }}</h1> 
+    <button class="button icon button-clear ion-settings" ui-sref="sport"></button>
+</ion-header-bar>
+
+<!-- <ion-floating-menu has-footer="false">
+    <ion-floating-item icon="ion-camera" click="showPopup()"></ion-floating-item>
+    <ion-floating-item icon="ion-person" click="newTrip()"></ion-floating-item>
+    <ion-floating-item icon="" click="openGoogleMap()"></ion-floating-item>
+</ion-floating-menu> -->
+
+<ion-content class="has-header padding" >
+
+    <div class="bottom-content row">
+        <div class="col col-bottom">
+          <a ng-show="gb" class="google-sign-in button button-block" ng-click="googleLogin()">
+              <span class="btn-copy">Sign in with Google</span>
+          </a>
+        </div>
+    </div>
+</ion-content> 
+
+
+
+<!-- <ion-floating-button click="myEvent()" has-footer="false" button-color="#2AC9AA" icon="ion-plus" iconColor="#fff">
+</ion-floating-button> -->
