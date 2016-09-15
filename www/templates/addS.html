@@ -1,18 +1,44 @@
-<div class="list">
-  <label class="item item-input item-floating-label">
-    <span class="input-label">First Name</span>
-    <input type="text" placeholder="First Name">
-  </label>
-  <label class="item item-input item-floating-label">
-    <span class="input-label">Last Name</span>
-    <input type="text" placeholder="Last Name">
-  </label>
-  <label class="item item-input item-floating-label">
-    <span class="input-label">Email</span>
-    <input type="text" placeholder="Email">
-  </label>
+<div class="item list" style="top:-7px">
+  <h2 class="center" >輸入時間</h2>
+  <div class="row">
+    <label class="col-33 item-floating-label">
+      <span class="input-label">開始時間</span>
+      <input type="time" ng-model="spstrattime" placeholder="Start">
+    </label>
+    <label class="col-offset-10 item-floating-label">
+      <span class="input-label">耗時</span>
+      <input type="text" ng-model="sptotaltime" placeholder="Time">
+    </label>
+    <label class="col-33 item-floating-label">
+      <span class="input-label">結束時間</span>
+      <input type="time" ng-model="spendtime" placeholder="End">
+    </label>
+  </div>
+</div>
+ <div class="tabs tabs-striped tabs-calm" style="top:35%;min-width:94%;width:95%;margin-left:-1px">
+  <a class="tab-item" style="color:#FFFFFF" ng-click="t(5)">
+   <p>1</p>
+  </a>
+  <a class="tab-item" ng-click="t(10)">
+    10
+  </a>
+  <a class="tab-item" ng-click="t(15)">
+    15
+  </a>
 </div>
 
+<div class="item list" style="height:200px;margin-top:51px">
+  <ion-content> 
+   <p ng-model="testlist" ng-repeat="t in testlist">{{t}}</p>
+  </ion-content> 
+</div>
+
+
+
+
+
+
+ 
 
 
 

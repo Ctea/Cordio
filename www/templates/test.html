@@ -1,0 +1,47 @@
+<ion-header-bar class="bar-stable">
+    <h1 class="title" >{{ title }}</h1> 
+</ion-header-bar>
+<ion-content class="has-header padding" >
+  <div class="item list" style="">
+    <h2 class="center" >輸入時間</h2>
+    <div class="row">
+      <label class="col-33 item-floating-label">
+        <span class="input-label">開始時間</span>
+        <input type="time" ng-model="spstrattime" placeholder="Start">
+      </label>
+      <label class="col-33 item-floating-label">
+        <span class="input-label">耗時</span>
+        <input type="text" ng-model="sptotaltime" placeholder="Minute">
+        分鐘
+      </label>
+      <label class="col-33 item-floating-label">
+        <span class="input-label">結束時間</span>
+        <input type="time" ng-model="spendtime" placeholder="End">
+      </label>
+    </div>
+  </div>
+
+<div class="tabs tabs-top tabs-striped tabs-calm" style="top:120px;margin-left:-1px">
+  <a class="tab-item" style="color:#FFFFFF" ng-click="t(5)">
+   <p>1</p>
+  </a>
+  <a class="tab-item" ng-click="t(10)">
+    10
+  </a>
+  <a class="tab-item" ng-click="t(15)">
+    15
+  </a>
+</div>
+
+<div class="item list " style="height:60%;top:53px;margin-right:1px">
+  <ion-content> 
+   <p ng-model="testlist" ng-repeat="t in testlist">{{t}}</p>
+  </ion-content> 
+</div>
+
+<button class="button" style="bottom:-45px">1</button>
+
+</ion-content> 
+
+
+

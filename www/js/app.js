@@ -41,7 +41,14 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                   $scope.getBMI();
                   $scope.getBMR();
               }
-          })
+          })    
+          .state('test', {
+              url: '/test',
+              templateUrl: 'templates/test.html',
+              controller: function($scope) {
+                  $scope.setTitle("test");
+              }
+          })  
           .state('sport', {
               url: '/sport',
               templateUrl: 'templates/sport.html',
@@ -79,7 +86,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
        $urlRouterProvider.otherwise('/');
 })
 
-.controller("mainController", function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $timeout, $ionicLoading, $ionicActionSheet, UserService) {
+.controller("mainController", function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate) {
         $scope.userinfo = {
                   name : '未登入帳號',
                   photoURL : '/img/ionic.png'
@@ -215,8 +222,8 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         var myPopup = $ionicPopup.show({
           cssClass: '',
           templateUrl: 'templates/addS.html',
-          title: '加入運動項目',
-          subTitle: 'Please use normal things',
+          title: '選擇時段與運動',
+          subTitle: 'Choose time and sport',
           scope: $scope,
           buttons: [
             { text: 'Cancel' },
@@ -267,8 +274,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       $scope.butsty.color = '#808080';
       if(index === 0) {
           $scope.basedata.sex = 'Male';
-      }
-        
+      }       
       if(index === 1) {
           $scope.basedata.sex = 'Female';
       }
@@ -305,13 +311,19 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
          $state.go('about');
       };
 
+      $scope.t = function (n) {
+        $scope.testlist = [];
+        for (var i = 0; i < n; i++) {
+          $scope.testlist.push(i);
+        };
+      };
 
       $scope.showPopup = function() {
         var myPopup = $ionicPopup.show({
           cssClass: '',
           templateUrl: 'templates/fabadd.html',
           title: '創建新的行程',
-          subTitle: 'Please use normal things',
+          subTitle: '',
           scope: $scope,
           buttons: [
             { text: 'Cancel' },

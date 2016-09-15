@@ -47,3 +47,8 @@ hr {
   font-size: 28px;
 }
 
+.popup {
+  width: 90%  !important;
+  max-height: 100%;
+}
+
