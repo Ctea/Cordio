@@ -210,6 +210,8 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       var w = $scope.basedata.weight;
       $scope.basedata.BMI =  w/(h*h);
     };
+
+   
     $scope.showSelectValue = function(selectSp) {
         $scope.selectSp = JSON.parse(selectSp);
         //console.log();
@@ -289,6 +291,18 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
     };
 
+      $scope.selected = 0;
+        $scope.isSelected = function (id) {
+          return ($scope.selected === id) ? 'active tab-item' : 'tab-item';
+      };
+
+      $scope.t = function (n , btnid) {
+        $scope.selected = btnid;
+        $scope.testlist = [];
+        for (var i = 0; i < n; i++) {
+          $scope.testlist.push(i);
+        };
+      };
 
       $scope.setTitle = function(title) {
           $scope.title = title;
@@ -311,12 +325,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
          $state.go('about');
       };
 
-      $scope.t = function (n) {
-        $scope.testlist = [];
-        for (var i = 0; i < n; i++) {
-          $scope.testlist.push(i);
-        };
-      };
+
 
       $scope.showPopup = function() {
         var myPopup = $ionicPopup.show({
