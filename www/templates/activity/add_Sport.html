@@ -1,0 +1,63 @@
+<ion-modal-view >
+<ion-header-bar class="bar-stable">
+    <h1 class="title " >{{ title }}</h1> 
+    <button class="button icon button-clear ion-reply" ng-click="modal.hide()"></button>
+</ion-header-bar>
+
+<ion-content class="padding" >
+  <div class="item list" style="margin-bottom:-5px">
+    <h2 class="center" >輸入時間</h2>
+    <div class="row">
+        <label class="col-40 item-floating-label" style="margin-left:15px;margin-right:-5px">
+          <span class="input-label">開始時間</span>
+          <input type="time" ng-model="timedata.start" ng-Blur="timeBlur2(0)" ng-change="timechange(0)" placeholder="Start" >
+        </label>
+        <label class="col-20 item-floating-label" style="margin-left:5px;margin-right:10px">
+          <span class="input-label">分鐘</span>
+          <input type="number" ng-model="timedata.total" ng-Blur="timeBlur()" ng-focus="timeFocus()" ng-change="timechange(1)"  placeholder="Time">
+        </label>
+        <label class="col-40 item-floating-label" style="">
+          <span class="input-label">結束時間</span>
+          <input type="time" ng-model="timedata.end" ng-Blur="timeBlur2(1)" ng-change="timechange(2)"  placeholder="End" >
+        </label>
+      </div>
+  </div>
+
+<div class="list list-inset">
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="text" placeholder="Search" ng-model="search.sname">
+  </label>
+</div>
+<div class="tabs tabs-calm" style="top:170px;margin-left:-1px;" ng-show="!search.sname">
+  <a ng-class="isSelected(0)" ng-click="t(5,0)">
+    <span class="tabsfont">A</span>
+  </a>
+  <a ng-class="isSelected(1)" ng-click="t(10,1)">
+    <span class="tabsfont">B</span>
+  </a>
+  <a ng-class="isSelected(2)" ng-click="t(15,2)">
+    <span class="tabsfont">C</span>
+  </a>
+</div>
+
+<div class="item list" style="height:45%;top:37px;margin-right:1px"  ng-show="!search.sname">
+  <ion-content> 
+    <ion-list>
+      <ion-radio id="{{s.name}}" ng-repeat="sp in sportlist track by $index"  ng-model="sportoption.s" ng-value="sp" >
+        {{sp.sname}}
+      </ion-radio>
+    </ion-list>
+  <!--  <p class="item" ng-model="testlist" ng-repeat="t in testlist track by $index" >{{t}}</p> -->
+  </ion-content> 
+</div>
+
+<div class="item" style="height:45%;margin-right:1px" ng-show="search.sname">
+  <p ng-repeat="s in sportlist | filter: search">{{s.sname}}</p>
+</div>
+
+
+<button class="button button-block button-calm" style="bottom:-30px;margin-bottom:25px" ng-click="add_activity()">送出</button>
+</ion-content> 
+
+</ion-modal-view>

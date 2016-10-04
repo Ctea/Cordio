@@ -1,0 +1,44 @@
+<ion-header-bar class="bar-stable">
+    <button class="button icon button-clear ion-reply" ui-sref="home"></button>
+    <div class="h1 title">{{ title }}</div> 
+</ion-header-bar>
+
+<ion-floating-button click="add_plan()" has-footer="false" button-color="#9999ff" icon="ion-plus" iconColor="#fff">
+</ion-floating-button>
+
+<ion-content class="has-header padding">
+	<div class="list">
+		<div class="item card" ng-repeat="i in basedata.plan_list track by $index" ng-click="to_p($index)">
+			<div class="row padding">
+				<div class="col-50 list">
+					<h2>{{i.pname}}</h2>		   
+					<p>日期：{{i.pdate | date:'MM/dd'}}</p>
+				</div>
+				<div class="col-50">
+					
+				</div>
+			</div>
+		</div>					
+	</div>
+	
+
+<!-- 	<ion-list>
+  	<ion-radio  ng-model="choise.ed" ng-value="'A'" ng-click="rbtn('A')">
+  		安排個人運動計劃
+	</ion-radio>
+		<div class="padding" ng-show="choise.ed == 'A'">
+			
+	  	</div>
+	<ion-radio ng-model="choise.ed" ng-value="'B'" ng-click="rbtn('B')">
+		設定彈性時段 
+		<div class="" ng-show="choise.ed == 'B'">
+			<h4><i class="icon ion-information-circled"/>此選項會按照使用者所輸入的時段<br>自動安排運動行程</h4>
+	  	</div>
+	</ion-radio>
+		<div class="padding" ng-show="choise == 'B'">
+			
+	  	</div>
+			
+</ion-list> -->
+</ion-content> 
+

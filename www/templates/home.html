@@ -1,7 +1,7 @@
 <ion-header-bar class="bar-stable">
     <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
     <h1 class="title" >{{ title }}</h1> 
-    <button class="button icon button-clear ion-settings" ui-sref="sport"></button>
+    <button class="button icon button-clear ion-settings" ui-sref="plan_list" ></button>
 </ion-header-bar>
 
 <!-- <ion-floating-menu has-footer="false">
@@ -11,15 +11,12 @@
 </ion-floating-menu> -->
 
 <ion-content class="has-header padding" >
-
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="text" placeholder="Search" ng-model="search">
+  </label>
   
-  <!--   <div class="bottom-content row">
-      <div class="col col-bottom">
-        <a ng-show="gb" class="google-sign-in button button-block" ng-click="googleLogin()">
-            <span class="btn-copy">Sign in with Google</span>
-        </a>
-      </div>
-  </div> -->
+
 </ion-content> 
 
 

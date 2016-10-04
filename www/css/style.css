@@ -2,6 +2,11 @@ html, body, h1, h2, h4, h5 {
   height: 100%;
   font-family: '微軟正黑體';
 }
+
+h3 {
+  font-family: '微軟正黑體';
+  font-size: 18px;
+}
 .center{
     text-align: center;
 }
@@ -48,7 +53,15 @@ hr {
 }
 
 .popup {
-  width: 95%  !important;
+  width: 280px  !important;
   max-height: 100%;
 }
 
+.tabsfont {
+  font-weight: bold;
+}
+
+.sportconent {
+  margin-top: -2px;
+  margin-bottom: 14px;
+}

@@ -3,6 +3,9 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
+
+(function () {
+  "use strict";
 var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth'])
 
 .run(function($ionicPlatform) {
@@ -42,23 +45,34 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                   $scope.getBMR();
               }
           })    
-          .state('test', {
-              url: '/test',
-              templateUrl: 'templates/test.html',
+          .state('plan_list', {
+              url: '/plan_list',
+              templateUrl: 'templates/activity/plan_list.html',
               controller: function($scope) {
-                  $scope.setTitle("test");
+                  $scope.setTitle('Plan');
+              }
+          }) 
+          .state('plan', {
+              url: '/plan',
+              templateUrl: 'templates/activity/plan.html',
+              controller: function($scope) {
+                  $scope.setTitle("計劃內容");
+                  $scope.timedata.start = null;
+                  $scope.timedata.end = null;
+                  $scope.timedata.total = null;
               }
           })  
-          .state('sport', {
-              url: '/sport',
-              templateUrl: 'templates/sport.html',
+          .state('add_Sport', {
+              url: '/add_Sport',
+              templateUrl: 'templates/activity/add_Sport.html',
               controller: function($scope) {
-                  $scope.setTitle('Sport');
+                  $scope.setTitle("選擇時段與活動");
+            
               }
-          })
-          .state('database', {
-              url: '/database',
-              templateUrl: 'templates/menu/database.html',
+          })  
+          .state('basedata', {
+              url: '/basedata',
+              templateUrl: 'templates/data/basedata.html',
               controller: function($scope) {
                   $scope.setTitle('基本資料');
                   $scope.getBMI();
@@ -66,9 +80,9 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
               }
 
           })
-          .state('database_edit', {
-              url: '/database',
-              templateUrl: 'templates/menu/database_edit.html',
+          .state('basedata_edit', {
+              url: '/basedata',
+              templateUrl: 'templates/data/basedata_edit.html',
               controller: function($scope) {
                   $scope.setTitle('基本資料');
 
@@ -85,12 +99,41 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           })*/
        $urlRouterProvider.otherwise('/');
 })
-
-.controller("mainController", function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate) {
+.controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location) {
+      // ----------------- base-data ----------------- 
+        $scope.basedata = {
+          sex : '',          //  性別
+          age : '',          //  年齡
+          height : '',       //  身高
+          weight : '',       //  體重
+          BMI : '',          //  BMI
+          min_BMR : '',      //  基礎代謝率
+          max_BMR : '',      //
+          plan_list : [],
+        }
+      //button-style
+        $scope.butsty = {
+          'padding': 0,
+          'text-align': 'left',
+          'font-size' : '16px',
+          'font-family':'微軟正黑體',
+          'color': '',
+        }
+      // ----------------- sport-data ----------------- 
+        $scope.sportlist = [
+          {sname: '慢走',units: '4公里/時', cal: 3.5},
+          {sname: '快走、健走',units: '6.0公里/時', cal: 5.5},
+          {sname: '上樓梯', units: '', cal: 8.4},
+          {sname: '慢跑',units: '8公里/時', cal: 8.2},
+          {sname: '快跑',units: '12公里/時' , cal: 12.7},
+          {sname: '騎腳踏車',units: '10公里/時' , cal: 4},
+        ];
+           
+      // ----------------- login -----------------
         $scope.userinfo = {
-                  name : '未登入帳號',
-                  photoURL : '/img/ionic.png'
-                };
+            name : '未登入帳號',
+            photoURL : '/img/ionic.png'
+        };
 
         firebase.auth().onAuthStateChanged(function(user) {
           if (user) {        
@@ -107,9 +150,9 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                 $scope.userinfo = info;
               }
              $scope.loging = true;
-             $scope.$digest();
+             $scope.$apply();
           } else {
-            $scope.loging = false;
+              $scope.loging = false;
           }
         });
 
@@ -137,8 +180,6 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                 // ...
               })     
           }
-
-
       }
 
       $scope.signOut = function() {
@@ -155,7 +196,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
             BMI : '',          //  BMI
             min_BMR : '',      //  基礎代謝率
             max_BMR : '',      //
-            selectedSport : [{name:'Monday', splist:[]}, {name:'Tuesday', splist:[]}, {name:'Wednesday', splist:[]}, {name:'Thursday', splist:[]}, {name:'Friday', splist:[]}, {name:'Saturday', splist:[]}, {name:'Sunday',splist:[]}]
+            plan_list : [],
           }
         }, function(error) {
           // An error happened.
@@ -163,36 +204,39 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         $scope.toggleLeftSideMenu();
       }      
 
-      //base-data
-        $scope.basedata = {
-          sex : '',          //  性別
-          age : '',          //  年齡
-          height : '',       //  身高
-          weight : '',       //  體重
-          BMI : '',          //  BMI
-          min_BMR : '',      //  基礎代謝率
-          max_BMR : '',      //
-          selectedSport : [{name:'Monday', splist:[]}, {name:'Tuesday', splist:[]}, {name:'Wednesday', splist:[]}, {name:'Thursday', splist:[]}, {name:'Friday', splist:[]}, {name:'Saturday', splist:[]}, {name:'Sunday',splist:[]}]
-        }
-      //button-style
-        $scope.butsty = {
-          'padding': 0,
-          'text-align': 'left',
-          'font-size' : '16px',
-          'font-family':'微軟正黑體',
-          'color': '',
-        }
-      //sport-data
-        $scope.sportlist = [
-          {sname: '慢走',units: '4公里/時', cal: 3.5},
-          {sname: '快走、健走',units: '6.0公里/時', cal: 5.5},
-          {sname: '上樓梯', units: '', cal: 8.4},
-          {sname: '慢跑',units: '8公里/時', cal: 8.2},
-          {sname: '快跑',units: '12公里/時' , cal: 12.7},
-          {sname: '騎腳踏車',units: '10公里/時' , cal: 4},
-        ];
-           
-    // data function 
+ 
+    // ----------------- data function ----------------- 
+       $scope.showsex = function() {
+   
+       var hideSheet = $ionicActionSheet.show({
+         buttons: [
+           { text: '<span class="button button-clear button-dark">Male</span>' },
+           { text: '<span class="button button-clear button-dark">Female</span>' }
+         ],
+         
+         titleText: '<span class="stitle">請選擇您的性別</span>',
+         cancelText: '<span class="button button-clear button-dark">Cancel</span>',
+         cancel: function() {
+              
+            },
+         buttonClicked: function(index) {
+          $scope.butsty.color = '#808080';
+          if(index === 0) {
+              $scope.basedata.sex = 'Male';
+          }       
+          if(index === 1) {
+              $scope.basedata.sex = 'Female';
+          }
+            return true;
+         }
+       });
+
+       // For example's sake, hide the sheet after two seconds
+       $timeout(function() {
+         hideSheet();
+       }, 3000);
+
+    };
     $scope.getBMR = function(){
       var a = $scope.basedata.age;
       var h = $scope.basedata.height;
@@ -211,21 +255,154 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       $scope.basedata.BMI =  w/(h*h);
     };
 
-   
+
+    // -----------------  radio but controll ----------------- 
+    $scope.currentChose = '';
+    $scope.choise = {
+        ed : ''
+    }
+
+    $scope.rbtn = function(v) {
+        if ($scope.currentChose == v) {
+          $scope.currentChose = '';
+          $scope.choise.ed = ''; 
+        } else {
+            $scope.currentChose = v;
+        }
+    }
+
     $scope.showSelectValue = function(selectSp) {
         $scope.selectSp = JSON.parse(selectSp);
         //console.log();
     }
-    $scope.addSport = function(sid) {
-      $scope.selectSp = '';
-      $scope.sptime = {
-        t : ''
+    
+    // ----------------- time ----------------- 
+    $scope.timedata = {
+        start: null,
+        end: null,
+        total: null,
+        start_s: null,
+        end_s: null,
+        total_s: null,
+        total_c: false,
+        First : 0
+    }
+    $scope.timeFocus = function () {
+        var t = $scope.timedata
+        t.total_c = true;
+    }
+    $scope.timeBlur = function () {
+        var t = $scope.timedata
+        t.total_c = false;
+    }
+    $scope.timeBlur2 = function (value) {
+        var t = $scope.timedata
+        t.First = value;
+    }
+    $scope.timechange = function(value) {
+        var t = $scope.timedata
+            if ((t.start && t.total) || (t.start && t.end) || (t.total && t.end)) {
+                if (!t.start) {
+                    $scope.timedata.start = angular.copy(t.end);
+                    $scope.timedata.start.setMinutes(t.end.getMinutes() - t.total);
+                    t.start_s = t.start;
+                    t.total_s = t.total;
+                    t.end_s = t.end;
+                }
+                else if (!t.end) {
+                    $scope.timedata.end = angular.copy(t.start);
+                    $scope.timedata.end.setMinutes(t.start.getMinutes() + t.total);
+                    t.start_s = t.start;
+                    t.total_s = t.total;
+                    t.end_s = t.end;
+                }
+                else if (!t.total && !t.total_c) {
+                    $scope.timedata.total = (t.end - t.start) / 60000
+                    t.start_s = t.start;
+                    t.total_s = t.total;
+                    t.end_s = t.end;
+                }
+                else {
+                    if (t.start != t.start_s) {
+                        $scope.timedata.end = angular.copy(t.start_s);
+                        $scope.timedata.end.setMinutes(t.start.getMinutes() + t.total);
+                        t.start_s = t.start;
+                        t.end_s = t.end;
+                    } else if (t.total != t.total_s) {
+                        if (t.First === 0) {
+                            $scope.timedata.end = angular.copy(t.start_s);
+                            $scope.timedata.end.setMinutes(t.start.getMinutes() + $scope.timedata.total);
+                        } else if(t.First === 1) {
+                            $scope.timedata.start = angular.copy(t.end);
+                            $scope.timedata.start.setMinutes(t.end.getMinutes() - t.total);
+                        }
+                        t.start_s = t.start;
+                        t.total_s = t.total;
+                        t.end_s = t.end;
+                    } else if (t.end != t.end_s) {
+                        $scope.timedata.total = (t.end - t.start) / 60000
+                        t.total_s = t.total;
+                        t.end_s = t.end;
+                    }
+                }
+            };
+    }
+
+    
+
+  // ----------------- add_sport modal ----------------- 
+    $scope.modal_show = function(){
+        $scope.timedata.start = null;
+        $scope.timedata.end = null;
+        $scope.timedata.total = null;
+        $scope.sportoption.s = $scope.sportlist[5];
+        $scope.modal.show();
+ /*     $location.hash(id);
+        $ionicScrollDelegate.anchorScroll();*/
+    }
+    $ionicModal.fromTemplateUrl('templates/activity/add_Sport.html', {
+        scope: $scope,
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
+
+  // -----------------  add_Sport radiobutton ----------------- 
+    $scope.to_p = function(pid) {
+      $scope.pid = pid;
+      $state.go('plan');
+    }
+    $scope.sportoption = {
+      s:null,
+    };
+
+    $scope.add_activity = function() {
+      var t = $scope.timedata;
+      var s = $scope.sportoption.s;
+      if (t.start && t.end && t.total && s) {
+        $scope.basedata.plan_list[$scope.pid].psplist.push({
+          sname : s.sname,
+          scal : s.scal,
+          sstart : t.start,
+          send :  t.end,
+          stotal : t.total
+        });
       };
+      $scope.modal.hide();
+      $state.go('plan')
+    }
+    $scope.add_plan = function() {
+      $scope.selectSp = {
+        pname : (new Date().getMonth()+1)+"/"+new Date().getDate()+' 的計劃',
+        pdate : new Date(),
+        pbr_in : '',
+        psplist : [],
+      }
+
         var myPopup = $ionicPopup.show({
           cssClass: '',
-          templateUrl: 'templates/addS.html',
-          title: '選擇時段與運動',
-          subTitle: 'Choose time and sport',
+          templateUrl: 'templates/activity/addS.html',
+          title: '<h3>設定名稱與日期</h3>',
+          subTitle: 'Create a plan and choose a day',
           scope: $scope,
           buttons: [
             { text: 'Cancel' },
@@ -233,66 +410,17 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
               text: '<b>Add</b>',
               type: 'button-positive',
               onTap: function(e) {
-                if ($scope.selectSp && ($scope.sptime.t > 0) && ($scope.sptime.t < 600)) {
-                  $scope.basedata.selectedSport[sid].splist.push({
-                      sname : $scope.selectSp.sname,
-                      stime : $scope.sptime.t,
-                      ecal : $scope.selectSp.cal * ($scope.sptime.t / 60.0) * $scope.basedata.weight
-                  });
-                  return true;
-                }else {
-
-                }    
+                if ($scope.selectSp.pname && $scope.selectSp.pdate) {
+                  $scope.basedata.plan_list.push($scope.selectSp)   
+                };              
               }
             }
           ]
         });
     };
-   
-
-    $scope.radshow = function(A) {
-      if (A) {
-        $scope.A = false;
-      }else{
-        $scope.A = true;
-      };
-
-    };
-
-   $scope.show = function() {
-   // Show the action sheet
-   var hideSheet = $ionicActionSheet.show({
-     buttons: [
-       { text: '<span class="button button-clear button-dark">Male</span>' },
-       { text: '<span class="button button-clear button-dark">Female</span>' }
-     ],
-     
-     titleText: '<span class="stitle">請選擇您的性別</span>',
-     cancelText: '<span class="button button-clear button-dark">Cancel</span>',
-     cancel: function() {
-          
-        },
-     buttonClicked: function(index) {
-      $scope.butsty.color = '#808080';
-      if(index === 0) {
-          $scope.basedata.sex = 'Male';
-      }       
-      if(index === 1) {
-          $scope.basedata.sex = 'Female';
-      }
-        return true;
-     }
-   });
-
-   // For example's sake, hide the sheet after two seconds
-   $timeout(function() {
-     hideSheet();
-   }, 3000);
-
-    };
 
       $scope.selected = 0;
-        $scope.isSelected = function (id) {
+      $scope.isSelected = function (id) {
           return ($scope.selected === id) ? 'active tab-item' : 'tab-item';
       };
 
@@ -303,7 +431,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           $scope.testlist.push(i);
         };
       };
-
+    // ----------------- Other -----------------   
       $scope.setTitle = function(title) {
           $scope.title = title;
       };
@@ -313,6 +441,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       $scope.isObject = function(input) {
           return angular.isObject(input);
       };
+
       /*  sortable  */
       $scope.sortableOptions = {
           'ui-floating': true, 
@@ -320,171 +449,10 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           connectWith: '.container',
           handle: '.myHandle'
       };
-      /*  fab  */
-      $scope.newTrip = function() {
-         $state.go('about');
-      };
-
-
-
-      $scope.showPopup = function() {
-        var myPopup = $ionicPopup.show({
-          cssClass: '',
-          templateUrl: 'templates/fabadd.html',
-          title: '創建新的行程',
-          subTitle: '',
-          scope: $scope,
-          buttons: [
-            { text: 'Cancel' },
-            {
-              text: '<b>Save</b>',
-              type: 'button-positive',
-              onTap: function(e) {
-                  //e.preventDefault();
-                  var tmpNewTrip = {
-                    name: document.getElementById('tname').value,
-                    date: document.getElementById('tdate').value,
-                    triplist: [{locatelist:[],route:[]}]
-                    };
-                  $scope.trip = tmpNewTrip;
-                  $scope.alltrip.push(tmpNewTrip);
-                  return true;
-              }
-            }
-          ]
-        });
-
-        myPopup.then(function(res) {
-          if (res) {
-              $state.go('about');
-            }
-          console.log('Tapped!', res);
-        });
-
-/*        $timeout(function() {
-           myPopup.close(); //close the popup after 3 seconds for some reason
-        }, 3000);*/
-       };
-
-/*      $scope.initialize = function() {
-        var myLatlng = new google.maps.LatLng(43.07493,-89.381388);
-        
-        var mapOptions = {
-          center: myLatlng,
-          zoom: 16,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map"),
-            mapOptions);
-        
-        //Marker + infowindow + angularjs compiled ng-click
-        var contentString = "<div><a ng-click='clickTest()'>Click me!</a></div>";
-        var compiled = $compile(contentString)($scope);
-
-        var infowindow = new google.maps.InfoWindow({
-          content: compiled[0]
-        });
-
-        var marker = new google.maps.Marker({
-          position: myLatlng,
-          map: map,
-          title: 'Uluru (Ayers Rock)'
-        });
-
-        google.maps.event.addListener(marker, 'click', function() {
-          infowindow.open(map,marker);
-        });
-
-        $scope.map = map;
-      }*/
       
       $scope.cleartext = function(id) {
         document.getElementById(id).value = '';
-      }
-
-      $scope.viewT = function(index) {
-        $scope.trip = $scope.alltrip[index];
-        $state.go('about');
-      }
-
-      $scope.goSearch = function(tid) {
-        $scope.tid = tid;
-        $state.go('loc_s');
-      }
-
-      $scope.addOneDay = function() {
-          var tmpt = $scope.trip;
-          tmpt.triplist.push({locatelist:[],route:[]}); 
-          $scope.trip = tmpt;
-      }
-/*      $scope.addloc = function(lname, llat, llng,lpid) {
-       
-        var tmpt = $scope.trip;
-        var tmptid = $scope.tid;
-        tmpt.triplist[tmptid].locatelist.push({
-          pid: lpid,
-          name: lname,
-          lat: llat,
-          lng: llng
-        });
-        $scope.trip = tmpt;
-        $scope.getRoute($scope.trip, tmptid);
-      }*/
-     /* $scope.getRoute = function(tmpt, tmptid){
-        var rlist = [];
-        for (var i = 0; i < tmpt.triplist[tmptid].locatelist.length - 1; i++) {
-            
-            $http.get('http://localhost/hello?start='+tmpt.triplist[tmptid].locatelist[i].pid+'&end='+tmpt.triplist[tmptid].locatelist[i+1].pid)
-            .success(function(response) {
-              rlist.push(response.routes[0].legs[0].duration.text);
-              console.log(rlist);
-            }); 
-
-        };
-        
-        if(rlist){
-          tmpt.triplist[tmptid].route = rlist;
-          $scope.trip = tmpt;
-        };
-      }*/
-      
- /*     $scope.centerOnMe = function() {
-        if(!$scope.map) {
-          return;
-        }
-
-        $scope.loading = $ionicLoading.show({
-          content: 'Getting current location...',
-          showBackdrop: false
-        });
-
-        navigator.geolocation.getCurrentPosition(function(pos) {
-          $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-        }, function(error) {
-          alert('Unable to get location: ' + error.message);
-        });
-      };
-      
-      $scope.clickTest = function() {
-        alert('Example of infowindow with ng-click')
-      };
-      
-      $scope.testc = function(){
-
-        console.log("test");
-      };*/
-      $scope.currentChose = '';
-      $scope.choise = {
-        ed : ''
-      }
-      $scope.rbtn = function(v) {
-          if ($scope.currentChose == v) {
-            $scope.currentChose = '';
-            $scope.choise.ed = ''; 
-          } else {
-            $scope.currentChose = v;
-          }
-      }
+      }  
 
       /*  sidemenu  */
       $scope.toggleLeftSideMenu = function() {
@@ -499,101 +467,18 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         return input;
       };
 
-/*      
-      $http.get('http://localhost/data')
+      
+   
+
+
+}])
+
+
+ /*  $http.get('http://localhost/data')
       .success(function(response) {
         $scope.locate = response;
       });*/
       
-
-      var tmpList = [{day:0,l:[]}];
-        
-      for (var i = 1; i <= 6; i++){
-          /*tmpList.push({
-            text: 'Item ' + i,
-            value: i
-          });*/
-          tmpList[0].l.push(i);
-      };
-
-      var tmpList2 = [];
-        
-      for (var i = 7; i <= 10; i++){
-          tmpList2.push({
-            text: 'Item ' + i,
-            value: i
-          });
-      };
-        
-        
-      $scope.list = tmpList;
-      $scope.list2 = tmpList2;
-
-     /* $scope.openGoogleMap = function() {
-          $state.go('map');
-      };
-
-      var directionsDisplay;
-      var directionsService = new google.maps.DirectionsService();
-      var map;
-      var inticor;
-      $scope.setLatLng = function(lat, lng) {
-        inticor= new google.maps.LatLng(lat, lng);
-        $scope.openGoogleMap();
-      }
-
-      $scope.initialize = function() {
-      
-          directionsDisplay = new google.maps.DirectionsRenderer();
-          var mapOptions =
-                  {
-                      zoom: 17,
-                      center: inticor,
-                      mapTypeId: google.maps.MapTypeId.ROADMAP,
-                  };
-
-          map = new google.maps.Map(document.getElementById('map'), mapOptions);
-          directionsDisplay.setMap(map);
-
-          var contentString = "<div><a ng-click='clickTest()'>Click me!</a></div>";
-          var compiled = $compile(contentString)($scope);
-
-          var infowindow = new google.maps.InfoWindow({
-            content: compiled[0]
-          });
-
-          var marker = new google.maps.Marker({
-            position: inticor,
-            map: map,
-            title: 'Uluru (Ayers Rock)'
-          });
-
-          google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map,marker);
-          });
-
-          $scope.map = map;      
-          
-      }*/
-      
-/*
-      $scope.calcRoute = function() {
-        var start = "高雄市大樹區竹寮路149號";
-        var end = "屏東縣屏東市屏東縣屏東市建南路182號1樓";
-        var request = {
-            origin:start,
-            destination:end,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-        directionsService.route(request, function(response, status) {
-          if (status == google.maps.DirectionsStatus.OK) {
-            directionsDisplay.setDirections(response);
-          }
-        });
-      }*/
-
-})
-
 /*.controller('MapCtrl', function($scope, $ionicLoading, $compile) {
       function initialize() {
         var myLatlng = new google.maps.LatLng(43.07493,-89.381388);
@@ -657,3 +542,4 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       };
     })
 */
+})();

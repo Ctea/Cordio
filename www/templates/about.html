@@ -15,7 +15,7 @@
 		<div class="item" ng-repeat="d in basedata as data">
 			<p>{{d}}</p>
 		</div>
-		<p>您的BMI：{{ data.BMI | number:2}}</p>
+		<p>您的BMI：{{ data.BMI | number:2 }}</p>
 		<p>基礎代謝率(BMR)：{{ data.min_BMR }}</p>
 		<p>一天至少要攝取 {{ data.weight * 33 }} c.c. 的水</p>
 	</div>
