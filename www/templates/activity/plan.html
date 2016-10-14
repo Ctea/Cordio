@@ -9,16 +9,17 @@
 
 
 <ion-content class="has-header padding" >
+
     <div class="list">
-    	<div class="row padding" ng-repeat="s in basedata.plan_list[pid].psplist">
+    	<div class="row padding animated fadeInDown " ng-repeat="s in basedata.plan_list[pid].psplist">
             <div class="col-25 center">
                 <p >{{ s.sstart | date:'HH:mm'}}</p>
                 <p>｜</p>
                 <p >{{ s.send | date:'HH:mm'}}</p>
             </div>
-    		<div class="col-75 card sportconent" >
+    		<div class="col-75 card sportconent " >
                 <div class="padding">
-                    <span>{{ s.sname }}</span>
+                    <p >{{ s.sname }}</p>
                 </div>     
             </div>
     		

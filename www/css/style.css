@@ -2,7 +2,6 @@ html, body, h1, h2, h4, h5 {
   height: 100%;
   font-family: '微軟正黑體';
 }
-
 h3 {
   font-family: '微軟正黑體';
   font-size: 18px;
@@ -13,6 +12,10 @@ h3 {
 .left{
     text-align: left;
 }
+.not-visible {
+  visibility: hidden;
+}
+
 .myHandle {
   font-size: 25px;
   margin-right: 5px;
@@ -25,43 +28,46 @@ h3 {
   min-height:50px;
 }
 
-.trip .popup-title {
-  height: 20px;
-} 
-
-
-#map {
-  width: 100%;
+.scroll {
   height: 100%;
 }
 
-.scroll {
-  height: 100%;
+
+.ion-plus-circled {
+  font-size: 28px;
+}
+
+/* popup css */
+.popup {
+  width: 280px  !important;
+  max-height: 100%;
+}
+.trip .popup-title {
+  height: 20px;
+} 
+/* --------- */
+.tabsfont {
+  font-weight: bold;
 }
 
 .stitle {
   font-size: 18px;
 }
-
-hr {
-  color: #DCDCDC;
-  border-style: solid;
-  border-width: 0.5px;
-}
-.ion-plus-circled {
-  font-size: 28px;
-}
-
-.popup {
-  width: 280px  !important;
-  max-height: 100%;
-}
-
-.tabsfont {
-  font-weight: bold;
-}
-
 .sportconent {
   margin-top: -2px;
   margin-bottom: 14px;
 }
+
+/* --- tab-slide-box --- */
+.slider-slide {
+      color: #fff;
+      margin-top:0px;  
+};
+.tabbed-slidebox .tsb-icons:after{
+      display:none;
+}
+.scroll-set{
+  height:30px;
+  font-size:10px
+}
+/* --------------------- */

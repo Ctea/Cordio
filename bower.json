@@ -9,6 +9,8 @@
     "angularfire": "2",
     "ngCordova": "^0.1.27-alpha",
     "ng-cordova-oauth": "^0.2.10",
-    "angular": "^1.5.8"
+    "angular": "^1.5.8",
+    "angular-timeline": "^1.7.0",
+    "angular-scroll-animate": "^0.9.9"
   }
 }

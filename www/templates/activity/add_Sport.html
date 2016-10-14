@@ -1,11 +1,11 @@
-<ion-modal-view >
+<ion-modal-view style="height:70%">
 <ion-header-bar class="bar-stable">
     <h1 class="title " >{{ title }}</h1> 
     <button class="button icon button-clear ion-reply" ng-click="modal.hide()"></button>
 </ion-header-bar>
 
-<ion-content class="padding" >
-  <div class="item list" style="margin-bottom:-5px">
+<ion-content >
+  <div class="item list" style="margin-bottom:-5px" ng-show="">
     <h2 class="center" >輸入時間</h2>
     <div class="row">
         <label class="col-40 item-floating-label" style="margin-left:15px;margin-right:-5px">
@@ -23,13 +23,30 @@
       </div>
   </div>
 
-<div class="list list-inset">
-  <label class="item item-input">
-    <i class="icon ion-search placeholder-icon"></i>
-    <input type="text" placeholder="Search" ng-model="search.sname">
-  </label>
-</div>
-<div class="tabs tabs-calm" style="top:170px;margin-left:-1px;" ng-show="!search.sname">
+
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="text" placeholder="Search" ng-model="search.sname">
+    </label>
+
+    <tab-slide-box tab="0" ng-show="!search.sname" style=>
+        <div class="tsb-icons">
+          <div class="tsb-ic-wrp">
+            <ion-scroll style="overflow-x: hidden;" direction="x" class="scroll-set tsb-hscroll ">
+              <a href="" ng-repeat="st in sl | unique:'type'" on-finish-render="test()" >{{st.type}}</a>
+             
+            </ion-scroll>
+          </div>
+        </div>
+        <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)">
+            <ion-slide  ng-repeat="st in sl | unique:'type'">
+              <ion-scroll class="list" scrollbar-y="false" direction="y" style="height:100%">
+                 <p class="item" style="background-color: rgba(0,0,0,0);color:#fff" ng-repeat="s in sl | filter:st.type | orderBy:'name' ">{{s.name}}</p>
+              </ion-scroll>
+            </ion-slide>                  
+        </ion-slide-box>
+    </tab-slide-box>
+<!--   <div class="tabs tabs-calm" style="top:170px;margin-left:-1px;" ng-show="!search.sname">
   <a ng-class="isSelected(0)" ng-click="t(5,0)">
     <span class="tabsfont">A</span>
   </a>
@@ -48,16 +65,19 @@
         {{sp.sname}}
       </ion-radio>
     </ion-list>
-  <!--  <p class="item" ng-model="testlist" ng-repeat="t in testlist track by $index" >{{t}}</p> -->
+  <p class="item" ng-model="testlist" ng-repeat="t in testlist track by $index" >{{t}}</p>
   </ion-content> 
-</div>
+</div> -->
 
-<div class="item" style="height:45%;margin-right:1px" ng-show="search.sname">
-  <p ng-repeat="s in sportlist | filter: search">{{s.sname}}</p>
-</div>
+  <div class="list" style="height:76%;margin-top:10px" ng-show="search.sname">
+    <p class="item" ng-repeat="s in sportlist | filter: search">{{s.sname}}</p>
+  </div>
+ 
+    <button class="button button-block button-calm" ng-click="add_activity()">送出</button>
+ 
+  
 
+</ion-content>
 
-<button class="button button-block button-calm" style="bottom:-30px;margin-bottom:25px" ng-click="add_activity()">送出</button>
-</ion-content> 
 
 </ion-modal-view>

@@ -6,7 +6,7 @@
 
 (function () {
   "use strict";
-var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth'])
+var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox'])
 
 .run(function($ionicPlatform) {
 
@@ -27,6 +27,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
   });
 })
+
 .config(function($stateProvider, $urlRouterProvider) {
       $stateProvider
           .state('home', {
@@ -56,7 +57,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
               url: '/plan',
               templateUrl: 'templates/activity/plan.html',
               controller: function($scope) {
-                  $scope.setTitle("計劃內容");
+                  $scope.setTitle($scope.basedata.plan_list[$scope.pid].pname);
                   $scope.timedata.start = null;
                   $scope.timedata.end = null;
                   $scope.timedata.total = null;
@@ -81,10 +82,11 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
           })
           .state('basedata_edit', {
-              url: '/basedata',
+              url: '/basedata_edit',
               templateUrl: 'templates/data/basedata_edit.html',
               controller: function($scope) {
                   $scope.setTitle('基本資料');
+
 
               }
           })
@@ -100,6 +102,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
        $urlRouterProvider.otherwise('/');
 })
 .controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location) {
+
       // ----------------- base-data ----------------- 
         $scope.basedata = {
           sex : '',          //  性別
@@ -119,6 +122,18 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           'font-family':'微軟正黑體',
           'color': '',
         }
+
+        $scope.events = [{
+          badgeClass: 'info',
+          badgeIconClass: './img/ionic.png',
+          title: 'First heading',
+          content: 'Some awesome content.'
+        }, {
+          badgeClass: 'warning',
+          badgeIconClass: 'glyphicon-credit-card',
+          title: 'Second heading',
+          content: 'More awesome content.'
+        }];
       // ----------------- sport-data ----------------- 
         $scope.sportlist = [
           {sname: '慢走',units: '4公里/時', cal: 3.5},
@@ -255,6 +270,17 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       $scope.basedata.BMI =  w/(h*h);
     };
 
+    // ----------- angular-scroll-animate -----------
+        $scope.animateElementIn = function($el) {
+          $el.removeClass('timeline-hidden');
+          $el.addClass('bounce-in');
+        };
+
+       
+        $scope.animateElementOut = function($el) {
+          $el.addClass('timeline-hidden');
+          $el.removeClass('bounce-in');
+        };
 
     // -----------------  radio but controll ----------------- 
     $scope.currentChose = '';
@@ -354,8 +380,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
     $scope.modal_show = function(){
         $scope.timedata.start = null;
         $scope.timedata.end = null;
-        $scope.timedata.total = null;
-        $scope.sportoption.s = $scope.sportlist[5];
+        $scope.timedata.total = null;    
         $scope.modal.show();
  /*     $location.hash(id);
         $ionicScrollDelegate.anchorScroll();*/
@@ -367,14 +392,25 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
     });
 
   // -----------------  add_Sport radiobutton ----------------- 
-    $scope.to_p = function(pid) {
-      $scope.pid = pid;
-      $state.go('plan');
-    }
     $scope.sportoption = {
       s:null,
     };
-
+    $scope.sptab = {
+      v : '腿部運動'
+    }
+    $scope.sl= [];
+    $http.get('sl.json').success(function(data) { 
+        console.log("success!");
+        $scope.sl = data.table1;
+    });
+    $scope.to_p = function(pid) {
+      $scope.pid = pid;
+      $state.go('plan');
+    }  
+    $scope.slideChange = function(v) {
+      $scope.sptab.v = v ;
+    }
+     
     $scope.add_activity = function() {
       var t = $scope.timedata;
       var s = $scope.sportoption.s;

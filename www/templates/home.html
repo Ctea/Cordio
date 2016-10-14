@@ -10,12 +10,21 @@
     <ion-floating-item icon="" click="openGoogleMap()"></ion-floating-item>
 </ion-floating-menu> -->
 
-<ion-content class="has-header padding" >
-  <label class="item item-input">
-    <i class="icon ion-search placeholder-icon"></i>
-    <input type="text" placeholder="Search" ng-model="search">
-  </label>
-  
+<ion-content class="has-header" scroll="false">
+    
+<timeline>
+    <timeline-event ng-repeat="event in events" side="right">
+      <timeline-badge class="{{event.badgeClass}}">
+        <i class="glyphicon {{event.badgeIconClass}}"></i>
+      </timeline-badge>
+      <timeline-panel class="{{event.badgeClass}}">
+        <timeline-heading>
+          <h4>{{event.title}}</h4>
+        </timeline-heading>
+        <p>{{event.content}}</p>
+      </timeline-panel>
+    </timeline-event>
+  </timeline>
 
 </ion-content> 
 
