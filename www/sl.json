@@ -2,467 +2,583 @@
   "table1": [
     {
       "name": "騎自行車",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "length"
     },
     {
-      "name": "騎自行車－健身房",
-      "type": "腿部運動"
+      "name": "騎自行車(健身房)",
+      "type": "腿部運動",
+      "feature": "Watt"
     },
     {
-      "name": "騎自行車－山地",
-      "type": "腿部運動"
+      "name": "騎自行車山地",
+      "type": "腿部運動",
+      "feature": "Strength"
     },
     {
-      "name": "騎自行車－爬坡",
-      "type": "腿部運動"
+      "name": "騎自行車爬坡",
+      "type": "腿部運動",
+      "feature": "null"
     },
     {
       "name": "騎特技車",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "null"
     },
     {
       "name": "馬拉松",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "null"
     },
     {
       "name": "散步",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "length"
     },
     {
       "name": "散步爬坡",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "Strength"
     },
     {
       "name": "競走",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "null"
     },
     {
       "name": "遛狗",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "null"
     },
     {
       "name": "爬山",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "Strength"
     },
     {
       "name": "跑步",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "length"
     },
     {
       "name": "慢跑",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "null"
     },
     {
       "name": "旅行",
-      "type": "腿部運動"
+      "type": "腿部運動",
+      "feature": "Strength"
     },
     {
       "name": "羽毛球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "籃球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "檯球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "null"
     },
     {
       "name": "保齡球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "null"
     },
     {
       "name": "槌球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "null"
     },
     {
       "name": "足球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "高爾夫",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "手球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "曲棍球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "棒壘球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "躲避球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "排球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "回力球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "null"
     },
     {
       "name": "橄欖球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "乒乓球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "null"
     },
     {
       "name": "網球",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "Strength"
     },
     {
       "name": "足壘",
-      "type": "球類運動"
+      "type": "球類運動",
+      "feature": "null"
     },
     {
       "name": "潛水",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
       "name": "衝浪",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
       "name": "游泳",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
-      "name": "游泳－踩水",
-      "type": "水上活動"
+      "name": "游泳踩水",
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
-      "name": "游泳－仰式",
-      "type": "水上活動"
+      "name": "游泳仰式",
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
-      "name": "游泳－蛙式",
-      "type": "水上活動"
+      "name": "游泳蛙式",
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
-      "name": "游泳－自由式",
-      "type": "水上活動"
+      "name": "游泳自由式",
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
-      "name": "游泳－狗爬式",
-      "type": "水上活動"
+      "name": "游泳狗爬式",
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
-      "name": "游泳－蝶式",
-      "type": "水上活動"
+      "name": "游泳蝶式",
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
       "name": "水上步行",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
       "name": "水中排球",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "null"
     },
     {
       "name": "水中慢跑",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "null"
     },
     {
       "name": "水上健身操",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "null"
     },
     {
       "name": "划帆船",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
       "name": "划獨木舟",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "Strength"
+    },
+    {
+      "name": "划船競爭",
+      "type": "水上活動",
+      "feature": "null"
     },
     {
       "name": "划皮艇",
-      "type": "水上活動"
+      "type": "水上活動",
+      "feature": "Strength"
     },
     {
       "name": "射箭",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "拳擊",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "賽車",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "擊劍",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "飛盤",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "體操",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "毽子",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "滑翔",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "騎馬",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "太極",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "氣功",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "武術",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "柔道",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "柔術",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "空手道",
-      "type": "體育"
-    },
-    {
-      "name": "拳擊",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "跆拳道",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "泰拳",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "攀岩",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "跳繩",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "滑板",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "直排輪",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "跳傘",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "射擊",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "鐵餅",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "鏈球",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "跳高",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "跳遠",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "三級跳遠",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "標槍",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "撐竿跳",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "障礙賽跑",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "鍛鍊",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "瑜珈",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "伸展",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "上半身運動",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "舉重",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "有氧結合運動",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "重訓",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "循環訓練",
-      "type": "體育"
+      "type": "體育",
+      "feature": "Strength"
     },
     {
       "name": "橢圓訓練機",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "抗阻訓練",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "樓梯跑步機",
-      "type": "體育"
+      "type": "體育",
+      "feature": "null"
     },
     {
       "name": "芭蕾",
-      "type": "跳舞"
+      "type": "跳舞",
+      "feature": "Strength"
     },
     {
       "name": "踢踏",
-      "type": "跳舞"
+      "type": "跳舞",
+      "feature": "null"
     },
     {
       "name": "有氧舞",
-      "type": "跳舞"
+      "type": "跳舞",
+      "feature": "Strength"
     },
     {
       "name": "跳舞",
-      "type": "跳舞"
+      "type": "跳舞",
+      "feature": "null"
     },
     {
       "name": "加勒比舞",
-      "type": "跳舞"
+      "type": "跳舞",
+      "feature": "null"
     },
     {
       "name": "靜樂跳舞",
-      "type": "跳舞"
+      "type": "跳舞",
+      "feature": "null"
     },
     {
       "name": "釣魚",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "Strength"
     },
     {
       "name": "河岸釣魚",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "手抓魚",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "溪流釣魚",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "漁網捕魚",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "Strength"
     },
     {
       "name": "手風琴",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "喇叭",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "木管樂器",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "長笛",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "演奏",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "吉他",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "Strength"
     },
     {
       "name": "大提琴",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "鋼琴",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "Strength"
     },
     {
       "name": "低音提琴",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "小提琴",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "長號",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "打鼓",
-      "type": "休閒活動"
+      "type": "休閒活動",
+      "feature": "null"
     },
     {
       "name": "滑冰",
-      "type": "雪上活動"
+      "type": "雪上活動",
+      "feature": "Strength"
     },
     {
       "name": "滑雪",
-      "type": "雪上活動"
+      "type": "雪上活動",
+      "feature": "Strength"
     },
     {
       "name": "雪橇",
-      "type": "雪上活動"
+      "type": "雪上活動",
+      "feature": "Strength"
     }
   ],
   "table2": [
@@ -783,11 +899,6 @@
     },
     {
       "name": "爬山",
-      "Remark": "爬山",
-      "Mets": "8"
-    },
-    {
-      "name": "爬山",
       "Remark": "21至42磅負重爬山",
       "Mets": "8.3"
     },
@@ -1015,11 +1126,6 @@
       "name": "雪橇",
       "Remark": "狗拉雪橇，駕駛狗拉雪橇",
       "Mets": "7.5"
-    },
-    {
-      "name": "喇叭",
-      "Remark": "喇叭，站著",
-      "Mets": "1.8"
     },
     {
       "name": "喇叭",

@@ -11,6 +11,8 @@
     "ng-cordova-oauth": "^0.2.10",
     "angular": "^1.5.8",
     "angular-timeline": "^1.7.0",
-    "angular-scroll-animate": "^0.9.9"
+    "angular-scroll-animate": "^0.9.9",
+    "underscore": "^1.8.3",
+    "ion-floating-menu": "^1.0.4"
   }
 }

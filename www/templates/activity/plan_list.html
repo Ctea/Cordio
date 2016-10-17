@@ -1,13 +1,11 @@
-<ion-header-bar class="bar-stable">
+<ion-header-bar align-title="center" class="bar-stable">
     <button class="button icon button-clear ion-reply" ui-sref="home"></button>
-    <div class="h1 title">{{ title }}</div> 
+    <h1 class="title">{{ title }}</h1> 
 </ion-header-bar>
-<!-- 
-<ion-floating-button click="add_plan()" has-footer="false" button-color="#9999ff" icon="ion-plus" iconColor="#fff">
-</ion-floating-button> -->
-<ion-floating-menu menu-icon="ion-person" menu-open-icon="ion-camera">
-	<ion-floating-item icon="ion-person" click="modal_show()" text="新增活動"></ion-floating-item>
-    <ion-floating-item icon="ion-camera" click="add_plan()" text="新增行程"></ion-floating-item>  
+
+<ion-floating-menu menu-icon="ion-plus-round" menu-open-icon="ion-minus-round" >
+	<ion-floating-item icon="ion-android-walk"  click="modal_show()" text="新增活動"></ion-floating-item>
+    <ion-floating-item icon="ion-ios-paper" click="add_plan()" text="新增行程"></ion-floating-item>  
 </ion-floating-menu>
 
 <ion-content class="has-header padding">
@@ -18,32 +16,31 @@
 				<h2>{{i.pname}}</h2>		   
 				<p>日期：{{i.pdate | date:'MM/dd'}}</p>
 			</div>
-			<div class="col-50">
-				
+			<div class="col-50">	
 			</div>
 		</div>
 	</div>					
 </div> -->
-	
-	<timeline >
-	    <timeline-event ng-repeat="e in basedata.plan_list track by $index" ng-click="to_p($index)"   side="alternate">
-	      <timeline-badge class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
-	        <span style="font-size: 16px">{{e.pdate | date:'MM/dd'}}</span>
-	      </timeline-badge>
-	      <timeline-panel class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
-	        <timeline-heading >
-	          <p >{{e.pname}}</p>
-	        </timeline-heading>
-	        <div >
-	        	<p>{{e.pbr_in || '&nbsp'}}</p>
-	        </div>
-
-	        
-	      </timeline-panel>
-	    </timeline-event>
-	 </timeline>
-
-<!-- 	<ion-list>
+	<div  ng-repeat="sl in basedata.plan_list | toArray | orderBy: '-$key'" >	
+		<p class=" item-divider center">{{sl.$key}}</p>
+		<timeline>
+		    <timeline-event ng-repeat="e in sl | orderBy: 'pdate'" ng-click="to_p(sl.$key, $index, e.pdate)"   side="alternate">
+		      <timeline-badge class="success"  when-visible="animateElementIn" when-not-visible="animateElementOut">
+		        <span style="font-size: 16px">{{e.pdate | date:'MM/dd'}}</span>
+		      </timeline-badge>
+		      <timeline-panel style="margin-top:10px" class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
+		        <timeline-heading >
+		          <h3>{{e.pname}}</h3>
+		        </timeline-heading>
+		        <div style="width:180px">
+		        	<p>{{e.pbr_in || '&nbsp'}}</p>
+		        	<p>消耗熱量總計：1000</p>
+		        </div>       
+		      </timeline-panel>
+		    </timeline-event>
+		 </timeline>
+	</div>
+<!-- <ion-list>
   	<ion-radio  ng-model="choise.ed" ng-value="'A'" ng-click="rbtn('A')">
   		安排個人運動計劃
 	</ion-radio>

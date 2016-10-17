@@ -31,9 +31,9 @@ img {
   border-radius: 50%; }
 
 .timeline {
-  padding: 0;
-  list-style: none;
-  position: relative; }
+    padding: 0;
+    list-style: none;
+    position: relative; }
 
 .timeline:before {
   top: 0;
@@ -109,7 +109,7 @@ timeline-panel:after {
   border-top: 14px solid transparent;
   border-left: 14px solid #fff;
   border-right: 0 solid #fff;
-  border-bottom: 14px solid transparent;
+  border-bottom: 16px solid transparent;
   content: " "; }
 
 timeline-badge {
@@ -137,15 +137,15 @@ timeline-badge {
 .timeline-inverted timeline-panel:before {
   border-left-width: 0;
   border-right-width: 15px;
-  top: 36px;  /* 三角形位置 */
+  top: 30px;  /* 三角形位置 */
   left: -15px;
   right: auto; }
 
 .timeline-inverted timeline-panel:after {
   border-left-width: 0;
   border-right-width: 14px;
-  top: 36px;  /* 三角形位置 */
-  left: -14px;
+  top: 30px;  /* 三角形位置 */
+  left: -13px;
   right: auto; }
 
 .timeline-event:before,
@@ -188,10 +188,10 @@ timeline-badge {
     border-right-width: 15px;
     left: -15px;
     right: auto;
-    top: 36px; }
+    top: 30px; }
   timeline-panel:after {
     border-left-width: 0;
     border-right-width: 14px;
-    left: -14px;
+    left: -13px;
     right: auto;
-    top: 36px; } }
+    top: 30px; } }

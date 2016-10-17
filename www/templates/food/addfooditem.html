@@ -1,0 +1,24 @@
+<ion-modal-view style="height:70%">
+    <ion-header-bar align-title="center"  class="bar-stable">
+        <h1 class="title ">{{ title }}</h1>
+        <button class="button icon button-clear ion-close-round" ng-click="modal.hide()"></button>
+    </ion-header-bar>
+    <ion-content>
+        <div class="list " style="padding: 20px" >
+        	<div class="item item-input" style="margin-bottom: 8px">
+        		<input  type="time" style="  padding:0px ; margin:0px;font-size: 16px ;">
+        	</div>
+            
+            <div class="item item-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="text" placeholder="Search">
+            </div>
+        </div>
+
+        <div class="bar bar-footer " ng-click="">
+                <div class="title">
+                    新增
+                </div>
+            </div>
+    </ion-content>
+</ion-modal-view>

@@ -1,0 +1,18 @@
+<ion-header-bar align-title="center"  class="bar-stable">
+    <button class="button icon button-clear ion-reply" ui-sref="food"></button>
+    <h1 class="title" >{{ title }}</h1> 
+</ion-header-bar>
+
+<ion-floating-button ng-click="" has-footer="false" button-color="#9999ff" icon="ion-plus" iconColor="#fff">
+</ion-floating-button>
+<ion-content class="has-header padding">
+    <div class="list" ng-repeat="s in basedata.food_list[fid].fitem[fitemid].fdetails track by $index">
+        <div class="item" style="padding: 8px">
+            <label> {{s.name}}</label><br>
+            <label style="font-size: 16px">{{'卡路里 : '+ s.cal}}</label>
+        </div>
+    </div>
+    <div class="bar bar-footer bar-light" ng-click="to_log()">
+        <div class="title">{{ '總熱量 : '+basedata.food_list[fid].fitem[fitemid].cal}}</div>
+    </div>
+</ion-content>

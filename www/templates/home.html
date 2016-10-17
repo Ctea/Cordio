@@ -1,8 +1,9 @@
-<ion-header-bar class="bar-stable">
+<ion-header-bar align-title="center" class="bar-stable">
     <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
     <h1 class="title" >{{ title }}</h1> 
     <button class="button icon button-clear ion-settings" ui-sref="plan_list" ></button>
 </ion-header-bar>
+
 
 <!-- <ion-floating-menu has-footer="false">
     <ion-floating-item icon="ion-camera" click="showPopup()"></ion-floating-item>
@@ -10,21 +11,8 @@
     <ion-floating-item icon="" click="openGoogleMap()"></ion-floating-item>
 </ion-floating-menu> -->
 
-<ion-content class="has-header" scroll="false">
-    
-<timeline>
-    <timeline-event ng-repeat="event in events" side="right">
-      <timeline-badge class="{{event.badgeClass}}">
-        <i class="glyphicon {{event.badgeIconClass}}"></i>
-      </timeline-badge>
-      <timeline-panel class="{{event.badgeClass}}">
-        <timeline-heading>
-          <h4>{{event.title}}</h4>
-        </timeline-heading>
-        <p>{{event.content}}</p>
-      </timeline-panel>
-    </timeline-event>
-  </timeline>
+<ion-content class="has-header padding"  >
+
 
 </ion-content> 
 

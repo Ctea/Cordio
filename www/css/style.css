@@ -23,6 +23,18 @@ h3 {
   vertical-align: middle;
   cursor: move;
 }
+
+
+.item .radio-icon{
+    color: #fff;
+}
+.item-content {
+    background-color: #0398dc !important;
+    color: #fff;
+}  
+
+
+
 .container {
 	min-width:200px;
   min-height:50px;
@@ -32,8 +44,15 @@ h3 {
   height: 100%;
 }
 
+.pline {
+  height: 75px;
+  width:1.5px;
+  background-color:   #C0C0C0;
+  margin-left:50%;
+  margin-bottom:10px;
+}
 
-.ion-plus-circled {
+.ion-plus-circled  {
   font-size: 28px;
 }
 

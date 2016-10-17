@@ -6,7 +6,7 @@
 
 (function () {
   "use strict";
-var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox'])
+var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll'])
 
 .run(function($ionicPlatform) {
 
@@ -37,6 +37,34 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                   $scope.setTitle('健康管理');
               }
           })
+
+            .state('food', {
+                    url: '/food',
+                    templateUrl: 'templates/food/food.html',
+                    controller: function($scope) {
+                        $scope.setTitle('飲食管理');
+                    }
+            })
+
+            .state('fooditem', {
+                url: '/fooditem',
+                templateUrl: 'templates/food/fooditem.html',
+                controller: function($scope) {
+                    //  $scope.setTitle( $scope.basedata.food_list[$scope.fid].fname ); 
+                    $scope.setTitle('飲食記錄');
+                }
+
+            })
+
+            .state('addfooditem', {
+                url: '/addfooditem',
+                templateUrl: 'templates/food/addfooditem.html',
+                controller: function($scope) {
+                    //  $scope.setTitle( $scope.basedata.food_list[$scope.fid].fname ); 
+                    $scope.setTitle('新增記錄');
+                }
+            })
+
           .state('about', {
               url: '/about',
               templateUrl: 'templates/about.html',
@@ -50,14 +78,14 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
               url: '/plan_list',
               templateUrl: 'templates/activity/plan_list.html',
               controller: function($scope) {
-                  $scope.setTitle('Plan');
+                  $scope.setTitle('計劃列表');
               }
           }) 
           .state('plan', {
               url: '/plan',
               templateUrl: 'templates/activity/plan.html',
               controller: function($scope) {
-                  $scope.setTitle($scope.basedata.plan_list[$scope.pid].pname);
+                  $scope.setTitle($scope.basedata.plan_list[$scope.k][$scope.pid].pname);
                   $scope.timedata.start = null;
                   $scope.timedata.end = null;
                   $scope.timedata.total = null;
@@ -112,7 +140,8 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           BMI : '',          //  BMI
           min_BMR : '',      //  基礎代謝率
           max_BMR : '',      //
-          plan_list : [],
+          plan_list : {},    //  計劃列表
+          food_list : []     //  飲食
         }
       //button-style
         $scope.butsty = {
@@ -211,7 +240,8 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
             BMI : '',          //  BMI
             min_BMR : '',      //  基礎代謝率
             max_BMR : '',      //
-            plan_list : [],
+            plan_list : {},
+            food_list : [] 
           }
         }, function(error) {
           // An error happened.
@@ -282,7 +312,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           $el.removeClass('bounce-in');
         };
 
-    // -----------------  radio but controll ----------------- 
+    // -------------  radio but controll ------------- 
     $scope.currentChose = '';
     $scope.choise = {
         ed : ''
@@ -376,64 +406,91 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
     
 
-  // ----------------- add_sport modal ----------------- 
+  // ----------------- add_sport modal -----------------
+    $scope.search = {
+      name : ''
+    }
     $scope.modal_show = function(){
+        $scope.n = {
+          n:true
+        }
         $scope.timedata.start = null;
         $scope.timedata.end = null;
-        $scope.timedata.total = null;    
+        $scope.timedata.total = null;  
+        $scope.search.name = null;
+        $scope.sportoption.s = null;
+        $scope.sportoption.f = null;
         $scope.modal.show();
  /*     $location.hash(id);
         $ionicScrollDelegate.anchorScroll();*/
     }
+
     $ionicModal.fromTemplateUrl('templates/activity/add_Sport.html', {
         scope: $scope,
     }).then(function(modal) {
         $scope.modal = modal;
     });
 
+
+
   // -----------------  add_Sport radiobutton ----------------- 
     $scope.sportoption = {
       s:null,
+      f:null,
     };
     $scope.sptab = {
       v : '腿部運動'
     }
     $scope.sl= [];
+    $scope.sl_f= [];
     $http.get('sl.json').success(function(data) { 
         console.log("success!");
         $scope.sl = data.table1;
+        $scope.sl_f = data.table2;
     });
-    $scope.to_p = function(pid) {
+    $scope.to_p = function(k,pid,d) {
+      $scope.k = k;
       $scope.pid = pid;
+      $scope.pd = d;
       $state.go('plan');
     }  
     $scope.slideChange = function(v) {
       $scope.sptab.v = v ;
+    }    
+    $scope.nextb = function(){
+      $scope.n.n = !$scope.n.n;
     }
-     
     $scope.add_activity = function() {
       var t = $scope.timedata;
-      var s = $scope.sportoption.s;
-      if (t.start && t.end && t.total && s) {
-        $scope.basedata.plan_list[$scope.pid].psplist.push({
-          sname : s.sname,
-          scal : s.scal,
+      var so = $scope.sportoption;
+      if (t.start && t.end && t.total && so.s ) {
+        var y = $scope.basedata.plan_list[$scope.k][$scope.pid].pdate.getFullYear();
+        var m = $scope.basedata.plan_list[$scope.k][$scope.pid].pdate.getMonth();
+        var d = $scope.basedata.plan_list[$scope.k][$scope.pid].pdate.getDate();
+        t.start.setFullYear(y,m,d);
+        t.end.setFullYear(y,m,d);
+        
+        $scope.basedata.plan_list[$scope.k][$scope.pid].psplist.push({
+          sname : so.s.name,
+          scal : so.s.scal,
           sstart : t.start,
           send :  t.end,
-          stotal : t.total
+          stotal : t.total,
+          sfeature : so.f,
         });
+        
       };
-      $scope.modal.hide();
+      $scope.modal.hide(); 
       $state.go('plan')
     }
     $scope.add_plan = function() {
       $scope.selectSp = {
-        pname : (new Date().getMonth()+1)+"/"+new Date().getDate()+' 的計劃',
+        pname : '運動計劃 ',
         pdate : new Date(),
         pbr_in : '',
         psplist : [],
       }
-
+        
         var myPopup = $ionicPopup.show({
           cssClass: '',
           templateUrl: 'templates/activity/addS.html',
@@ -446,13 +503,26 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
               text: '<b>Add</b>',
               type: 'button-positive',
               onTap: function(e) {
+                var ym = '';
+                if (($scope.selectSp.pdate.getMonth()+1) < 10) 
+                    ym = $scope.selectSp.pdate.getFullYear() + ' / 0' + ($scope.selectSp.pdate.getMonth()+1)        
+                else
+                    ym = $scope.selectSp.pdate.getFullYear() + ' / ' + ($scope.selectSp.pdate.getMonth()+1)        
                 if ($scope.selectSp.pname && $scope.selectSp.pdate) {
-                  $scope.basedata.plan_list.push($scope.selectSp)   
+                  if ($scope.basedata.plan_list[ym]) {
+                      $scope.basedata.plan_list[ym].push($scope.selectSp)
+                         console.log($scope.basedata)
+                  }else{                 
+                      $scope.basedata.plan_list[ym] = [];
+                      $scope.basedata.plan_list[ym].push($scope.selectSp);
+                      console.log($scope.basedata);
+                  };        
                 };              
               }
             }
           ]
         });
+        
     };
 
       $scope.selected = 0;
@@ -503,12 +573,67 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         return input;
       };
 
-      
-   
+      //-------------------Food-------------------------
+      $scope.addfoodM = function() {
 
+          if ($scope.findValue(new Date())) {
+              $scope.basedata.food_list.push({
+                  fdate: new Date(),
+                  fcaltotal: 0,
+                  fitem: []
+              })
+          }
 
-}])
+      // $state.go('fooditem');
+          $scope.basedata.food_list[$scope.fid].fitem.push({
+                    name: 'A',
+                    cal: 300,
+                    fdetails: [{
+                        name: 'a',
+                        cal: 100,
+                    }, {
+                        name: 'b',
+                        cal: 200,
+                    }]
+                }, {
+                    name: 'B',
+                    cal: 400,
+                    fdetails: [{
+                        name: 'c',
+                        cal: 200,
+                    }, {
+                        name: 'b',
+                        cal: 200,
+                    }]
+                })
 
+          $scope.appfcaltotal($scope.fid,700);
+      }
+            $scope.appfcaltotal=function(fid,cal){
+                  $scope.basedata.food_list[fid].fcaltotal += cal;
+            };
+
+            $scope.findValue = function(date) {
+                var boolean = true;
+                $scope.fid = $scope.basedata.food_list.length;
+
+                for (var i = $scope.basedata.food_list.length - 1; i >= 0; i--) {
+                    if ($scope.basedata.food_list[i].fdate.getDate() === date.getDate()) {
+                        $scope.fid = i;
+                        boolean = false;
+                    }
+                }
+                return boolean;
+            };
+
+            $scope.to_f = function(fid, fitemid) {
+                $scope.fid = fid;
+                $scope.fitemid = fitemid;
+                console.log(fid + ' , ' + fitemid);
+                $state.go('fooditem');
+            }
+    }])
+})();
 
  /*  $http.get('http://localhost/data')
       .success(function(response) {
@@ -578,4 +703,3 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       };
     })
 */
-})();

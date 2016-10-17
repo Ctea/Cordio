@@ -1,0 +1,36 @@
+<ion-header-bar align-title="center"  class="bar-stable">
+    <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
+    <h1 class="title">{{ title }}</h1>
+</ion-header-bar>
+
+<ion-floating-button button-color="#2894FF" icon="ion-plus-round" iconColor="#fff" click="addfoodM()" >
+</ion-floating-button>
+
+<ion-content class="has-header padding">
+    <div class="list" ng-repeat="e in basedata.food_list |  orderBy : 'fdate' track by $index  " >
+        <div class="item item-divider icon icon-left ion-home " style="margin-bottom: 8px  ; border-width: 0px;font-size: 16px">
+            {{ (e.fdate| date:'MM/dd') +'     總計卡路里 : '+e.fcaltotal}}
+        </div>
+        <div class="item " style="margin-left: 10px ; margin-bottom: 5px ;padding: 8px ; " ng-repeat=" f in e.fitem track by $index" ng-click="to_f(basedata.food_list.indexOf(e),$index)">
+            <label> {{f.name}}</label><br>
+            <label style="font-size: 16px">{{'卡路里 : '+ f.cal}}</label>
+        </div>
+    </div>
+    <!--
+    <timeline>
+        <timeline-event ng-repeat="e in basedata.food_list track by $index" ng-click="to_f($index)" side="right">
+            <timeline-badge class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
+                <span style="font-size: 16px">{{e.fdate | date:'MM/dd'}}</span>
+            </timeline-badge>
+            <timeline-panel class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
+                <timeline-heading>
+                    <p>{{e.fdate| date:'MM/dd' + " 123"}}</p>
+                </timeline-heading>
+                <div>
+                    <p>{{ '&nbsp'}}</p>
+                </div>
+            </timeline-panel>
+        </timeline-event>
+    </timeline> 
+-->
+</ion-content>

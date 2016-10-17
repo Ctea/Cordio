@@ -1,26 +1,32 @@
-<ion-header-bar class="bar-stable">
+<ion-header-bar align-title="center" class="bar-stable">
     <button class="button icon button-clear ion-reply" ui-sref="plan_list"></button>
     <h1 class="title" >{{ title }}</h1> 
-   
+</ion-header-bar align-title="center">
+<ion-header-bar align-title="center" class="bar bar-subheader">
+    <h2 class="title">{{ pd | date:'MM 月 dd 日' }}</h2>
 </ion-header-bar>
 
-<ion-floating-button ng-click="modal_show()" has-footer="false" button-color="#9999ff" icon="ion-plus" iconColor="#fff">
+<ion-floating-button ng-click="modal_show()" has-footer="false" button-color="#9999ff" icon="ion-android-walk" iconColor="#fff" >
 </ion-floating-button>
 
 
 <ion-content class="has-header padding" >
 
     <div class="list">
-    	<div class="row padding animated fadeInDown " ng-repeat="s in basedata.plan_list[pid].psplist">
+    	<div class="row padding animated fadeInDown " ng-repeat="s in basedata.plan_list[k][pid].psplist | orderBy:'send'">
             <div class="col-25 center">
                 <p >{{ s.sstart | date:'HH:mm'}}</p>
-                <p>｜</p>
+                <div class="pline"></div>
                 <p >{{ s.send | date:'HH:mm'}}</p>
             </div>
     		<div class="col-75 card sportconent " >
-                <div class="padding">
-                    <p >{{ s.sname }}</p>
+                <div style="padding-left:10px">
+                    <h4 >{{ s.sname }}</h4>
+                    <p>耗時：{{ s.stotal }} 分鐘</p>
+                    <p>距離：{{ sportoption.f }} 公尺</p>
+                    <p>熱量消耗：{{ s.stotal }} cal</p>
                 </div>     
+
             </div>
     		
     	</div>  

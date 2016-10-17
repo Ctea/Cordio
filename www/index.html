@@ -8,53 +8,13 @@
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
+    <link href="lib/ion-floating-menu/dist/ion-floating-menu.css" rel="stylesheet" />
 
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="css/ionic.app.css" rel="stylesheet">
     -->
 
-    <!-- jquery -->
-    <script src="lib/jquery/dist/jquery.min.js"></script>
-    <script src="lib/jquery-ui/jquery-ui.min.js"></script>
-    <script src="lib/jquery-ui/jquery.ui.touch-punch.js"></script>
 
-    <!-- ionic/angularjs js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-
-    <!-- ion-floating-menu -->
-    <script src="lib/ion-floating-menu/dist/ion-floating-menu.js" type="text/javascript"></script>
-    <link href="lib/ion-floating-menu/dist/ion-floating-menu.css" rel="stylesheet" type="text/css"/>
-
-    <!-- angular-animate -->
-    <script src="lib/angular-scroll-animate/dist/angular-scroll-animate.js"></script> 
-
-    <!-- angular-timeline -->
-    <script src="lib/angular-timeline/dist/angular-timeline.js"></script>
-    <link rel="stylesheet" href="lib/angular-timeline/dist/angular-timeline.css"/>
-    <link rel="stylesheet" href="lib/angular-timeline/dist/angular-timeline-animations.css"/>
-    <link rel="stylesheet" href="lib/angular-timeline/dist/angular-timeline-bootstrap.css"/>
-
-    <!-- tabSlideBox -->
-    <script src="lib/tabbedSlideBox/tabSlideBox.js"></script>
-    <link href="lib/tabbedSlideBox/tabSlideBox.css" rel="stylesheet">
-
-    <!-- ui-sortable -->
-    <script src="lib/ui-sortable/sortable.min.js"></script>
-
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="lib/ng-cordova-master/dist/ng-cordova.min.js"></script>
-    <script src="lib/ng-cordova-oauth/dist/ng-cordova-oauth.min.js"></script>
-    <script src="cordova.js"></script>
-    
-    <!-- Firebase -->
-    <script src="lib/firebase/firebase.js"></script>
-    <script src="lib/angularfire/dist/angularfire.min.js"></script>  
-    
-  
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDn18agA2D71cbr7_kvQqMrUy06i44P81c&sensor=true"></script> -->
-    <!-- your app's js -->
-    <script src="js/app.js"></script>
-    <script src="js/services.js"></script>
 
   </head>
   <body >
@@ -78,23 +38,27 @@
             <br>
             <div class="list padding">
                 <button class="button-full item item-icon-left left" ui-sref="home" ng-click="toggleLeftSideMenu()">
-                  <i class="icon"></i>
+                  <i class="icon ion-ios-home"></i>
                   <h2 style="margin-left:18px">首頁</h2>
                 </button>
                 <button class="button-full item item-icon-left left" ui-sref="basedata" ng-click="toggleLeftSideMenu()">
                   <i class="icon ion-person"></i>
                   <h2 style="margin-left:18px">基本資料</h2>
                 </button>
-                <button class="button-full item item-icon-left left">
+                <button class="button-full item item-icon-left left" ui-sref="plan_list" ng-click="toggleLeftSideMenu()">
+                  <i class="icon ion-document-text"></i>
+                  <h2 style="margin-left:18px">計劃列表</h2>
+                </button>
+                <button class="button-full item item-icon-left left" ui-sref="food" ng-click="toggleLeftSideMenu()">
                   <i class="icon"></i>
-                  <h2 style="margin-left:18px">Call Ma</h2>
+                  <h2 style="margin-left:18px">飲食管理</h2>
                 </button>
                 <button ng-show="!loging" class="button-full item item-icon-left left" ng-click="googleLogin()" >
-                  <i class="icon"></i>
+                  <i class="icon ion-log-in"></i>
                   <h2 style="margin-left:18px;color:Red">登入</h2>
                 </button>
                 <button ng-show="loging" class="button-full item item-icon-left left" ng-click="signOut()"  ui-sref="home">
-                  <i class="icon"></i>
+                  <i class="icon ion-log-out"></i>
                   <h2 style="margin-left:18px">登出</h2>
                 </button>
             </div>
@@ -102,7 +66,58 @@
         <ion-side-menu>
       </ion-side-menus> 
     </ion-pane>
+    
+    <!-- jquery -->
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script src="lib/jquery-ui/jquery-ui.min.js"></script>
+    <script src="lib/jquery-ui/jquery.ui.touch-punch.js"></script>
 
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- ion-floating-menu -->
+    <script src="lib/ion-floating-menu/dist/ion-floating-menu.js"></script>
+   
+
+    <!-- angular-animate -->
+    <script src="lib/angular-scroll-animate/dist/angular-scroll-animate.js"></script> 
+
+    <!-- angular-timeline -->
+    <script src="lib/angular-timeline/dist/angular-timeline.js"></script>
+    <link rel="stylesheet" href="lib/angular-timeline/dist/angular-timeline.css"/>
+    <link rel="stylesheet" href="lib/angular-timeline/dist/angular-timeline-animations.css"/>
+    <link rel="stylesheet" href="lib/angular-timeline/dist/angular-timeline-bootstrap.css"/>
+
+    <!-- tabSlideBox -->
+    <link href="lib/tabbedSlideBox/tabSlideBox.css" rel="stylesheet">
+    <script src="lib/tabbedSlideBox/tabSlideBox.js"></script>
+    
+    <!-- ui-sortable -->
+    <script src="lib/ui-sortable/sortable.min.js"></script>
+
+    <!-- ui-scroll -->
+    <script src="lib/angular-ui-scroll/dist/ui-scroll.min.js"></script>  
+    <script src="lib/angular-ui-scroll/dist/ui-scroll-jqlite.min.js"></script>
+
+    <!-- underscore -->
+    <script src="lib/underscore/underscore-min.js"></script>    
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="lib/ng-cordova-master/dist/ng-cordova.min.js"></script>
+    <script src="lib/ng-cordova-oauth/dist/ng-cordova-oauth.min.js"></script>
+    <script src="cordova.js"></script>
+    
+    <!-- Firebase -->
+    <script src="lib/firebase/firebase.js"></script>
+    <script src="lib/angularfire/dist/angularfire.min.js"></script>  
+    
+  
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDn18agA2D71cbr7_kvQqMrUy06i44P81c&sensor=true"></script> -->
+    <!-- your app's js -->
+
+    <script src="js/app.js"></script>
+    <script src="js/services.js"></script>
+    
     <script>
       // Initialize Firebase
       var config = {
