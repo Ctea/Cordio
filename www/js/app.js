@@ -333,78 +333,87 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
     }
     
     // ----------------- time ----------------- 
-    $scope.timedata = {
-        start: null,
-        end: null,
-        total: null,
-        start_s: null,
-        end_s: null,
-        total_s: null,
-        total_c: false,
-        First : 0
-    }
-    $scope.timeFocus = function () {
-        var t = $scope.timedata
-        t.total_c = true;
-    }
-    $scope.timeBlur = function () {
-        var t = $scope.timedata
-        t.total_c = false;
-    }
-    $scope.timeBlur2 = function (value) {
-        var t = $scope.timedata
-        t.First = value;
-    }
-    $scope.timechange = function(value) {
-        var t = $scope.timedata
+        $scope.timedata = {
+            start: null,
+            end: null,
+            total: null,
+            day: false,
+            start_s: null,
+            end_s: null,
+            total_s: null,
+            total_c: false,
+            First: 0
+        }
+        $scope.timeFocus = function() {
+            var t = $scope.timedata
+            t.total_c = true;
+        }
+        $scope.timeBlur = function() {
+            var t = $scope.timedata
+            t.total_c = false;
+        }
+        $scope.timeBlur2 = function(value) {
+            var t = $scope.timedata
+            t.First = value;
+        }
+        $scope.timechange = function(value) {
+            var t = $scope.timedata
+
             if ((t.start && t.total) || (t.start && t.end) || (t.total && t.end)) {
                 if (!t.start) {
-                    $scope.timedata.start = angular.copy(t.end);
-                    $scope.timedata.start.setMinutes(t.end.getMinutes() - t.total);
-                    t.start_s = t.start;
-                    t.total_s = t.total;
-                    t.end_s = t.end;
-                }
-                else if (!t.end) {
-                    $scope.timedata.end = angular.copy(t.start);
-                    $scope.timedata.end.setMinutes(t.start.getMinutes() + t.total);
-                    t.start_s = t.start;
-                    t.total_s = t.total;
-                    t.end_s = t.end;
-                }
-                else if (!t.total && !t.total_c) {
-                    $scope.timedata.total = (t.end - t.start) / 60000
-                    t.start_s = t.start;
-                    t.total_s = t.total;
-                    t.end_s = t.end;
-                }
-                else {
+                    t.start = new Date(t.end.getTime() - (t.total * 60000));
+                } else if (!t.end) {
+                    t.end = new Date(t.start.getTime() + (t.total * 60000));
+                } else if (!t.total && !t.total_c) {
+                    $scope.timetotal();
+                } else {
                     if (t.start != t.start_s) {
-                        $scope.timedata.end = angular.copy(t.start_s);
-                        $scope.timedata.end.setMinutes(t.start.getMinutes() + t.total);
-                        t.start_s = t.start;
-                        t.end_s = t.end;
+                        t.end = new Date(t.start.getTime() + (t.total * 60000));
                     } else if (t.total != t.total_s) {
-                        if (t.First === 0) {
-                            $scope.timedata.end = angular.copy(t.start_s);
-                            $scope.timedata.end.setMinutes(t.start.getMinutes() + $scope.timedata.total);
-                        } else if(t.First === 1) {
-                            $scope.timedata.start = angular.copy(t.end);
-                            $scope.timedata.start.setMinutes(t.end.getMinutes() - t.total);
-                        }
-                        t.start_s = t.start;
-                        t.total_s = t.total;
-                        t.end_s = t.end;
+                        $scope.timeFirst();
+                        $scope.timetotalOver();
                     } else if (t.end != t.end_s) {
-                        $scope.timedata.total = (t.end - t.start) / 60000
-                        t.total_s = t.total;
-                        t.end_s = t.end;
+                        $scope.timetotal();
                     }
-                }
-            };
-    }
+                };
+                t.start_s = t.start;
+                t.total_s = t.total;
+                t.end_s = t.end;
+                if(t.end.getDate()>t.start.getDate())
+                  t.day =true;
+                else
+                  t.day =false;
+                //console.log(t.day);
+            }
+        }
 
-    
+        $scope.timeFirst = function() {
+           var t = $scope.timedata
+
+            if (t.First === 0) {
+                t.end = new Date(t.start.getTime() + (t.total * 60000));
+            } else if (t.First === 1) {
+                t.start = new Date(t.end.getTime() - (t.total * 60000));
+            }
+        };
+        $scope.timetotal = function() {
+           var t = $scope.timedata
+
+            if (((t.end - t.start) / 60000) >= 0)
+                t.total = (t.end - t.start) / 60000;
+            else
+                t.total = ((t.end - t.start) / 60000) + 1440; //24*60
+            $scope.timetotalOver();
+        }
+
+        $scope.timetotalOver = function() {
+           var t = $scope.timedata
+
+            if (t.total >= 1440) {
+                t.total = t.total - (Math.floor(t.total / 1440) * 1440);
+                t.end = new Date(t.start.getTime() + (t.total * 60000));
+            }
+        }
 
   // ----------------- add_sport modal -----------------
     $scope.search = {
@@ -418,8 +427,14 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         $scope.timedata.end = null;
         $scope.timedata.total = null;  
         $scope.search.name = null;
-        $scope.sportoption.s = null;
-        $scope.sportoption.f = null;
+        $scope.sportoption = {
+            s:null,
+            f:{
+              feature:null,
+              cost: null,
+              cal:null,
+            },
+        }
         $scope.modal.show();
  /*     $location.hash(id);
         $ionicScrollDelegate.anchorScroll();*/
@@ -436,17 +451,25 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
   // -----------------  add_Sport radiobutton ----------------- 
     $scope.sportoption = {
       s:null,
-      f:null,
+      f:{
+        feature:null,
+        cost: null,
+        cal:null,
+      },
     };
     $scope.sptab = {
       v : '腿部運動'
     }
     $scope.sl= [];
     $scope.sl_f= [];
+    $scope.s_tabs = {};
     $http.get('sl.json').success(function(data) { 
         console.log("success!");
         $scope.sl = data.table1;
         $scope.sl_f = data.table2;
+        for (var i = 0; i < $scope.sl.length; i++) {
+             $scope.s_tabs[$scope.sl[i].type] = $scope.sl[i].type;        
+        };  
     });
     $scope.to_p = function(k,pid,d) {
       $scope.k = k;
@@ -463,23 +486,23 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
     $scope.add_activity = function() {
       var t = $scope.timedata;
       var so = $scope.sportoption;
-      if (t.start && t.end && t.total && so.s ) {
+      if (t.start && t.end && t.total && so.s && so.f.feature) {
         var y = $scope.basedata.plan_list[$scope.k][$scope.pid].pdate.getFullYear();
         var m = $scope.basedata.plan_list[$scope.k][$scope.pid].pdate.getMonth();
         var d = $scope.basedata.plan_list[$scope.k][$scope.pid].pdate.getDate();
         t.start.setFullYear(y,m,d);
         t.end.setFullYear(y,m,d);
-        
+        so.f.cost = t.total;
         $scope.basedata.plan_list[$scope.k][$scope.pid].psplist.push({
           sname : so.s.name,
           scal : so.s.scal,
           sstart : t.start,
           send :  t.end,
-          stotal : t.total,
           sfeature : so.f,
         });
         
       };
+      console.log($scope.basedata.plan_list[$scope.k][$scope.pid])
       $scope.modal.hide(); 
       $state.go('plan')
     }
@@ -513,7 +536,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                       $scope.basedata.plan_list[ym].push($scope.selectSp)
                          console.log($scope.basedata)
                   }else{                 
-                      $scope.basedata.plan_list[ym] = [];
+                      $scope.basedata.plan_list[ym] = [];  //   a = { 'ym' : [] }
                       $scope.basedata.plan_list[ym].push($scope.selectSp);
                       console.log($scope.basedata);
                   };        
@@ -573,48 +596,31 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         return input;
       };
 
-      //-------------------Food-------------------------
-      $scope.addfoodM = function() {
+            //-------------------Food-------------------------
+            //
+            $scope.addfoodM = function() {
 
-          if ($scope.findValue(new Date())) {
-              $scope.basedata.food_list.push({
-                  fdate: new Date(),
-                  fcaltotal: 0,
-                  fitem: []
-              })
-          }
+                if ($scope.findValue(new Date())) {
+                    $scope.basedata.food_list.push({
+                        fdate: new Date(),
+                        fcaltotal: 0,
+                        fitem: []
+                    })
+                }
 
-      // $state.go('fooditem');
-          $scope.basedata.food_list[$scope.fid].fitem.push({
-                    name: 'A',
-                    cal: 300,
-                    fdetails: [{
-                        name: 'a',
-                        cal: 100,
-                    }, {
-                        name: 'b',
-                        cal: 200,
-                    }]
-                }, {
-                    name: 'B',
-                    cal: 400,
-                    fdetails: [{
-                        name: 'c',
-                        cal: 200,
-                    }, {
-                        name: 'b',
-                        cal: 200,
-                    }]
-                })
+                $scope.appfitem($scope.fid, '便當');
+                $scope.appfdetails($scope.fid, $scope.fitemid, '青菜', 100);
+                $scope.appfdetails($scope.fid, $scope.fitemid, '白飯', 200);
 
-          $scope.appfcaltotal($scope.fid,700);
-      }
-            $scope.appfcaltotal=function(fid,cal){
-                  $scope.basedata.food_list[fid].fcaltotal += cal;
+                $scope.appfitem($scope.fid, '晚餐-便當');
+                $scope.appfdetails($scope.fid, $scope.fitemid, '白飯', 200);
+                $scope.appfdetails($scope.fid, $scope.fitemid, '雞腿', 400);
+
             };
 
             $scope.findValue = function(date) {
                 var boolean = true;
+
                 $scope.fid = $scope.basedata.food_list.length;
 
                 for (var i = $scope.basedata.food_list.length - 1; i >= 0; i--) {
@@ -626,10 +632,35 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                 return boolean;
             };
 
+            $scope.appfcaltotal = function(fid, cal) {
+                $scope.basedata.food_list[fid].fcaltotal += cal;
+            };
+
+            $scope.appfitemcal = function(fid, fitemid, cal) {
+                $scope.basedata.food_list[fid].fitem[fitemid].cal += cal;
+                $scope.appfcaltotal($scope.fid, cal);
+            };
+
+            $scope.appfitem = function(fid, iname) {
+                $scope.fitemid = $scope.basedata.food_list[fid].fitem.length;
+                $scope.basedata.food_list[fid].fitem.push({
+                    name: iname,
+                    cal: 0,
+                    fdetails: []
+                });
+            };
+
+            $scope.appfdetails = function(fid, fitemid, iname, ical) {
+                $scope.basedata.food_list[fid].fitem[fitemid].fdetails.push({
+                    name: iname,
+                    cal: ical,
+                });
+                $scope.appfitemcal(fid, fitemid, ical);
+            };
+
             $scope.to_f = function(fid, fitemid) {
                 $scope.fid = fid;
                 $scope.fitemid = fitemid;
-                console.log(fid + ' , ' + fitemid);
                 $state.go('fooditem');
             }
     }])

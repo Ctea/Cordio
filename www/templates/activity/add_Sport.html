@@ -24,15 +24,15 @@
           <div class="tsb-icons">
             <div class="tsb-ic-wrp">
             <ion-scroll direction="x" class="scroll-set tsb-hscroll">
-                <a href="javascript:;" ng-repeat="st in sl  | unique:'type'" on-finish-render="test()" >{{st.type}}</a>  
+                <a href="javascript:;" ng-repeat="t in s_tabs" on-finish-render="test()" >{{t}}</a>  
             </ion-scroll>
             </div>
           </div>
         <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)">
-            <ion-slide ng-repeat="st in sl  | unique:'type'">
+            <ion-slide ng-repeat="t in s_tabs">
                 <ion-scroll scrollbar-y="false" direction="y" style="height:100%;">
                     <ion-list >
-                      <ion-radio ng-if="s.type == st.type" ng-repeat="s in sl track by $id($index)" ng-model="sportoption.s" ng-value="s"  >
+                      <ion-radio ng-if="s.type == t" ng-repeat="s in sl track by $id($index)" ng-model="sportoption.s" ng-value="s"  >
                             <h2 style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</h2>
                       </ion-radio>
                     </ion-list>
@@ -47,15 +47,12 @@
     <div class="item list" >
         <h2 class="center item-divider " style="margin-right:-20px">輸入時間</h2>
         <div class="row" style="margin-top:20px">
-            <label class="col-40 item-floating-label" style="margin-left:10px;margin-right:0px">
+            <label class="col-50 item-floating-label" style="margin-left:20px;margin-right:0px">
               <span class="input-label">開始時間</span>
               <input type="time" ng-model="timedata.start" ng-Blur="timeBlur2(0)" ng-change="timechange(0)" placeholder="Start" >
             </label>
-            <label class="col-20 item-floating-label" style="margin-left:15px;margin-right:5px">
-              <span class="input-label">分鐘</span>
-              <input type="number" ng-model="timedata.total" ng-Blur="timeBlur()" ng-focus="timeFocus()" ng-change="timechange(1)"  placeholder="Time">
-            </label>
-            <label class="col-40 item-floating-label" style="margin-left:5px">
+    
+            <label class="col-50 item-floating-label" style="">
               <span class="input-label">結束時間</span>
               <input type="time" ng-model="timedata.end" ng-Blur="timeBlur2(1)" ng-change="timechange(2)"  placeholder="End" >
             </label>
@@ -63,10 +60,23 @@
       </div>
 
       <div class="item list" ng-if="sportoption.s.feature == 'length'">
-          <label class="item-input">
-            <span class="input-label">距離</span>
-            <input type="number" ng-model="sportoption.f">
+          <label class="item-input" >
+            <span class="input-label lable_sty">運動</span>
+            <h2>{{sportoption.s.name}}</h2>       
           </label>
+          <label class="item-input l_bottom"  >
+              <span class="input-label lable_sty">分鐘</span>
+              <input type="number" ng-model="timedata.total" min="0" ng-Blur="timeBlur()" ng-focus="timeFocus()" ng-change="timechange(1)"  placeholder="Time">
+          </label>
+          <label class="item-input l_bottom">
+            <span class="input-label lable_sty">距離</span>
+            <input type="number" ng-model="sportoption.f.feature" placeholder="meter">
+          </label>
+          <label class="item-input l_bottom">
+            <span class="input-label lable_sty"消耗熱量</span>
+            <p type="number" ng-model="sportoption.f.cal" placeholder="meter">{{ sportoption.f.cal }}</p>
+          </label>
+
       </div>
       <div class="item list" ng-if="sportoption.s.feature == 'Watt'">
         <label class=" item-input">

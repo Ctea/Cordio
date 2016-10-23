@@ -33,7 +33,14 @@ h3 {
     color: #fff;
 }  
 
+.l_bottom {
+  margin-top: -10px
+}
 
+.lable_sty {
+  margin-left:10px;
+  margin-right:-30px;
+}
 
 .container {
 	min-width:200px;
