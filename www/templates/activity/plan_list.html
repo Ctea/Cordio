@@ -5,7 +5,7 @@
 
 <ion-floating-menu menu-icon="ion-plus-round" menu-open-icon="ion-minus-round" >
 	<ion-floating-item icon="ion-android-walk"  click="modal_show()" text="新增活動"></ion-floating-item>
-    <ion-floating-item icon="ion-ios-paper" click="add_plan()" text="新增行程"></ion-floating-item>  
+    <ion-floating-item icon="ion-ios-paper" click="add_plan()" text="新增計劃"></ion-floating-item>  
 </ion-floating-menu>
 
 <ion-content class="has-header padding">
@@ -25,16 +25,16 @@
 		<p class=" item-divider center">{{sl.$key}}</p>
 		<timeline>
 		    <timeline-event ng-repeat="e in sl | orderBy: 'pdate'" ng-click="to_p(sl.$key, $index, e.pdate)"   side="alternate">
-		      <timeline-badge class="success"  when-visible="animateElementIn" when-not-visible="animateElementOut">
+		      <timeline-badge class="info" when-visible="animateElementIn" when-not-visible="animateElementOut">
 		        <span style="font-size: 16px">{{e.pdate | date:'MM/dd'}}</span>
 		      </timeline-badge>
-		      <timeline-panel style="margin-top:10px" class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
+		      <timeline-panel style="margin-top:10px;" class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
 		        <timeline-heading >
 		          <h3>{{e.pname}}</h3>
 		        </timeline-heading>
 		        <div style="width:180px">
 		        	<p>{{e.pbr_in || '&nbsp'}}</p>
-		        	<p>消耗熱量總計：1000</p>
+		        	<p>消耗熱量總計：{{ e.p_total_cal | number:0 }}</p>
 		        </div>       
 		      </timeline-panel>
 		    </timeline-event>

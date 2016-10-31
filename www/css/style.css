@@ -25,6 +25,7 @@ h3 {
 }
 
 
+
 .item .radio-icon{
     color: #fff;
 }
@@ -39,7 +40,7 @@ h3 {
 
 .lable_sty {
   margin-left:10px;
-  margin-right:-30px;
+  margin-right:0px;
 }
 
 .container {

@@ -1,4 +1,4 @@
-angular.module('services', [])
+angular.module('services', ['ngAnimate'])
 .service('UserService', function() {
 
 //for the purpose of this example I will store user data on ionic local storage but you should save it on a database
@@ -16,6 +16,7 @@ angular.module('services', [])
     setUser: setUser
   };
 })
+
 .filter('toArray', function() { return function(obj) {
     if (!(obj instanceof Object)) return obj;
     return _.map(obj, function(val, key) {
@@ -59,4 +60,8 @@ angular.module('services', [])
     }
     return items;
   };
-});
+}).directive("ngRepeat", function($animate) {
+  return function($scope, $element) {
+    $animate.enabled($element, false);
+  };
+});;

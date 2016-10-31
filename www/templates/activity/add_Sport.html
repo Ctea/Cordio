@@ -14,7 +14,7 @@
     </label>
     <ion-content class="has-header has-footer" style="margin-bottom:20px" ng-show="search.name"> 
       <ion-list>
-        <ion-radio id="{{s.name}}" ng-repeat="s in sl | filter: search" style="color:#000"  ng-model="sportoption.s" ng-value="sp" >
+        <ion-radio id="{{s.name}}" ng-repeat="s in sl | filter: search"  style="color:#000"  ng-model="sportoption.s" ng-value="sp" >
           <h2 style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</h2>
         </ion-radio>
       </ion-list>
@@ -24,7 +24,7 @@
           <div class="tsb-icons">
             <div class="tsb-ic-wrp">
             <ion-scroll direction="x" class="scroll-set tsb-hscroll">
-                <a href="javascript:;" ng-repeat="t in s_tabs" on-finish-render="test()" >{{t}}</a>  
+                <a href="javascript:;" bindonce ng-repeat="t in s_tabs" on-finish-render="test()" >{{t}}</a>  
             </ion-scroll>
             </div>
           </div>
@@ -32,7 +32,7 @@
             <ion-slide ng-repeat="t in s_tabs">
                 <ion-scroll scrollbar-y="false" direction="y" style="height:100%;">
                     <ion-list >
-                      <ion-radio ng-if="s.type == t" ng-repeat="s in sl track by $id($index)" ng-model="sportoption.s" ng-value="s"  >
+                      <ion-radio bindonce ng-if="s.type == t" ng-repeat="s in sl track by $id($index)" ng-model="sportoption.s" ng-value="s"  >
                             <h2 style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</h2>
                       </ion-radio>
                     </ion-list>
@@ -59,7 +59,7 @@
           </div>
       </div>
 
-      <div class="item list" ng-if="sportoption.s.feature == 'length'">
+      <div class="item list" >
           <label class="item-input" >
             <span class="input-label lable_sty">運動</span>
             <h2>{{sportoption.s.name}}</h2>       
@@ -68,36 +68,25 @@
               <span class="input-label lable_sty">分鐘</span>
               <input type="number" ng-model="timedata.total" min="0" ng-Blur="timeBlur()" ng-focus="timeFocus()" ng-change="timechange(1)"  placeholder="Time">
           </label>
-          <label class="item-input l_bottom">
-            <span class="input-label lable_sty">距離</span>
-            <input type="number" ng-model="sportoption.f.feature" placeholder="meter">
+          <label class="item-input l_bottom" ng-if="sportoption.s.feature === 'length'">
+            <span class="input-label lable_sty">距離(公尺)</span>
+            <input type="number" ng-model="sportoption.f.feature" ng-change="setMets()" placeholder="meter">
           </label>
-          <label class="item-input l_bottom">
-            <span class="input-label lable_sty"消耗熱量</span>
-            <p type="number" ng-model="sportoption.f.cal" placeholder="meter">{{ sportoption.f.cal }}</p>
+          <label class="item-input l_bottom" ng-if="sportoption.s.feature === 'Watt'">
+            <span class="input-label lable_sty">瓦數</span>
+            <input type="number" ng-model="sportoption.f.feature" ng-change="setMets()" placeholder="meter">
           </label>
-
-      </div>
-      <div class="item list" ng-if="sportoption.s.feature == 'Watt'">
-        <label class=" item-input">
-            <span class="input-label">距離</span>
-            <input type="number" ng-model="sportoption.f">
+          <label class="item-input item-select l_bottom" ng-if="sportoption.s.feature === 'Strength'">
+            <span class="input-label lable_sty">強度</span>
+            <select ng-model="sport_selectoption.f" ng-options="sf.Remark for sf in sl_f | filter:sportoption.s.name" ng-Blur="setf()" >
+               
+            </select>  
           </label>
-      </div>
-      <div class="item list" ng-if="sportoption.s.feature == 'Strength'">
-        <label class=" item-input">
-            <span class="input-label">距離</span>
-            <input type="number" ng-model="sportoption.f">
+          <label class="item-input l_bottom" >
+            <span class="input-label lable_sty">消耗熱量</span>
+            <p >{{ sportoption.f.mets * (sportoption.f.cost/60) * basedata.weight | number:0 }} &nbsp&nbspcal</p>
           </label>
       </div>
-      <div class="item list" ng-if="sportoption.s.feature == 'null'">
-        <label class=" item-input">
-            <span class="input-label">距離</span>
-            <input type="number" ng-model="sportoption.f">
-          </label>
-      </div>
-
-
 </ion-content>
 
 <button class="button button-block button-calm" style="bottom:0;position: fixed;" ng-click="nextb()" ng-show="n.n">下一步</button>
@@ -106,29 +95,3 @@
 </ion-modal-view>
 
 
-<!--   <div class="tabs tabs-calm" style="top:170px;margin-left:-1px;" ng-show="!search.sname">
-  <a ng-class="isSelected(0)" ng-click="t(5,0)">
-    <span class="tabsfont">A</span>
-  </a>
-  <a ng-class="isSelected(1)" ng-click="t(10,1)">
-    <span class="tabsfont">B</span>
-  </a>
-  <a ng-class="isSelected(2)" ng-click="t(15,2)">
-    <span class="tabsfont">C</span>
-  </a>
-</div>
-
-<div class="item list" style="height:45%;top:37px;margin-right:1px"  ng-show="!search.sname">
-  <ion-content> 
-    <ion-list>
-      <ion-radio id="{{s.name}}" ng-repeat="sp in sportlist track by $index"  ng-model="sportoption.s" ng-value="sp" >
-        {{sp.sname}}
-      </ion-radio>
-    </ion-list>
-  <p class="item" ng-model="testlist" ng-repeat="t in testlist track by $index" >{{t}}</p>
-  </ion-content> 
-</div> -->
-<!-- 
-  <div class="list padding" style="height:76%;margin-top:10px" ng-show="search.name">
-   
-  </div> -->

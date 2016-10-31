@@ -31,8 +31,8 @@
                 <img src="{{userinfo.photoURL}}" height="60px" style="margin-top:18px">
               </div>
               <div class="padding" style="height:56px">
-                <p style="font-size:16px">{{userinfo.name}}</p> 
-                <p style="font-size:14px">{{userinfo.email}}</p> 
+                <p ng-bind="userinfo.name" style="font-size:16px"></p> 
+                <p ng-bind="userinfo.email" style="font-size:14px"></p> 
               </div>
             </div>
             <br>
@@ -81,6 +81,7 @@
 
     <!-- angular-animate -->
     <script src="lib/angular-scroll-animate/dist/angular-scroll-animate.js"></script> 
+
 
     <!-- angular-timeline -->
     <script src="lib/angular-timeline/dist/angular-timeline.js"></script>
