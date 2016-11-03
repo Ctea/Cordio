@@ -6,9 +6,21 @@
 
 (function () {
   "use strict";
+  var db = null;
 var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll'])
-
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $cordovaSQLite) {
+  $ionicPlatform.registerBackButtonAction(function(event) {
+    if (true) { // your check here
+      $ionicPopup.confirm({
+        title: 'System warning',
+        template: 'are you sure you want to exit?'
+      }).then(function(res) {
+        if (res) {
+          ionic.Platform.exitApp();
+        }
+      })
+    }
+  }, 100);
 
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -24,6 +36,15 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
+    
+    if (window.cordova) {
+      db = $cordovaSQLite.openDB({ name: "my.db" }); //device
+      console.log("Android");
+    }else{
+      db = window.openDatabase("my.db", '1', 'my', 1024 * 1024 * 100); // browser
+      console.log("browser");
+    }
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS people (id integer primary key, firstname text, lastname text)");
 
   });
 })
@@ -113,8 +134,34 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           })
        $urlRouterProvider.otherwise('/');
 })
-.controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location) {
-  
+.controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite',function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite) {
+
+       $scope.insert = function(firstname, lastname) {
+            var query = "INSERT INTO people (firstname, lastname) VALUES (?,?)";
+            $cordovaSQLite.execute(db, query, [firstname, lastname]).then(function(res) {
+                console.log("INSERT ID -> " + res.insertId);
+            }, function (err) {
+                console.error(err);
+            });
+        }
+     
+        $scope.select = function(lastname) {
+            var query = "SELECT firstname, lastname FROM people WHERE lastname = ?";
+            $cordovaSQLite.execute(db, query, [lastname]).then(function(res) {
+                if(res.rows.length > 0) {
+                    console.log("SELECTED -> " + res.rows.item(0).firstname + " " + res.rows.item(0).lastname);
+                } else {
+                    console.log("No results found");
+                }
+            }, function (err) {
+                console.error(err);
+            });
+        }
+     
+
+
+
+
       // ----------------- base-data ----------------- 
         $scope.basedata = {
           sex : '',          //  性別
@@ -521,9 +568,15 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
         };
         $scope.init_activity($scope.k,$scope.pid,so);
-        if (t.dat) {
+        var y = $scope.basedata.plan_list[k][pid].pdate.getFullYear();
+        var m = $scope.basedata.plan_list[k][pid].pdate.getMonth();
+        var d = $scope.basedata.plan_list[k][pid].pdate.getDate();
+        t.start.setFullYear(y,m,d);
+        t.end.setFullYear(y,m,d);
+        if (t.day) {
+            t.end.setDate(t.end.getDate()+1)
 
-        };
+        }
 
         $scope.modal.hide(); 
         $state.go('plan')      
@@ -538,11 +591,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
     $scope.init_activity = function( k, pid, so) {
         var t = $scope.timedata;
-        var y = $scope.basedata.plan_list[k][pid].pdate.getFullYear();
-        var m = $scope.basedata.plan_list[k][pid].pdate.getMonth();
-        var d = $scope.basedata.plan_list[k][pid].pdate.getDate();
-        t.start.setFullYear(y,m,d);
-        t.end.setFullYear(y,m,d);
+
         $scope.basedata.plan_list[k][pid].psplist.push({
           sname : so.s.name,
           sstart : t.start,
