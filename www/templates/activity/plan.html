@@ -3,7 +3,7 @@
     <h1 ng-bind="title" class="title" ></h1> 
 </ion-header-bar align-title="center">
 <ion-header-bar align-title="center" class="bar bar-subheader">
-    <h2 ng-bind="pd | date:'MM 月 dd 日'" class="title"></h2>
+    <h2 ng-bind="key.pd | date:'MM 月 dd 日'" class="title"></h2>
 </ion-header-bar>
 
 <ion-floating-button ng-click="modal_show()" has-footer="false" icon="ion-android-walk" iconColor="#fff" >
@@ -11,26 +11,51 @@
 
 
 <ion-content class="has-header padding" >
-
-    <div class="list">
-    	<div class="row padding animated fadeInDown " ng-repeat="p in basedata.plan_list[k][pid].psplist | orderBy:'send'">
+    <ion-list show-delete="data.showDelete" show-reorder="data.showReorder" >
+        <ion-item class="animated fadeInDown item-borderless" ng-repeat="p in basedata.plan_list[key.k][key.pid].psplist | orderBy:'send'">
+        <div class="row"> 
+            <div class="col col-25 center">
+                <p >{{ p.sstart | date:'HH:mm'}}</p>
+                <div class="pline"></div>
+                <p >{{ p.send | date:'HH:mm'}}</p>
+            </div>
+            <div class="col col-75 card sportconent " >
+                <div style="padding-left:10px">
+                    <h2 >{{ p.sname }}</h2>
+                    <p>耗時：{{ p.sfeature.cost || '' }} &nbsp分鐘</p>
+                    <p ng-show="p.sfeature.strength === 'length'">距離：{{ p.sfeature.feature || '' }} &nbsp公尺</p>
+                    <p ng-show="p.sfeature.strength === 'Watt'">瓦數：{{ p.sfeature.feature || '' }} &nbsp瓦</p>
+                    <p ng-show="p.sfeature.strength === 'Strength'">強度：{{ p.sfeature.feature || '' }}</p>
+                    <p>熱量消耗：{{ p.smets * basedata.weight | number:0 }} &nbsp cal</p>
+                </div>     
+            </div>          
+        </div>
+        <div>
+            <ion-option-button class="button-assertive padding" ng-click="edit_activity(basedata.plan_list[key.k][key.pid].psplist.indexOf(p))">
+               Edit
+            </ion-option-button> 
+        </div>
+        </ion-item>
+    </ion-list>
+    <!-- <div class="list">
+        <div class="row padding animated fadeInDown " ng-repeat="p in basedata.plan_list[k][pid].psplist | orderBy:'send'">
             <div class="col-25 center">
                 <p >{{ p.sstart | date:'HH:mm'}}</p>
                 <div class="pline"></div>
                 <p >{{ p.send | date:'HH:mm'}}</p>
             </div>
-    		<div class="col-75 card sportconent " >
+            <div class="col-75 card sportconent " >
                 <div style="padding-left:10px">
                     <h4 >{{ p.sname }}</h4>
                     <p>耗時：{{ p.sfeature.cost || '' }} &nbsp分鐘</p>
                     <p ng-show="p.sfeature.strength === 'length'">距離：{{ p.sfeature.feature || '' }} &nbsp公尺</p>
                     <p ng-show="p.sfeature.strength === 'Watt'">瓦數：{{ p.sfeature.feature || '' }} &nbsp瓦</p>
                     <p ng-show="p.sfeature.strength === 'Strength'">強度：{{ p.sfeature.feature || '' }}</p>
-                    <p>熱量消耗：{{ p.scal | number:0 }} &nbsp cal</p>
+                    <p>熱量消耗：{{ p.smets * basedata.weight | number:0 }} &nbsp cal</p>
                 </div>     
-
+    
             </div>
-    		
-    	</div>  
-    </div>  
+            
+        </div>  
+    </div>   -->
 </ion-content> 

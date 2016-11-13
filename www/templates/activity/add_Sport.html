@@ -1,3 +1,4 @@
+
 <ion-modal-view style="height:70%">
 <ion-header-bar align-title="center" class="bar-stable">
     <button ng-show="!n.n" class="button icon button-clear ion-ios-undo" ng-click="nextb()"></button>
@@ -8,6 +9,7 @@
 
 <!--  sport  -->
 <ion-content ng-show="n.n">
+
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input type="text" placeholder="Search" ng-model="search.name">
@@ -31,9 +33,9 @@
         <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)">
             <ion-slide ng-repeat="t in s_tabs">
                 <ion-scroll scrollbar-y="false" direction="y" style="height:100%;">
-                    <ion-list >
-                      <ion-radio bindonce ng-if="s.type == t" ng-repeat="s in sl track by $id($index)" ng-model="sportoption.s" ng-value="s"  >
-                            <h2 style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</h2>
+                    <ion-list>
+                      <ion-radio bindonce ng-if="s.type == t" ng-repeat="s in sl track by $id($index)" ng-model="sportoption.s" ng-value="s" class="adds">
+                            <h2 style="text-align:left;margin-left:30px;color:#fff;">{{s.name}}</h2>
                       </ion-radio>
                     </ion-list>
                 </ion-scroll>
@@ -60,8 +62,8 @@
       </div>
 
       <div class="item list" >
-          <label class="item-input" >
-            <span class="input-label lable_sty">運動</span>
+          <label class="item-input" ng-click="nextb()">
+            <span class="input-label lable_sty" >運動</span>
             <h2>{{sportoption.s.name}}</h2>       
           </label>
           <label class="item-input l_bottom"  >
@@ -87,10 +89,33 @@
             <p >{{ sportoption.f.mets * (sportoption.f.cost/60) * basedata.weight | number:0 }} &nbsp&nbspcal</p>
           </label>
       </div>
+
+      <div class="item" style="padding:0px;" ng-show="!id_edit">
+        <h2 class="center item-divider " style="margin-right:-20px;margin-bottom:6px">選擇計劃</h2>
+          <label class="item-input item-select l_bottom">
+            <span class="input-label lable_sty">月份</span>
+            <select  ng-model="se.k"  ng-options="p as p.$key for p in basedata.plan_list | toArray | orderBy: '-$key'"  >  
+            </select>  
+          </label>
+          <label class="item-input item-select l_bottom">
+            <span class="input-label lable_sty">計劃</span>
+            <select ng-model="se.m"  ng-options="v as (v.pdate.getDate()+'日 ' + v.pname ) for v in se.k | orderBy:'-pdate'">  
+              <option ng-if="!se.k " value="" >
+                {{key.pd || '今天的計劃' | date:'MM / dd 的計劃' }}            
+              </option>
+         <!--      <option ng-repeat="v for v in se.k " >{{v.pdate | date:'MM / dd'}}</option> -->
+            </select>  
+          </label>
+      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+
 </ion-content>
 
 <button class="button button-block button-calm" style="bottom:0;position: fixed;" ng-click="nextb()" ng-show="n.n">下一步</button>
-<button class="button button-block button-calm" style="bottom:0;position: fixed;" ng-click="add_activity()" ng-show="!n.n">送出</button>
+<button class="button button-block button-calm" style="bottom:0;position: absolute ;" ng-click="add_activity()" ng-show="!n.n">送出</button>
 
 </ion-modal-view>
 

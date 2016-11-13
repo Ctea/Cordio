@@ -1,5 +1,9 @@
-html, body, h1, h2, h4, h5 {
+
+html, body,  h2, h4, h5 {
   height: 100%;
+  font-family: '微軟正黑體';
+}
+h1 {
   font-family: '微軟正黑體';
 }
 h3 {
@@ -24,22 +28,26 @@ h3 {
   cursor: move;
 }
 
+.item > .item-content {
+  padding: 0px !important;
+  padding-right: 12px !important;
+  
+}
 
-
-.item .radio-icon{
+.adds > .radio-content > .radio-icon{
     color: #fff;
 }
-.item-content {
+.adds > .radio-content > .item-content {
     background-color: #0398dc !important;
     color: #fff;
 }  
 
 .l_bottom {
-  margin-top: -10px
+  margin-top: -5px
 }
 
 .lable_sty {
-  margin-left:10px;
+  margin-left:8px;
   margin-right:0px;
 }
 
@@ -81,8 +89,18 @@ h3 {
   font-size: 18px;
 }
 .sportconent {
-  margin-top: -2px;
-  margin-bottom: 14px;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+.sportconent > div > h2 {
+  padding-top: 6px;
+  padding-bottom: 10px;
+  font-size : 18px;
+}
+.sportconent > div > p {
+  padding-top: 6px;
+  font-size : 14px;
 }
 
 /* --- tab-slide-box --- */
