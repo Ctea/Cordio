@@ -5,38 +5,8 @@
 </ion-header-bar>
 
 <ion-content class="has-header padding" >
-<ion-list show-delete="data.showDelete" show-reorder="data.showReorder" >
-
-        <ion-item ng-repeat="item in items"  class="item-remove-animate item-borderless test" >
-          <div class="row" style="padding:0px">
-            <div class="col col-25 center" >
-              {{$index}}
-            </div>
-            <div class="col col-75">
-              Item {{ item.id }}
-            </div>
-          </div>
-          
-          <ion-delete-button class="ion-minus-circled" 
-                             ng-click="onItemDelete(item)">
-          </ion-delete-button>
-          <ion-option-button class="button-assertive"
-                             ng-click="edit(item)">
-            Edit
-          </ion-option-button>
-          <ion-option-button style="" ng-click="onItemDelete(item)">
-            delete
-          </ion-option-button>
-          <ion-reorder-button class="ion-navicon" on-reorder="moveItem(item, $fromIndex, $toIndex)">
-          </ion-reorder-button>
-        </ion-item>
-      </ion-list>
-        <button class="button button-icon icon ion-ios-minus-outline"
-          ng-click="data.showDelete = !data.showDelete; ">
-        </button>
 
 
-<p class="item item-borderless">123</p>
 </ion-content> 
 
 

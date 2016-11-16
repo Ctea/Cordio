@@ -1,46 +1,12 @@
+
 <ion-header-bar align-title="center" class="bar-stable">
     <button class="button icon button-clear ion-reply" ui-sref="home"></button>
     <div class="h1 title">{{ title }}</div> 
 </ion-header-bar>
 
-<ion-floating-button click="" ui-sref="sport" has-footer="false" button-color="#9999ff" icon="ion-plus" iconColor="#fff">
-</ion-floating-button>
 
 
 <ion-content class="has-header padding">
 
-
-	
-	<div class="list" >
-		<div class="item" ng-repeat="d in basedata as data">
-			<p>{{d}}</p>
-		</div>
-		<p>您的BMI：{{ data.BMI | number:2 }}</p>
-		<p>基礎代謝率(BMR)：{{ data.min_BMR }}</p>
-		<p>一天至少要攝取 {{ data.weight * 33 }} c.c. 的水</p>
-	</div>
-	
-
-	<!-- <ul ui-sortable="sortableOptions" class="container" ng-model="list">
-		  <li class="list" ng-repeat="i in list">
-		    <p class="item">{{i.text}}</p>
-		  </li>
-	</ul> -->
-	<!-- <h3 class="text-center">{{trip.name}}</h3>
-	<h5 class="text-center">{{trip.date}}</h5>
-	<div ui-sortable="sortableOptions" class="container padding" ng-model="locdata">
-		<div class="item" ng-repeat="t in trip.triplist">
-			<h1 class="item" ><i class="ion-arrow-move myHandle"/>{{ l }}</h1>
-			<p class="item" ng-click="setLatLng(loc.lat, loc.lng)" ng-repeat-start="loc in t.locatelist track by $index">{{loc.name}}</p>
-			<p class="" ng-click="" ng-repeat-end>{{ t.route }}</p>
-			<button class="button button-outline button-positive button-block " ng-click="goSearch($index)">
-			  Add a locate
-			</button>
-		</div>
-	</div>
-	<br> -->
-	<!-- <div ui-sortable="sortableOptions" class="container" ng-model="list2">
-		<div ng-repeat="i in list2"><i class="ion-arrow-move myHandle"/>{{ i.text }}</div>
-	</div> -->
 	
 </ion-content> 

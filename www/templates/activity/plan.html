@@ -8,8 +8,6 @@
 
 <ion-floating-button ng-click="modal_show()" has-footer="false" icon="ion-android-walk" iconColor="#fff" >
 </ion-floating-button>
-
-
 <ion-content class="has-header padding" >
     <ion-list show-delete="data.showDelete" show-reorder="data.showReorder" >
         <ion-item class="animated fadeInDown item-borderless" ng-repeat="p in basedata.plan_list[key.k][key.pid].psplist | orderBy:'send'">
@@ -31,12 +29,18 @@
             </div>          
         </div>
         <div>
-            <ion-option-button class="button-assertive padding" ng-click="edit_activity(basedata.plan_list[key.k][key.pid].psplist.indexOf(p))">
+            <ion-option-button class="button-stable padding" ng-click="edit_activity(basedata.plan_list[key.k][key.pid].psplist.indexOf(p))">
                Edit
+            </ion-option-button> 
+            <ion-option-button class="button-assertive padding" ng-click="del_activity(basedata.plan_list[key.k][key.pid].psplist.indexOf(p))">
+                            Delete
             </ion-option-button> 
         </div>
         </ion-item>
     </ion-list>
+</ion-content> 
+
+
     <!-- <div class="list">
         <div class="row padding animated fadeInDown " ng-repeat="p in basedata.plan_list[k][pid].psplist | orderBy:'send'">
             <div class="col-25 center">
@@ -53,9 +57,6 @@
                     <p ng-show="p.sfeature.strength === 'Strength'">強度：{{ p.sfeature.feature || '' }}</p>
                     <p>熱量消耗：{{ p.smets * basedata.weight | number:0 }} &nbsp cal</p>
                 </div>     
-    
-            </div>
-            
+            </div>         
         </div>  
     </div>   -->
-</ion-content> 
