@@ -1,19 +1,22 @@
-<ion-header-bar align-title="center" class="bar-stable" >
+<ion-header-bar align-title="center" class="bar-stable titles" >
     <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
-    <h1 class="title">{{ title }}</h1> 
+    <h1 class="title">{{ title }}</h1>
+    <button class="button icon button-clear ion-ios-settings-strong" ng-click="plan_setting_modal.show()"></button> 
 </ion-header-bar>
 
 <ion-floating-menu menu-icon="ion-plus-round" menu-open-icon="ion-minus-round" >
 	<ion-floating-item icon="ion-android-walk"  click="modal_show()" text="新增活動"></ion-floating-item>
     <ion-floating-item icon="ion-ios-paper" click="add_plan()" text="新增計劃"></ion-floating-item>  
 </ion-floating-menu>
-
-<ion-content class="has-header" >
-	<div  ng-repeat="sl in basedata.plan_list | toArray | orderBy: '-$key'" >	
-		<p class=" item-divider center">{{sl.$key}}</p>
+<div class="bar bar-subheader" style="height:20px" ng-show="subtitleShow">
+  <p ng-bind="plan_list_subtitle.subtitle" style="padding:0;margin:0" class="title item-divider center"></p>
+</div>
+<ion-content class="has-header" delegate-handle="mainScroll" on-scroll="scrollEvent('mainScroll')">
+	<div ng-repeat="sl in basedata.plan_list | toArray | orderBy: key_sort.m " >	
+		<p id="{{sl.$key}}" class=" item-divider center">{{sl.$key}}</p>
 		<timeline>
 			<ion-list style=" padding: 0px !important;" >
-				<ion-item ng-repeat="e in sl | orderBy: '-pdate' " ng-click="to_p(sl.$key, sl.indexOf(e), e.pdate)" class="item-remove-animate item-borderless" >
+				<ion-item ng-repeat="e in sl | orderBy: key_sort.d " ng-click="to_p(sl.$key, sl.indexOf(e), e.pdate)" class="item-remove-animate item-borderless" >
 				    <timeline-event side="alternate">	    
 				      <timeline-badge class="info" when-visible="animateElementIn" when-not-visible="animateElementOut">
 				        <span style="font-size: 16px">{{e.pdate | date:'MM/dd'}}</span>
@@ -23,17 +26,18 @@
 				          <h2>{{e.pname}}</h2>
 				        </timeline-heading>
 				        <div style="width:180px;padding-top:8px">
-				        	<p on-hold="showpbr($event, e.pbr_in)">{{e.pbr_in || '&nbsp'}}</p> 
+				        	<p on-hold="showpbr($event, e.pbr_in)">{{e.pbr_in || '&nbsp'}}</p>
+				        	<p>活動數量：{{ e.psplist.length }}</p> 
 				        	<p>消耗熱量總計：{{ e.p_total_mets * basedata.weight || 0 | number:0 }}</p>
 				        </div>   
 				           
 				      </timeline-panel>	          
 				    </timeline-event>
 				    <ion-option-button class="button-stable padding" ng-click="edit_plan(sl.$key,sl.indexOf(e))">
-		            		Edit
+		            		修改
 		          	</ion-option-button> 
 		          	<ion-option-button class="button-assertive padding" ng-click="del_plan(sl.$key,sl.indexOf(e))">
-		            		Delete
+		            		刪除
 		          	</ion-option-button> 
 			    </ion-item>
 			 </ion-list>

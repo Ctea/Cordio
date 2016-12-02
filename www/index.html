@@ -25,17 +25,18 @@
           <!-- <div ng-include src="'templates/tabs.html'"></div> -->
         </ion-side-menu-content>
         <ion-side-menu side="left">
-          <ion-content>
-            <div class="padding" style="height:160px">
+        <ion-content class="menustyle" scroll="false">
+            <div class="padding " >
               <div class="padding" style="height:100px">
-                <img src="{{userinfo.photoURL}}" height="60px" style="margin-top:18px">
+                <img src="{{userinfo.photoURL}}" height="70px" style="margin-top:10px; border:1px solid #FAFAFA;">
               </div>
               <div class="padding" style="height:56px">
                 <p ng-bind="userinfo.name" style="font-size:16px"></p> 
                 <p ng-bind="userinfo.email" style="font-size:14px"></p> 
               </div>
             </div>
-            <br>
+        </ion-content > 
+        <ion-content style="z-index:5 !important;margin-top:185px">
             <div class="list padding">
                 <button class="button-full item item-icon-left left" ui-sref="home" ng-click="toggleLeftSideMenu()">
                   <i class="icon ion-ios-home"></i>

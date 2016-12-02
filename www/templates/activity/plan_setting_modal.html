@@ -1,0 +1,28 @@
+<ion-modal-view>
+	<ion-header-bar align-title="center" class="bar-stable ">
+	      <h1 class="title ">排序條件</h1> 
+	      <button class="button icon button-clear ion-ios-close-empty" ng-click="plan_setting_modal.hide()"></button>
+	</ion-header-bar>
+	<ion-content class="has-header padding" >
+		<div class="list">
+			<label class="item item-input item-select">
+				<div class="input-label">
+				    月份
+				</div>
+				<select ng-model="key_sort.m">
+				    <option value="-$key">遞減</option>
+				    <option value="$key">遞增</option>
+				</select>
+			</label>
+			<label class="item item-input item-select">
+				<div class="input-label">
+				    日期
+				</div>
+				<select ng-model="key_sort.d">
+				    <option value="-pdate">遞減</option>
+				    <option value="pdate">遞增</option>
+				</select>
+			</label>
+		</div>
+	</ion-content>
+</ion-modal-view>

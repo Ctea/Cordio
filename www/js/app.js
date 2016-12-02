@@ -1,55 +1,47 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-
 (function () {
   "use strict";
   var db = null;
-var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll'])
-.run(function($ionicPlatform, $cordovaSQLite) {
-  $ionicPlatform.registerBackButtonAction(function(event) {
-    if (true) { // your check here
-      $ionicPopup.confirm({
-        title: 'System warning',
-        template: 'are you sure you want to exit?'
-      }).then(function(res) {
-        if (res) {
-          ionic.Platform.exitApp();
-        }
-      })
-    }
-  }, 100);
+  var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll'])
+  .run(function($ionicPlatform, $cordovaSQLite) {
+    $ionicPlatform.registerBackButtonAction(function(event) {
+      if (true) { // your check here
+        $ionicPopup.confirm({
+          title: 'System warning',
+          template: 'are you sure you want to exit?'
+        }).then(function(res) {
+          if (res) {
+            ionic.Platform.exitApp();
+          }
+        })
+      }
+    }, 100);
 
-  $ionicPlatform.ready(function() {
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-      // for form inputs)
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+    $ionicPlatform.ready(function() {
+      if(window.cordova && window.cordova.plugins.Keyboard) {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 
-      // Don't remove this line unless you know what you are doing. It stops the viewport
-      // from snapping when text inputs are focused. Ionic handles this internally for
-      // a much nicer keyboard experience.
-      cordova.plugins.Keyboard.disableScroll(true);
-    }
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-    
-    // SQLite
-    if (window.cordova) {
-      db = $cordovaSQLite.openDB({ name: "my.db" }); //device
-      console.log("Android");
-    }else{
-      db = window.openDatabase("my.db", '1', 'my', 1024 * 1024 * 100); // browser
-      console.log("browser");
-    }
-    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS people (id integer primary key, firstname text, lastname text)");
+        // Don't remove this line unless you know what you are doing. It stops the viewport
+        // from snapping when text inputs are focused. Ionic handles this internally for
+        // a much nicer keyboard experience.
+        cordova.plugins.Keyboard.disableScroll(true);
+      }
+      if(window.StatusBar) {
+        StatusBar.styleDefault();
+      }
+      
+      // SQLite
+      if (window.cordova) {
+        db = $cordovaSQLite.openDB({ name: "my.db" }); //device
+      }else{
+        db = window.openDatabase("my.db", '1', 'my', 1024 * 1024 * 100); // browser
+      }
+      $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS ud (id integer primary key, name text, BMI float,age int,height float,max_BMR float,min_BMR float,sex text,weight float )");
 
-  });
-})
-.config(function($stateProvider, $urlRouterProvider) {
+    });
+  })
+  .config(function($stateProvider, $urlRouterProvider) {
       $stateProvider
           .state('home', {
               url: '/',
@@ -107,13 +99,13 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
                   $scope.setTitle($scope.basedata.plan_list[$scope.key.k][$scope.key.pid].pname);
               }
           })  
-          .state('add_Sport', {
+          /*.state('add_Sport', {
               url: '/add_Sport',
               templateUrl: 'templates/activity/add_Sport.html',
               controller: function($scope) {
                   $scope.setTitle("選擇時段與活動");
               }
-          })  
+          })  */
           .state('basedata', {
               url: '/basedata',
               templateUrl: 'templates/data/basedata.html',
@@ -131,8 +123,8 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
               }
           })
        $urlRouterProvider.otherwise('/');
-})
-.controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite',function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite) {
+  })
+  .controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite',function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite) {
   
     // ----------- base-data ----------------- 
         $scope.basedata = {
@@ -199,6 +191,73 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         $scope.basedata.BMI =  w/(h*h);
       };
 
+    // ----------- Firebase and Sqlite -------------
+      $scope.save = function() {
+        firebase.auth().onAuthStateChanged(function(user) {
+          //console.log($scope.userinfo);查資料
+          if (user) {        
+            //getUserinfo
+            var user = firebase.auth().currentUser;
+            if (user != null) {
+              var userId = user.uid;
+              var starCountRef ='user_data/'
+              firebase.database().ref(starCountRef+userId+'/').set(
+                $scope.basedata
+               
+              );
+              console.log('firebase');
+            } 
+          }else {
+              console.log('SQLite');
+              var query = "INSERT INTO ud (name,BMI,age,height,max_BMR,min_BMR,sex,weight) VALUES (?,?,?,?,?,?,?,?)";
+              $cordovaSQLite.execute(db, query, [$scope.userinfo.name,$scope.basedata.BMI,$scope.basedata.age,$scope.basedata.height,$scope.basedata.max_BMR,$scope.basedata.min_BMR,$scope.basedata.sex,$scope.basedata.weight]).then(function(res) {
+                console.log("INSERT ID -> " + res.insertId);
+              }, function (err) {
+                console.error(err);
+              });
+              
+            }
+        
+        });
+      }
+      $scope.search = function(){
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {        
+            //getUserinfo
+            var user = firebase.auth().currentUser;
+            if (user != null) {
+              var userId =user.uid
+              var starCountRef = firebase.database().ref('user_data/'+userId+'/');  
+                
+              starCountRef.on('value', function(data) {
+                if(data.val() == null){
+                  console.log('fail');
+                }else{
+                  $scope.basedata = data.val()
+                }
+              });  
+              console.log('firebase');
+                
+            } 
+          } else {
+            var query = "SELECT BMI,age,height,max_BMR,min_BMR,sex,weight FROM ud WHERE name = ?";
+            $cordovaSQLite.execute(db, query, [$scope.userinfo.name]).then(function(res) {
+                if(res.rows.length > 0) {
+                  console.log("SELECTED -> " + res.rows.item(0).BMI + " " + res.rows.item(0).age);
+                  $scope.basedata = res.rows.item(0);
+                } else {
+                  console.log("No results found");
+                }
+                }, function (err) {
+                  console.error(err);
+                
+              });
+              console.log('SQLite');
+            }
+        
+        });
+      }
+
     // ----------- sport-data ----------------- 
 
         $scope.sl= [];       //資料列表
@@ -207,7 +266,6 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
         //取得JSON資料
         $http.get('sl.json').success(function(data) { 
-            console.log("success!");
             $scope.sl = data.table1;
             $scope.sl_f = data.table2;
             for (var i = 0; i < $scope.sl.length; i++) {
@@ -385,14 +443,17 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
            var t = $scope.timedata
             if ( ((t.end - t.start) / 60000) >= 0 )
                 t.total = (t.end - t.start) / 60000;
-            else
-                t.total = ((t.end - t.start) / 60000) + 1440; //24*60
+            else{
+                t.end = new Date(t.end.getTime() + 86400000); //24*60*60000
+                t.total = ((t.end - t.start) / 60000);
+            }           
             $scope.timetotalOver();
       }
       $scope.timetotalOver = function() {
            var t = $scope.timedata
-            if (t.total >= 1440) {
-                t.total = t.total - (Math.floor(t.total / 1440) * 1440);
+            if (t.total >= 300) {
+                t.total = 300
+               /* t.total = t.total - (Math.floor(t.total / 1440) * 1440);*/
                 t.end = new Date(t.start.getTime() + (t.total * 60000));
             }
       }
@@ -422,6 +483,18 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           $scope.modal = modal;
       });
 
+    // ----------- plan_setting modal ----------
+      $scope.key_sort = {
+        m : '-$key',
+        d : '-pdate'
+      }
+      
+      $ionicModal.fromTemplateUrl('templates/activity/plan_setting_modal.html', {
+          scope: $scope,
+      }).then(function(modal) {
+          $scope.plan_setting_modal = modal;
+      });
+
     // ----------- add_Sport  -----------------
       //選擇的運動項目
       $scope.sportoption = {
@@ -440,11 +513,11 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
         k : null,
         m : null,
       } 
-        $scope.key = {
+      $scope.key = {
           k : null,
           pid : null,
           pd : null,
-        }
+      }
       //Set 計劃日期、$index
       $scope.to_p = function(k,pid,d) {
         $scope.key = {
@@ -554,6 +627,7 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
                   $scope.modal.hide(); 
             }else{ 
+                  so.f.cost = t.total;
                   $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].psplist[$scope.tmp.aid] = {
                     sname : so.s.name,
                     sstart : t.start,
@@ -710,16 +784,18 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
               aid : aid,
           }
           $scope.modal.show();
-
           $scope.n = {
             n:false
           }
-          $scope.se.k = null;
-          $scope.se.m = null;
+          $scope.se = {
+            k : null,
+            m : null,
+          } 
           $scope.search.name = null;
           $scope.timedata.start = plan.psplist[aid].sstart;
           $scope.timedata.end = plan.psplist[aid].send;
           $scope.timedata.total = plan.psplist[aid].sfeature.cost;
+
           for (var i = 0; i < $scope.sl.length; i++) {
             if ($scope.sl[i].name === plan.psplist[aid].sname) {
               $scope.sportoption.s = $scope.sl[i];
@@ -738,16 +814,34 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
 
       //  刪除計劃  活動
       $scope.del_plan = function(k, pid){
-          $scope.basedata.plan_list[k].splice(pid,1);
-          if ($scope.basedata.plan_list[k].length === 0) 
-              delete  $scope.basedata.plan_list[k];     
+        var confirmPopup = $ionicPopup.confirm({
+           title: '刪除警告',
+           template: '確定要刪除此計劃嗎？',
+           okType: 'button-assertive'
+        });
+        confirmPopup.then(function(res) {
+          if(res) {
+            $scope.basedata.plan_list[k].splice(pid,1);
+            if ($scope.basedata.plan_list[k].length === 0) 
+              delete  $scope.basedata.plan_list[k]; 
+          } 
+        });        
       };
       $scope.del_activity = function(aid){
-          var k = $scope.key.k;
-          var pid = $scope.key.pid;
-          var plan = $scope.basedata.plan_list[k][pid]; 
-          plan.p_total_mets -= (plan.plan_list[aid].sfeature.cost/60) * plan.plan_list[aid].sfeature.mets ; 
-          plan.plan_list.splice(aid,1);
+        var confirmPopup = $ionicPopup.confirm({
+           title: '刪除警告',
+           template: '確定要刪除此活動嗎？',
+           okType: 'button-assertive'
+        });
+        confirmPopup.then(function(res) {
+          if(res) {
+            var k = $scope.key.k;
+            var pid = $scope.key.pid;
+            var plan = $scope.basedata.plan_list[k][pid]; 
+            plan.p_total_mets -= (plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets ; 
+            plan.psplist.splice(aid,1); 
+          } 
+        });     
       };
 
       //跨天處理
@@ -785,6 +879,30 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
       };
       $scope.isObject = function(input) {
           return angular.isObject(input);
+      };
+
+      // plan-scrollEvent
+      $scope.plan_list_subtitle = {
+        subtitle : null
+      };
+      $scope.scrollEvent = function(id) {
+        var scrollamount = $ionicScrollDelegate.$getByHandle(id).getScrollPosition().top;
+        var pl = $scope.basedata.plan_list;
+        if (scrollamount > 30) 
+          $scope.subtitleShow = true;
+        else
+          $scope.subtitleShow = false
+        angular.forEach(pl, function(value, key) {
+          var top = angular.element(document.getElementById(key))[0].offsetTop;
+          if(top - scrollamount <= 15){
+            $scope.set_subtitle(key);
+          } 
+        });
+  
+      };
+      $scope.set_subtitle= function(k){
+        $scope.plan_list_subtitle.subtitle = k
+        $scope.$apply();
       };
 
       /*  sortable  */
@@ -909,6 +1027,5 @@ var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-me
           $el.addClass('timeline-hidden');
           $el.removeClass('bounce-in');
         };
-    }])
+  }])
 })();
-

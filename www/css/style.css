@@ -1,8 +1,30 @@
-
 html, body,  h2, h4, h5 {
   height: 100%;
   font-family: '微軟正黑體';
 }
+.bar-stable {
+  background-color: #61C791 !important;
+}
+.bar-stable > h1 {
+ color:#292929 !important;
+ font-weight: bold !important;
+ letter-spacing: 1px;
+ font-size: 20px  !important;
+}
+.bar > .icon {
+ color:#292929 !important;
+}
+
+.menustyle {
+  text-align: center;
+  background-color: #046380;
+  height:185px;
+  box-shadow:0px 4px 4px rgba(20%,20%,40%,0.5);
+  z-index: 9;
+  color: #FAFAFA;
+}
+
+
 h1 {
   font-family: '微軟正黑體';
 }

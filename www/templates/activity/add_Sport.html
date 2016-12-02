@@ -3,7 +3,7 @@
   <ion-header-bar align-title="center" class="bar-stable">
       <button ng-show="!n.n" class="button icon button-clear ion-ios-undo" ng-click="nextb()"></button>
 
-      <h1 class="title " >{{ title }}</h1> 
+      <h1 class="title " >選擇時段與活動</h1> 
       <button class="button icon button-clear ion-ios-close-empty" ng-click="modal.hide()"></button>
   </ion-header-bar>
 
@@ -15,7 +15,7 @@
       </label>
       <ion-content class="has-header has-footer" style="margin-bottom:20px" ng-show="search.name"> 
         <ion-list>
-          <ion-radio id="{{s.name}}" ng-repeat="s in sl | filter: search"  style="color:#000"  ng-model="sportoption.s" ng-value="sp" >
+          <ion-radio id="{{s.name}}" ng-repeat="s in sl | filter: search.name"  style="color:#000"  ng-model="sportoption.s" ng-value="s"  class="adds">
             <h2 style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</h2>
           </ion-radio>
         </ion-list>
@@ -32,7 +32,7 @@
               <ion-slide ng-repeat="t in s_tabs">
                   <ion-scroll scrollbar-y="false" direction="y" style="height:100%;">
                       <ion-list>
-                        <ion-radio bindonce ng-if="s.type == t" ng-repeat="s in sl track by $id($index)" ng-model="sportoption.s" ng-value="s" class="adds">
+                        <ion-radio  ng-repeat="s in sl | filter: t" ng-model="sportoption.s" ng-value="s" class="adds">
                               <h2 style="text-align:left;margin-left:30px;color:#fff;">{{s.name}}</h2>
                         </ion-radio>
                       </ion-list>
@@ -87,7 +87,7 @@
             </label>
         </div>
 
-        <div class="item" style="padding:0px;" ng-show="!id_edit">
+        <div class="item" style="padding:0px;" ng-show="!if_edit">
           <h2 class="center item-divider " style="margin-right:-20px;margin-bottom:6px">選擇計劃</h2>
             <label class="item-input item-select l_bottom">
               <span class="input-label lable_sty">月份</span>
