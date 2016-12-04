@@ -30,15 +30,70 @@
       if(window.StatusBar) {
         StatusBar.styleDefault();
       }
+
+      // Push Notifications V5
+      if (window.cordova) {
+        localStorage.myPush = 'test'; // I use a localStorage variable to persist the token
+        $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
+            {
+                android: {
+                    senderID: "1111111111"
+                },
+                ios: {
+                    alert: 'true',
+                    badge: true,
+                    sound: 'false',
+                    clearBadge: true
+                },
+                windows: {}
+            }
+        ).then(function (result) {
+            $cordovaPushV5.onNotification();
+            $cordovaPushV5.onError();
+            $cordovaPushV5.register().then(function (resultreg) {
+                localStorage.myPush = resultreg;
+                // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
+            }, function (err) {
+                // handle error
+            });
+        });
       
+      $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {  // use two variables here, event and data !!!
+          if (data.additionalData.foreground === false) {
+              // do something if the app is in foreground while receiving to push - handle in app push handling
+              
+          } else {
+             // handle push messages while app is in background or not started
+          }
+          if (Device.isOniOS()) {
+              if (data.additionalData.badge) {
+                  $cordovaPushV5.setBadgeNumber(NewNumber).then(function (result) {
+                      // OK
+                  }, function (err) {
+                      // handle error
+                  });
+              }
+          }
+
+          $cordovaPushV5.finish().then(function (result) {
+              // OK finished - works only with the dev-next version of pushV5.js in ngCordova as of February 8, 2016
+          }, function (err) {
+              // handle error
+          });
+      });
+
+      $rootScope.$on('$cordovaPushV5:errorOccurred', function(event, error) {
+          // handle error
+      });
+      }
+
       // SQLite
       if (window.cordova) {
         db = $cordovaSQLite.openDB({ name: "my.db" }); //device
       }else{
         db = window.openDatabase("my.db", '1', 'my', 1024 * 1024 * 100); // browser
       }
-      $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS ud (id integer primary key, name text, BMI float,age int,height float,max_BMR float,min_BMR float,sex text,weight float )");
-
+      $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS userd (id integer primary key,username text,basedata text)");
     });
   })
   .config(function($stateProvider, $urlRouterProvider) {
@@ -190,73 +245,63 @@
         var w = $scope.basedata.weight;
         $scope.basedata.BMI =  w/(h*h);
       };
+      $scope.save_data = function(){
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            //$scope.savlocSQL();
+            $scope.savFirebase();
+          } else {
+            $scope.savlocSQL();
+          }
+        })
+      }
 
     // ----------- Firebase and Sqlite -------------
-      $scope.save = function() {
-        firebase.auth().onAuthStateChanged(function(user) {
-          //console.log($scope.userinfo);查資料
-          if (user) {        
-            //getUserinfo
-            var user = firebase.auth().currentUser;
-            if (user != null) {
-              var userId = user.uid;
-              var starCountRef ='user_data/'
-              firebase.database().ref(starCountRef+userId+'/').set(
-                $scope.basedata
-               
-              );
-              console.log('firebase');
-            } 
-          }else {
-              console.log('SQLite');
-              var query = "INSERT INTO ud (name,BMI,age,height,max_BMR,min_BMR,sex,weight) VALUES (?,?,?,?,?,?,?,?)";
-              $cordovaSQLite.execute(db, query, [$scope.userinfo.name,$scope.basedata.BMI,$scope.basedata.age,$scope.basedata.height,$scope.basedata.max_BMR,$scope.basedata.min_BMR,$scope.basedata.sex,$scope.basedata.weight]).then(function(res) {
-                console.log("INSERT ID -> " + res.insertId);
-              }, function (err) {
-                console.error(err);
-              });
-              
+        $scope.savlocSQL = function(){
+          var query = "INSERT INTO userd (username, basedata) VALUES (?,?)";
+          $cordovaSQLite.execute(db, query, [$scope.userinfo.name, JSON.stringify($scope.basedata)]).then(function(res) {
+          }, function (err) {
+            console.error(err);
+          });     
+        }
+
+        $scope.sellocSQL = function(){
+          var query = "SELECT basedata FROM userd WHERE username = ?";
+          $cordovaSQLite.execute(db, query, [$scope.userinfo.name]).then(function(res) {
+            if(res.rows.length > 0) {
+              $scope.basedata = JSON.parse(res.rows[0]);
+            } else {
+               console.log("No results found");
             }
-        
-        });
-      }
-      $scope.search = function(){
-        firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {        
-            //getUserinfo
-            var user = firebase.auth().currentUser;
-            if (user != null) {
-              var userId =user.uid
-              var starCountRef = firebase.database().ref('user_data/'+userId+'/');  
-                
-              starCountRef.on('value', function(data) {
-                if(data.val() == null){
-                  console.log('fail');
-                }else{
-                  $scope.basedata = data.val()
-                }
-              });  
-              console.log('firebase');
-                
-            } 
-          } else {
-            var query = "SELECT BMI,age,height,max_BMR,min_BMR,sex,weight FROM ud WHERE name = ?";
-            $cordovaSQLite.execute(db, query, [$scope.userinfo.name]).then(function(res) {
-                if(res.rows.length > 0) {
-                  console.log("SELECTED -> " + res.rows.item(0).BMI + " " + res.rows.item(0).age);
-                  $scope.basedata = res.rows.item(0);
-                } else {
-                  console.log("No results found");
-                }
-                }, function (err) {
-                  console.error(err);
-                
-              });
-              console.log('SQLite');
-            }
-        
-        });
-      }
+          }, function (err) {
+            console.error(err);       
+          });    
+        }
+
+        $scope.savFirebase = function(){
+          var user = firebase.auth().currentUser;
+          if (user != null) {
+            var userId = user.uid;
+            var starCountRef ='user_data/'
+            firebase.database().ref(starCountRef+userId+'/').set($scope.basedata);
+          } 
+        }
+
+        $scope.selFirebase = function(){
+          var user = firebase.auth().currentUser;
+          if (user != null) {
+            var userId =user.uid
+            var starCountRef = firebase.database().ref('user_data/'+userId+'/');  
+            starCountRef.on('value', function(data) {
+              if(data.val() == null){
+                 console.log('fail');
+              }else{
+                //$scope.basedata = data.val()
+                $scope.basedata = data.val();
+              }
+            });                  
+          } 
+        }
 
     // ----------- sport-data ----------------- 
 
@@ -282,7 +327,7 @@
       firebase.auth().onAuthStateChanged(function(user) {
           if (user) {        
             //getUserinfo
-             var user = firebase.auth().currentUser;
+            var user = firebase.auth().currentUser;
               if (user != null) {
                 var info = {
                   providerId : user.providerId,
@@ -292,21 +337,24 @@
                   photoURL : user.photoURL
                 };
                 $scope.userinfo = info;
+                $scope.selFirebase();
               }
-             $scope.loging = true;
-             $scope.$apply();
+            $scope.loging = true;
+            $scope.$apply();
+            
           } else {
-              $scope.loging = false;
+            $scope.sellocSQL();
+            $scope.loging = false;
           }
       });
 
       $scope.googleLogin = function() {
           var provider = new firebase.auth.GoogleAuthProvider();
           if(ionic.Platform.isWebView()){
-                      return $cordovaOauth.google('662838886053-vk5k4s29d3065s98b6hvt8dp2lp6kqge.apps.googleusercontent.com' + '&include_profile=true', ["email", "profile"]).then(function (result) {
-                          var credential = firebase.auth.GoogleAuthProvider.credential(result.id_token);
-                          return firebase.auth().signInWithCredential(credential);
-                      });
+                return $cordovaOauth.google('662838886053-vk5k4s29d3065s98b6hvt8dp2lp6kqge.apps.googleusercontent.com' + '&include_profile=true', ["email", "profile"]).then(function (result) {
+                    var credential = firebase.auth.GoogleAuthProvider.credential(result.id_token);
+                    return firebase.auth().signInWithCredential(credential);
+                });
           } else{  
               firebase.auth().signInWithRedirect(provider).then(function(result) {    
                 // This gives you a Google Access Token. You can use it to access the Google API.
@@ -518,6 +566,7 @@
           pid : null,
           pd : null,
       }
+
       //Set 計劃日期、$index
       $scope.to_p = function(k,pid,d) {
         $scope.key = {
@@ -529,6 +578,7 @@
         $scope.se.m = $scope.basedata.plan_list[$scope.key.k][pid];
         $state.go('plan');
       }  
+
       // 清除選項資料
       $scope.clearadd_sport = function(v){
         $scope.sportoption.f = {
@@ -546,6 +596,7 @@
           $scope.se.m = null;
         }          
       };
+
       $scope.setpid = function(){
         if ($scope.se.k != null & $scope.se.m != null) {
           $scope.key.k = $scope.se.k.$key;
@@ -553,6 +604,7 @@
           $scope.key.pid = $scope.basedata.plan_list[$scope.key.k].indexOf($scope.se.m);
         };
       };
+
       // Set Mets
       $scope.setf = function(){
         var f =  $scope.sportoption.f;
@@ -561,6 +613,7 @@
         f.mets = select.Mets;
         f.feature = tmp;
       };
+
       $scope.setMets = function(){
           var s =  $scope.sportoption;
           s.f.cost = $scope.timedata.total;
@@ -602,7 +655,7 @@
                   if ($scope.key.k === null) {
                     var sp = {
                       pname : '運動計劃 ',
-                      pdate : new Date(),
+                      pdate : new Date(), 
                       pbr_in : '',
                       p_total_mets : 0,
                       psplist : [],
@@ -645,6 +698,7 @@
                  okType: 'button button-calm'
               });
           }
+          $scope.save_data()
       };
 
       $scope.init_activity = function( k, pd, so, start, end, total) {
@@ -692,15 +746,17 @@
                 }
               }
             ]
-          });  
+          });
+
+          $scope.save_data()  
       };
 
       $scope.init_plan = function(sp) {
         var ym = '';
         if ((sp.pdate.getMonth()+1) < 10) 
-            ym = sp.pdate.getFullYear() + ' / 0' + (sp.pdate.getMonth()+1)        
+            ym = sp.pdate.getFullYear() + '/0' + (sp.pdate.getMonth()+1)        
         else
-            ym = sp.pdate.getFullYear() + ' / ' + (sp.pdate.getMonth()+1)    
+            ym = sp.pdate.getFullYear() + '/' + (sp.pdate.getMonth()+1)    
 
         if (sp.pname && sp.pdate) {
               if ($scope.basedata.plan_list[ym]) {
@@ -751,9 +807,9 @@
                 onTap: function(e) {
                   var ym = '';
                   if (($scope.selectSp.pdate.getMonth()+1) < 10) 
-                      ym = $scope.selectSp.pdate.getFullYear() + ' / 0' + ($scope.selectSp.pdate.getMonth()+1)        
+                      ym = $scope.selectSp.pdate.getFullYear() + '/0' + ($scope.selectSp.pdate.getMonth()+1)        
                   else
-                      ym = $scope.selectSp.pdate.getFullYear() + ' / ' + ($scope.selectSp.pdate.getMonth()+1)    
+                      ym = $scope.selectSp.pdate.getFullYear() + '/' + ($scope.selectSp.pdate.getMonth()+1)    
                   
                   var tmps = {
                       pname : $scope.selectSp.pname,
@@ -773,7 +829,8 @@
                 }
               }
             ]
-          });  
+          });
+          $scope.save_data()  
       };
       $scope.edit_activity = function(aid) {
           var k = $scope.key.k;
@@ -796,6 +853,7 @@
           $scope.timedata.end = plan.psplist[aid].send;
           $scope.timedata.total = plan.psplist[aid].sfeature.cost;
 
+
           for (var i = 0; i < $scope.sl.length; i++) {
             if ($scope.sl[i].name === plan.psplist[aid].sname) {
               $scope.sportoption.s = $scope.sl[i];
@@ -810,6 +868,7 @@
             };
           };
           $scope.basedata.plan_list[k][pid].p_total_mets -= (plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets ; 
+          $scope.save_data()
       };
 
       //  刪除計劃  活動
@@ -819,6 +878,7 @@
            template: '確定要刪除此計劃嗎？',
            okType: 'button-assertive'
         });
+
         confirmPopup.then(function(res) {
           if(res) {
             $scope.basedata.plan_list[k].splice(pid,1);
@@ -849,9 +909,9 @@
             var date = new Date(ndt.getTime() + (1000*60*60*24));
             var ym = '';
               if ((date.getMonth()+1) < 10) 
-                  ym = date.getFullYear() + ' / 0' + (date.getMonth()+1)        
+                  ym = date.getFullYear() + '/0' + (date.getMonth()+1)        
               else
-                  ym = date.getFullYear() + ' / ' + (date.getMonth()+1)
+                  ym = date.getFullYear() + '/' + (date.getMonth()+1)
             var sp = {
               pname : '運動計劃 ',
               pdate : date,
