@@ -179,7 +179,7 @@
           })
        $urlRouterProvider.otherwise('/');
   })
-  .controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite',function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite) {
+  .controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite', '$ionicBackdrop',function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite, $ionicBackdrop) {
   
     // ----------- base-data ----------------- 
         $scope.basedata = {
@@ -249,7 +249,9 @@
         firebase.auth().onAuthStateChanged(function(user) {
           if (user) {
             //$scope.savlocSQL();
-            $scope.savFirebase();
+            $scope.set_basedata_Firebase();
+            $scope.set_plan_Firebase();
+            $scope.set_activity_Firebase();
           } else {
             $scope.savlocSQL();
           }
@@ -278,27 +280,171 @@
           });    
         }
 
-        $scope.savFirebase = function(){
+        $scope.set_basedata_Firebase = function(){
           var user = firebase.auth().currentUser;
           if (user != null) {
             var userId = user.uid;
             var starCountRef ='user_data/'
-            firebase.database().ref(starCountRef+userId+'/').set($scope.basedata);
+            var bd = $scope.basedata;
+            var f = firebase.database().ref(starCountRef+userId+'/')
+            f.update({
+              sex : bd.sex,
+              age : bd.age,
+              height : bd.height, 
+              weight : bd.weight, 
+              BMI : bd.BMI,  
+              min_BMR : bd.min_BMR,     
+              max_BMR : bd.max_BMR,      
+            });
+          } 
+        }
+        $scope.set_plan_Firebase = function(){
+          var user = firebase.auth().currentUser;
+          if (user != null) {
+            var userId = user.uid;
+            var starCountRef ='user_data/'
+            var planlist = $scope.basedata.plan_list
+              angular.forEach(planlist, function(pval, pkey){
+                for (var i = 0; i < pval.length; i++) {
+                    firebase.database().ref(starCountRef+userId+'/plan_list/'+pkey+'/'+ i).update({
+                      pname : pval[i].pname,
+                      pdate : pval[i].pdate.getTime(),
+                      pbr_in : pval[i].pbr_in,
+                      p_total_mets : pval[i].p_total_mets,
+                    });
+                };       
+              })  
+          } 
+        }
+        $scope.set_activity_Firebase = function(){
+          var user = firebase.auth().currentUser;
+          if (user != null) {
+            var userId = user.uid;
+            var starCountRef ='user_data/'
+            var psplist = $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].psplist
+            firebase.database().ref(starCountRef+userId+'/plan_list/'+$scope.key.k+'/'+ $scope.key.pid).update({
+              p_total_mets : $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].p_total_mets,
+            })
+            for (var i = 0; i < psplist.length; i++) {
+              firebase.database().ref(starCountRef+userId+'/plan_list/'+ $scope.key.k +'/'+ $scope.key.pid +'/psplist/'+i).update({
+                sname    : psplist[i].sname,
+                sstart   : psplist[i].sstart.getTime(),
+                send     : psplist[i].send.getTime(),
+                sfeature : psplist[i].sfeature,
+                smets    : psplist[i].smets
+              });   
+            };            
           } 
         }
 
-        $scope.selFirebase = function(){
+        $scope.remove_plan_Firebase = function(k, pid){
+          var user = firebase.auth().currentUser;
+          if (user != null) {
+            var userId = user.uid;
+            var adaRef = firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+pid);
+            adaRef.remove()
+              .then(function() {
+                var ref = firebase.database().ref('user_data/'+userId+'/plan_list/'+k)
+                ref.once('value').then(function(data){
+                  if(data.exists()){
+                    var n = 0;
+                    firebase.database().ref('user_data/'+userId+'/plan_list/'+k).set({});
+                    angular.forEach( data.val(), function(v ,key){
+                      firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+n).set({
+                          pname : v.pname,
+                          pdate : v.pdate,
+                          pbr_in : v.pbr_in,
+                          p_total_mets : v.p_total_mets,
+                          psplist : v.psplist || []
+                      })
+                      n++;
+                    })
+                  }
+                });
+              })
+              .catch(function(error) {
+              });           
+          } 
+        }
+        $scope.remove_activity_Firebase = function(k, pid, aid){
+          var user = firebase.auth().currentUser;
+          if (user != null) {
+            var userId = user.uid;
+            var adaRef = firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+pid+'/psplist/'+aid);
+            adaRef.remove()
+              .then(function() {
+                var ref = firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+pid+'/psplist/')
+                ref.once('value').then(function(data){
+                  if(data.exists()){
+                    firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+pid+'/psplist/').set({})
+                    for (var i = 0; i < data.val().length; i++) {
+                      firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+pid+'/psplist/'+i).set({
+                          sname    : $scope.basedata.plan_list[k][pid].psplist[i].sname,
+                          sstart   : $scope.basedata.plan_list[k][pid].psplist[i].sstart,
+                          send     : $scope.basedata.plan_list[k][pid].psplist[i].send,
+                          sfeature : $scope.basedata.plan_list[k][pid].psplist[i].sfeature,
+                          smets    : $scope.basedata.plan_list[k][pid].psplist[i].smets
+                      })
+                    };
+                  }
+                });
+              })
+              .catch(function(error) {
+              });           
+          } 
+        }
+
+        $scope.select_Firebase = function(){
           var user = firebase.auth().currentUser;
           if (user != null) {
             var userId =user.uid
-            var starCountRef = firebase.database().ref('user_data/'+userId+'/');  
-            starCountRef.on('value', function(data) {
-              if(data.val() == null){
-                 console.log('fail');
-              }else{
-                //$scope.basedata = data.val()
-                $scope.basedata = data.val();
-              }
+            var starCountRef = firebase.database().ref('user_data/'+userId+'/'); 
+            starCountRef.once('value').then(function(data){
+              if( data.exists() ){
+                $scope.$apply(function() {
+                  $scope.basedata = {
+                    sex : data.child('sex').val(),
+                    age : data.child('age').val(),
+                    height : data.child('height').val(), 
+                    weight : data.child('weight').val(), 
+                    BMI : data.child('BMI').val(),  
+                    min_BMR : data.child('min_BMR').val(),     
+                    max_BMR : data.child('max_BMR').val(),
+                    plan_list : {},    
+                    food_list : [] 
+                  };
+                  if (data.child('plan_list').exists()) {
+                    angular.forEach(data.child('plan_list').val(), function(pval,pkey){ 
+                      $scope.basedata.plan_list[pkey] = []; 
+                      for (var i = 0; i < pval.length; i++) {
+                        $scope.basedata.plan_list[pkey].push({
+                          pname : pval[i].pname,
+                          pdate : new Date(pval[i].pdate),
+                          pbr_in : pval[i].pbr_in,
+                          p_total_mets : pval[i].p_total_mets,
+                          psplist : pval[i].psplist || []
+                        }) 
+
+                        if (data.child('plan_list/'+pkey+'/'+i+'/psplist/').exists()) {
+                          var l = pval[i].psplist.length
+                          for (var j = 0; j < l ; j++) {
+                              $scope.basedata.plan_list[pkey][i].psplist[j].sstart = new Date(data.child('plan_list/'+pkey+'/'+i+'/psplist/'+j).child('sstart').val())
+                              $scope.basedata.plan_list[pkey][i].psplist[j].send = new Date(data.child('plan_list/'+pkey+'/'+i+'/psplist/'+j).child('send').val())
+                          }
+                        };           
+                        if ($scope.basedata.plan_list[pkey][i].pdate.getDate() === new Date().getDate()) { 
+                          $scope.key = {
+                            k : pkey,
+                            pid : i,
+                            pd : $scope.basedata.plan_list[pkey][i].pdate,
+                          }
+                        };   
+                      };       
+                    }) 
+                    
+                  };
+                });
+              };
             });                  
           } 
         }
@@ -329,21 +475,20 @@
             //getUserinfo
             var user = firebase.auth().currentUser;
               if (user != null) {
-                var info = {
-                  providerId : user.providerId,
-                  uid : user.uid,
-                  name : user.displayName,
-                  email : user.email,
-                  photoURL : user.photoURL
-                };
-                $scope.userinfo = info;
-                $scope.selFirebase();
+                $scope.$apply(function(){
+                  var info = {
+                    providerId : user.providerId,
+                    uid : user.uid,
+                    name : user.displayName,
+                    email : user.email,
+                    photoURL : user.photoURL
+                  };
+                  $scope.userinfo = info;
+                  $scope.select_Firebase();
+                });
               }
-            $scope.loging = true;
-            $scope.$apply();
-            
+            $scope.loging = true;      
           } else {
-            $scope.sellocSQL();
             $scope.loging = false;
           }
       });
@@ -511,13 +656,14 @@
         name : ''
       }
       $scope.modal_show = function(){
-          $scope.n = {
-            n:true
-          }
+
           $scope.se.k = null;
           $scope.se.m = null;
           $scope.search.name = null;
           $scope.clearadd_sport(0)
+          $scope.n = {
+            n : true
+          }
           $scope.modal.show();
       }
 
@@ -621,13 +767,13 @@
           if (s.f.cost != null && s.f.feature != null) {
             var x = (s.f.feature / 1000.0) / (s.f.cost / 60.0);
               if (s.s.feature === "length") { 
-                if (s.s.name = "跑步")  s.f.mets = 0.0022 * Math.pow(x,3) - 0.0688 * Math.pow(x,2) + 1.4548 * x - 0.1089;
+                if (s.s.name === "跑步")  s.f.mets = 0.0022 * Math.pow(x,3) - 0.0688 * Math.pow(x,2) + 1.4548 * x - 0.1089;
                   
-                if (s.s.name = "散步")  s.f.mets = 0.0332 * Math.pow(x,3) - 0.3283 * Math.pow(x,2) + 1.5577 * x + 0.0102;             
+                if (s.s.name === "散步")  s.f.mets = 0.0332 * Math.pow(x,3) - 0.3283 * Math.pow(x,2) + 1.5577 * x + 0.0102;             
                 
-                if (s.s.name = "散步爬坡")  s.f.mets = 0.0641 * Math.pow(x,2) + 0.7125 * x;
+                if (s.s.name === "散步爬坡")  s.f.mets = 0.0641 * Math.pow(x,2) + 0.7125 * x;
                             
-                if (s.s.name = "騎自行車")  s.f.mets = 0.001 * Math.pow(x,3) - 0.0363 * Math.pow(x,2) + 0.6965 * x - 0.0893;
+                if (s.s.name === "騎自行車")  s.f.mets = 0.001 * Math.pow(x,3) - 0.0363 * Math.pow(x,2) + 0.6965 * x - 0.0893;
          
               }else if (s.s.feature === "Watt") 
                 s.f.mets = 0.0000005 * Math.pow(x,3) - 0.0002 * Math.pow(x,2) + 0.0877 * x + 0.0481;   
@@ -697,8 +843,8 @@
                  okText: '確定',
                  okType: 'button button-calm'
               });
-          }
-          $scope.save_data()
+          }  
+          $scope.set_activity_Firebase();      
       };
 
       $scope.init_activity = function( k, pd, so, start, end, total) {
@@ -743,27 +889,30 @@
                 type: 'button-positive',
                 onTap: function(e) {
                   $scope.init_plan($scope.selectSp );
+                  $scope.set_plan_Firebase();  
                 }
               }
             ]
           });
-
-          $scope.save_data()  
       };
 
       $scope.init_plan = function(sp) {
         var ym = '';
         if ((sp.pdate.getMonth()+1) < 10) 
-            ym = sp.pdate.getFullYear() + '/0' + (sp.pdate.getMonth()+1)        
+            ym = sp.pdate.getFullYear() + '-0' + (sp.pdate.getMonth()+1)        
         else
-            ym = sp.pdate.getFullYear() + '/' + (sp.pdate.getMonth()+1)    
+            ym = sp.pdate.getFullYear() + '-' + (sp.pdate.getMonth()+1)    
 
         if (sp.pname && sp.pdate) {
               if ($scope.basedata.plan_list[ym]) {
                 var t = false;
                 for (var i = 0; i <= $scope.basedata.plan_list[ym].length-1; i++) {    
-                  if ($scope.basedata.plan_list[ym][i].pdate.getDate() === sp.pdate.getDate()) {
-                    console.log('此日期的計劃已存在');           
+                  if ($scope.basedata.plan_list[ym][i].pdate.getDate() === sp.pdate.getDate()) {  
+                    var alertPopup = $ionicPopup.alert({
+                       template: '<h3 class=" center ">此日期的計劃已存在</h3>',
+                       okText: '確定',
+                       okType: 'button button-calm'
+                    });        
                     t = true;
                     return true;
                   }              
@@ -773,7 +922,7 @@
                 }                   
               }else{             
                   $scope.basedata.plan_list[ym] = [];  //   a = { 'ym' : [] }
-                  $scope.basedata.plan_list[ym].push(sp);           
+                  $scope.basedata.plan_list[ym].push(sp);         
               };        
         };
 
@@ -807,9 +956,9 @@
                 onTap: function(e) {
                   var ym = '';
                   if (($scope.selectSp.pdate.getMonth()+1) < 10) 
-                      ym = $scope.selectSp.pdate.getFullYear() + '/0' + ($scope.selectSp.pdate.getMonth()+1)        
+                      ym = $scope.selectSp.pdate.getFullYear() + '-0' + ($scope.selectSp.pdate.getMonth()+1)        
                   else
-                      ym = $scope.selectSp.pdate.getFullYear() + '/' + ($scope.selectSp.pdate.getMonth()+1)    
+                      ym = $scope.selectSp.pdate.getFullYear() + '-' + ($scope.selectSp.pdate.getMonth()+1)    
                   
                   var tmps = {
                       pname : $scope.selectSp.pname,
@@ -826,13 +975,14 @@
                         $scope.basedata.plan_list[ym] = [];
                     $scope.basedata.plan_list[ym].push(tmps);              
                   }
+                  $scope.set_plan_Firebase();
                 }
               }
             ]
-          });
-          $scope.save_data()  
+          }); 
       };
       $scope.edit_activity = function(aid) {
+        
           var k = $scope.key.k;
           var pid = $scope.key.pid;
           var plan = $scope.basedata.plan_list[k][pid];
@@ -842,7 +992,7 @@
           }
           $scope.modal.show();
           $scope.n = {
-            n:false
+            n : false
           }
           $scope.se = {
             k : null,
@@ -852,8 +1002,8 @@
           $scope.timedata.start = plan.psplist[aid].sstart;
           $scope.timedata.end = plan.psplist[aid].send;
           $scope.timedata.total = plan.psplist[aid].sfeature.cost;
-
-
+          $scope.sportoption.f = plan.psplist[aid].sfeature
+     
           for (var i = 0; i < $scope.sl.length; i++) {
             if ($scope.sl[i].name === plan.psplist[aid].sname) {
               $scope.sportoption.s = $scope.sl[i];
@@ -861,14 +1011,14 @@
             };
           };
           for (var i = 0; i < $scope.sl_f.length; i++) {
-            if ($scope.sl_f[i].Remark === plan.psplist[aid].sfeature.feature) {
-                sport_selectoption.f = $scope.sl_f[i];
+            if ($scope.sl_f[i].Remark === plan.psplist[aid].sfeature.strength) {
+                $scope.sport_selectoption.f = $scope.sl_f[i];
                 $scope.setf();
                 return true;
             };
           };
-          $scope.basedata.plan_list[k][pid].p_total_mets -= (plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets ; 
-          $scope.save_data()
+          $scope.basedata.plan_list[k][pid].p_total_mets -= (plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets ;  
+          $scope.set_activity_Firebase();          
       };
 
       //  刪除計劃  活動
@@ -884,8 +1034,15 @@
             $scope.basedata.plan_list[k].splice(pid,1);
             if ($scope.basedata.plan_list[k].length === 0) 
               delete  $scope.basedata.plan_list[k]; 
+            $scope.key = {
+                k : null,
+                pid : null,
+                pd : null,
+            }
+            $scope.remove_plan_Firebase(k, pid);
           } 
-        });        
+        }); 
+             
       };
       $scope.del_activity = function(aid){
         var confirmPopup = $ionicPopup.confirm({
@@ -900,8 +1057,9 @@
             var plan = $scope.basedata.plan_list[k][pid]; 
             plan.p_total_mets -= (plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets ; 
             plan.psplist.splice(aid,1); 
+            $scope.remove_activity_Firebase(k, pid, aid);
           } 
-        });     
+        });    
       };
 
       //跨天處理
@@ -909,9 +1067,9 @@
             var date = new Date(ndt.getTime() + (1000*60*60*24));
             var ym = '';
               if ((date.getMonth()+1) < 10) 
-                  ym = date.getFullYear() + '/0' + (date.getMonth()+1)        
+                  ym = date.getFullYear() + '-0' + (date.getMonth()+1)        
               else
-                  ym = date.getFullYear() + '/' + (date.getMonth()+1)
+                  ym = date.getFullYear() + '-' + (date.getMonth()+1)
             var sp = {
               pname : '運動計劃 ',
               pdate : date,
@@ -940,28 +1098,28 @@
       $scope.isObject = function(input) {
           return angular.isObject(input);
       };
-
       // plan-scrollEvent
       $scope.plan_list_subtitle = {
         subtitle : null
       };
       $scope.scrollEvent = function(id) {
         var scrollamount = $ionicScrollDelegate.$getByHandle(id).getScrollPosition().top;
-        var pl = $scope.basedata.plan_list;
+        var pl = angular.copy($scope.basedata.plan_list);
         if (scrollamount > 30) 
           $scope.subtitleShow = true;
         else
           $scope.subtitleShow = false
-        angular.forEach(pl, function(value, key) {
+        if(pl != null){
+          angular.forEach(pl , function(value, key) {
           var top = angular.element(document.getElementById(key))[0].offsetTop;
-          if(top - scrollamount <= 15){
-            $scope.set_subtitle(key);
-          } 
-        });
-  
+            if( top - scrollamount <= 15 & scrollamount - top < 150){
+              $scope.set_subtitle(key);
+            } 
+          });
+        }
       };
       $scope.set_subtitle= function(k){
-        $scope.plan_list_subtitle.subtitle = k
+        $scope.plan_list_subtitle.subtitle = k;
         $scope.$apply();
       };
 
@@ -1003,8 +1161,8 @@
              okType: 'button button-calm'
           });
         }else{
-            $scope.n.n = !$scope.n.n;
             $scope.clearadd_sport(1);
+            $scope.n.n = !$scope.n.n;
         }
       };     
 

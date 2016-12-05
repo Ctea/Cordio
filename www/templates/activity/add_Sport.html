@@ -1,116 +1,117 @@
 
   <ion-modal-view style="height:70%">
   <ion-header-bar align-title="center" class="bar-stable">
-      <button ng-show="!n.n" class="button icon button-clear ion-ios-undo" ng-click="nextb()"></button>
+      <button ng-if="!n.n" class="button icon button-clear ion-ios-undo" ng-click="nextb()"></button>
 
       <h1 class="title " >選擇時段與活動</h1> 
       <button class="button icon button-clear ion-ios-close-empty" ng-click="modal.hide()"></button>
   </ion-header-bar>
 
-  <!--  sport  -->
-  <ion-content ng-show="n.n" >
+  <div ng-switch on="n.n" >
+    <!--  sport  -->
+    <ion-content ng-switch-when="true">
       <label class="item item-input">
-        <i class="icon ion-search placeholder-icon"></i>
-        <input type="text" placeholder="Search" ng-model="search.name">
-      </label>
-      <ion-content class="has-header has-footer" style="margin-bottom:20px" ng-show="search.name"> 
-        <ion-list>
-          <ion-radio id="{{s.name}}" ng-repeat="s in sl | filter: search.name"  style="color:#000"  ng-model="sportoption.s" ng-value="s"  class="adds">
-            <h2 style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</h2>
-          </ion-radio>
-        </ion-list>
-      </ion-content> 
-        <tab-slide-box tab="0" ng-show="!search.name">
-            <div class="tsb-icons">
-              <div class="tsb-ic-wrp">
-              <ion-scroll direction="x" class="scroll-set tsb-hscroll">
-                  <a href="javascript:;" bindonce ng-repeat="t in s_tabs" on-finish-render="test()" >{{t}}</a>  
-              </ion-scroll>
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="text" placeholder="Search" ng-model="search.name">
+        </label>
+        <ion-content class="has-header has-footer" style="margin-bottom:20px" ng-show="search.name"> 
+          <ion-list>
+            <ion-radio id="{{s.name}}" ng-repeat="s in sl | filter: search.name"  style="color:#000"  ng-model="sportoption.s" ng-value="s"  class="adds">
+              <h2 style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</h2>
+            </ion-radio>
+          </ion-list>
+        </ion-content> 
+          <tab-slide-box tab="0" ng-show="!search.name">
+              <div class="tsb-icons">
+                <div class="tsb-ic-wrp">
+                <ion-scroll direction="x" class="scroll-set tsb-hscroll">
+                    <a href="javascript:;"  ng-repeat="t in s_tabs" on-finish-render="test()" >{{t}}</a>  
+                </ion-scroll>
+                </div>
               </div>
-            </div>
-          <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)">
-              <ion-slide ng-repeat="t in s_tabs">
-                  <ion-scroll scrollbar-y="false" direction="y" style="height:100%;">
-                      <ion-list>
-                        <ion-radio  ng-repeat="s in sl | filter: t" ng-model="sportoption.s" ng-value="s" class="adds">
-                              <h2 style="text-align:left;margin-left:30px;color:#fff;">{{s.name}}</h2>
-                        </ion-radio>
-                      </ion-list>
-                  </ion-scroll>
-              </ion-slide>
-          </ion-slide-box>
-        </tab-slide-box>
-  </ion-content>
-  <!--  time  -->
-  <ion-content ng-show="!n.n" class="padding" >
-      <div class="item list" >
-          <h2 class="center item-divider " style="margin-right:-20px">輸入時間</h2>
-          <div class="row" style="margin-top:20px">
-              <label class="col-50 item-floating-label" style="margin-left:20px;margin-right:0px">
-                <span class="input-label">開始時間</span>
-                <input type="time" ng-model="timedata.start" ng-Blur="timeBlur2(0)" ng-change="timechange(0)" placeholder="Start" >
-              </label>
-      
-              <label class="col-50 item-floating-label" style="">
-                <span class="input-label">結束時間</span>
-                <input type="time" ng-model="timedata.end" ng-Blur="timeBlur2(1)" ng-change="timechange(2)"  placeholder="End" >
-              </label>
-            </div>
-        </div>
-
+            <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)">
+                <ion-slide ng-repeat="t in s_tabs track by $id($index)">
+                    <ion-scroll scrollbar-y="false" direction="y" style="height:100%;">
+                        <ion-list>
+                          <ion-radio  ng-repeat="s in sl | filter: t" ng-model="sportoption.s" ng-value="s" class="adds">
+                                <h2 style="text-align:left;margin-left:30px;color:#fff;">{{s.name}}</h2>
+                          </ion-radio>
+                        </ion-list>
+                    </ion-scroll>
+                </ion-slide>
+            </ion-slide-box>
+          </tab-slide-box>
+    </ion-content>
+    <!--  time  -->
+    <ion-content class="padding" ng-switch-when="false">
         <div class="item list" >
-            <label class="item-input" ng-click="nextb()">
-              <span class="input-label lable_sty" >運動</span>
-              <h2>{{sportoption.s.name}}</h2>       
-            </label>
-            <label class="item-input l_bottom"  >
-                <span class="input-label lable_sty">分鐘</span>
-                <input type="number" ng-model="timedata.total" min="0" ng-Blur="timeBlur()" ng-focus="timeFocus()" ng-change="timechange(1)"  placeholder="Time">
-            </label>
-            <label class="item-input l_bottom" ng-if="sportoption.s.feature === 'length'">
-              <span class="input-label lable_sty">距離(公尺)</span>
-              <input type="number" ng-model="sportoption.f.feature" ng-change="setMets()" placeholder="meter">
-            </label>
-            <label class="item-input l_bottom" ng-if="sportoption.s.feature === 'Watt'">
-              <span class="input-label lable_sty">瓦數</span>
-              <input type="number" ng-model="sportoption.f.feature" ng-change="setMets()" placeholder="meter">
-            </label>
-            <label class="item-input item-select l_bottom" ng-if="sportoption.s.feature === 'Strength'">
-              <span class="input-label lable_sty">強度</span>
-              <select ng-model="sport_selectoption.f" ng-options="sf.Remark for sf in sl_f | filter:sportoption.s.name" ng-Blur="setf()" >
-                 
-              </select>  
-            </label>
-            <label class="item-input l_bottom" >
-              <span class="input-label lable_sty">消耗熱量</span>
-              <p >{{ sportoption.f.mets * (sportoption.f.cost/60) * basedata.weight | number:0 }} &nbsp&nbspcal</p>
-            </label>
-        </div>
+            <h2 class="center item-divider " style="margin-right:-20px">輸入時間</h2>
+            <div class="row" style="margin-top:20px">
+                <label class="col-50 item-floating-label" style="margin-left:20px;margin-right:0px">
+                  <span class="input-label">開始時間</span>
+                  <input type="time" ng-model="timedata.start" ng-Blur="timeBlur2(0)" ng-change="timechange(0)" placeholder="Start" >
+                </label>
+        
+                <label class="col-50 item-floating-label" style="">
+                  <span class="input-label">結束時間</span>
+                  <input type="time" ng-model="timedata.end" ng-Blur="timeBlur2(1)" ng-change="timechange(2)"  placeholder="End" >
+                </label>
+              </div>
+          </div>
 
-        <div class="item" style="padding:0px;" ng-show="!if_edit">
-          <h2 class="center item-divider " style="margin-right:-20px;margin-bottom:6px">選擇計劃</h2>
-            <label class="item-input item-select l_bottom">
-              <span class="input-label lable_sty">月份</span>
-              <select  ng-model="se.k"  ng-options="p as p.$key for p in basedata.plan_list | toArray | orderBy: '-$key'"  >  
-              </select>  
-            </label>
-            <label class="item-input item-select l_bottom">
-              <span class="input-label lable_sty">計劃</span>
-              <select ng-model="se.m"  ng-options="v as (v.pdate.getDate()+'日 ' + v.pname ) for v in se.k | orderBy:'-pdate'">  
-                <option ng-if="!se.k " value="" >
-                  {{key.pd || '今天的計劃' | date:'MM / dd 的計劃' }}            
-                </option>
-              </select>  
-            </label>
-        </div>
-        <br>
-        <br>
-        <br>
-        <br>
+          <div class="item list" >
+              <label class="item-input" ng-click="nextb()">
+                <span class="input-label lable_sty" >運動</span>
+                <h2>{{sportoption.s.name}}</h2>       
+              </label>
+              <label class="item-input l_bottom"  >
+                  <span class="input-label lable_sty">分鐘</span>
+                  <input type="number" ng-model="timedata.total" min="0" ng-Blur="timeBlur()" ng-focus="timeFocus()" ng-change="timechange(1)"  placeholder="Time">
+              </label>
+              <label class="item-input l_bottom" ng-if="sportoption.s.feature === 'length'">
+                <span class="input-label lable_sty">距離(公尺)</span>
+                <input type="number" ng-model="sportoption.f.feature" ng-change="setMets()" placeholder="meter">
+              </label>
+              <label class="item-input l_bottom" ng-if="sportoption.s.feature === 'Watt'">
+                <span class="input-label lable_sty">瓦數</span>
+                <input type="number" ng-model="sportoption.f.feature" ng-change="setMets()" placeholder="meter">
+              </label>
+              <label class="item-input item-select l_bottom" ng-if="sportoption.s.feature === 'Strength'">
+                <span class="input-label lable_sty">強度</span>
+                <select ng-model="sport_selectoption.f" ng-options="sf.Remark for sf in sl_f | filter:sportoption.s.name" ng-Blur="setf()" >
+                   
+                </select>  
+              </label>
+              <label class="item-input l_bottom" >
+                <span class="input-label lable_sty">消耗熱量</span>
+                <p >{{ sportoption.f.mets * (sportoption.f.cost/60) * basedata.weight | number:0 }} &nbsp&nbspcal</p>
+              </label>
+          </div>
 
-  </ion-content>
+          <div class="item" style="padding:0px;" ng-show="!if_edit">
+            <h2 class="center item-divider " style="margin-right:-20px;margin-bottom:6px">選擇計劃</h2>
+              <label class="item-input item-select l_bottom">
+                <span class="input-label lable_sty">月份</span>
+                <select  ng-model="se.k"  ng-options="p as p.$key for p in basedata.plan_list | toArray | orderBy: '-$key'"  >  
+                </select>  
+              </label>
+              <label class="item-input item-select l_bottom">
+                <span class="input-label lable_sty">計劃</span>
+                <select ng-model="se.m"  ng-options="v as (v.pdate.getDate()+'日 ' + v.pname ) for v in se.k | orderBy:'-pdate'">  
+                  <option ng-if="!se.k " value="" >
+                    {{key.pd || '今天的計劃' | date:'MM / dd 的計劃' }}            
+                  </option>
+                </select>  
+              </label>
+          </div>
+          <br>
+          <br>
+          <br>
+          <br>
+    </ion-content>
+  </div>
 
-  <button class="button button-block button-calm" style="bottom:0;position: fixed;" ng-click="nextb()" ng-show="n.n">下一步</button>
+  <button class="button button-block button-calm" style="bottom:0;position: fixed;" ng-click="nextb()" ng-if="n.n">下一步</button>
   <button class="button button-block button-calm" style="bottom:0;position: absolute ;" ng-click="add_activity()" ng-show="!n.n">送出</button>
 
   </ion-modal-view>

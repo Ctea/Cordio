@@ -9,11 +9,11 @@
     <ion-floating-item icon="ion-ios-paper" click="add_plan()" text="新增計劃"></ion-floating-item>  
 </ion-floating-menu>
 <div class="bar bar-subheader" style="height:20px" ng-show="subtitleShow">
-  <p ng-bind="plan_list_subtitle.subtitle" style="padding:0;margin:0" class="title item-divider center"></p>
+  <p ng-bind="plan_list_subtitle.subtitle" style="padding:0;margin:0" class="title item-divider center subheader-style"></p>
 </div>
 <ion-content class="has-header" delegate-handle="mainScroll" on-scroll="scrollEvent('mainScroll')">
 	<div ng-repeat="sl in basedata.plan_list | toArray | orderBy: key_sort.m " >	
-		<p id="{{sl.$key}}" class=" item-divider center">{{sl.$key}}</p>
+		<p id="{{sl.$key}}" class="pl-item item-divider center">{{sl.$key}}</p>
 		<timeline>
 			<ion-list style=" padding: 0px !important;" >
 				<ion-item ng-repeat="e in sl | orderBy: key_sort.d " ng-click="to_p(sl.$key, sl.indexOf(e), e.pdate)" class="item-remove-animate item-borderless" >

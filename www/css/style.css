@@ -6,13 +6,13 @@ html, body,  h2, h4, h5 {
   background-color: #61C791 !important;
 }
 .bar-stable > h1 {
- color:#292929 !important;
+ color:#333745 !important;
  font-weight: bold !important;
  letter-spacing: 1px;
  font-size: 20px  !important;
 }
 .bar > .icon {
- color:#292929 !important;
+ color:#333745 !important;
 }
 
 .menustyle {
@@ -21,7 +21,7 @@ html, body,  h2, h4, h5 {
   height:185px;
   box-shadow:0px 4px 4px rgba(20%,20%,40%,0.5);
   z-index: 9;
-  color: #FAFAFA;
+  color: #FAFAFA ;
 }
 
 
@@ -67,6 +67,24 @@ h3 {
 
 .l_bottom {
   margin-top: -5px
+}
+
+ion-header-bar {
+  z-index: 10 !important;
+}
+
+.subheader-style {
+  margin-top: -5px !important;
+  font-size: 16px !important;
+  height:40px !important;
+  background-color: #77C4D3;
+  font-weight: bold !important; 
+}
+
+.pl-item {
+  color: #1C1D21;
+  font-weight: bold !important;
+  background-color: #77C4D3;
 }
 
 .lable_sty {
