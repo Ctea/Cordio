@@ -5,8 +5,12 @@
 </ion-header-bar>
 
 <ion-content class="has-header padding" >
-
-<button class="button" ng-click="save_data()">123</button>
+<div class="">
+<canvas id="line" class="chart chart-line " chart-data="data"
+chart-labels="labels" chart-series="series" chart-colors="colors" chart-options="{showTooltips:false}">
+</canvas>
+</div>
+<button class="button" ng-click="scheduleSingleNotification()">t</button>
 </ion-content> 
 
 

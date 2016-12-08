@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   var db = null;
-  var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll'])
+  var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll', 'chart.js'])
   .run(function($ionicPlatform, $cordovaSQLite) {
     $ionicPlatform.registerBackButtonAction(function(event) {
       if (true) { // your check here
@@ -29,62 +29,6 @@
       }
       if(window.StatusBar) {
         StatusBar.styleDefault();
-      }
-
-      // Push Notifications V5
-      if (window.cordova) {
-        localStorage.myPush = 'test'; // I use a localStorage variable to persist the token
-        $cordovaPushV5.initialize(  // important to initialize with the multidevice structure !!
-            {
-                android: {
-                    senderID: "1111111111"
-                },
-                ios: {
-                    alert: 'true',
-                    badge: true,
-                    sound: 'false',
-                    clearBadge: true
-                },
-                windows: {}
-            }
-        ).then(function (result) {
-            $cordovaPushV5.onNotification();
-            $cordovaPushV5.onError();
-            $cordovaPushV5.register().then(function (resultreg) {
-                localStorage.myPush = resultreg;
-                // SEND THE TOKEN TO THE SERVER, best associated with your device id and user
-            }, function (err) {
-                // handle error
-            });
-        });
-      
-      $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data) {  // use two variables here, event and data !!!
-          if (data.additionalData.foreground === false) {
-              // do something if the app is in foreground while receiving to push - handle in app push handling
-              
-          } else {
-             // handle push messages while app is in background or not started
-          }
-          if (Device.isOniOS()) {
-              if (data.additionalData.badge) {
-                  $cordovaPushV5.setBadgeNumber(NewNumber).then(function (result) {
-                      // OK
-                  }, function (err) {
-                      // handle error
-                  });
-              }
-          }
-
-          $cordovaPushV5.finish().then(function (result) {
-              // OK finished - works only with the dev-next version of pushV5.js in ngCordova as of February 8, 2016
-          }, function (err) {
-              // handle error
-          });
-      });
-
-      $rootScope.$on('$cordovaPushV5:errorOccurred', function(event, error) {
-          // handle error
-      });
       }
 
       // SQLite
@@ -136,8 +80,6 @@
               templateUrl: 'templates/about.html',
               controller: function($scope) {
                   $scope.setTitle("About");
-                  $scope.getBMI();
-                  $scope.getBMR();
               }
           })    
           .state('plan_list', {
@@ -179,8 +121,13 @@
           })
        $urlRouterProvider.otherwise('/');
   })
-  .controller ("mainController", ['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite', '$ionicBackdrop',function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite, $ionicBackdrop) {
-  
+  .controller ("mainController",['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite) {
+  $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+  $scope.series = ['Series A', 'Series B'];
+  $scope.data   = [65, 59, 80, 81, 56, 55, 40] ;
+  $scope.colors = ['#72C02C', '#3498DB', '#717984', '#F1C40F']
+
+
     // ----------- base-data ----------------- 
         $scope.basedata = {
           sex : '',          //  性別
@@ -245,33 +192,53 @@
         var w = $scope.basedata.weight;
         $scope.basedata.BMI =  w/(h*h);
       };
-      $scope.save_data = function(){
-        firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
-            //$scope.savlocSQL();
-            $scope.set_basedata_Firebase();
-            $scope.set_plan_Firebase();
-            $scope.set_activity_Firebase();
-          } else {
-            $scope.savlocSQL();
-          }
-        })
+      $scope.save_basedata = function(){
+        var bd = $scope.basedata
+        if(bd.age != '' && bd.sex != '' && bd.height != '' && bd.width != ''){
+          $scope.getBMI();
+          $scope.getBMR();
+          $scope.set_basedata_Firebase();
+          $state.go('basedata')
+        }else {
+          var alertPopup = $ionicPopup.alert({
+                 template: '<h3 class=" center ">請選擇輸入完整的資料</h3>',
+                 okText: '確定',
+                 okType: 'button button-calm'
+          });
+        }
+            
       }
+ 
+      
 
     // ----------- Firebase and Sqlite -------------
-        $scope.savlocSQL = function(){
-          var query = "INSERT INTO userd (username, basedata) VALUES (?,?)";
-          $cordovaSQLite.execute(db, query, [$scope.userinfo.name, JSON.stringify($scope.basedata)]).then(function(res) {
+/*        $scope.savlocSQL = function(){
+          var query = "SELECT basedata FROM userd WHERE username = ?";
+          $cordovaSQLite.execute(db, query, ['admin']).then(function(res) {
+            if(res.rows.length == 0) {  
+              var insert = "INSERT INTO userd (username, basedata) VALUES (?,?)";
+              $cordovaSQLite.execute(db, insert, ['admin', JSON.stringify($scope.basedata)]).then(function(res) { 
+              }, function (err) {
+                console.error(err);
+              });
+ 
+            } else {
+              var updata = "UPDATE userd SET basedata = ? WHERE username = ?";
+              $cordovaSQLite.execute(db, updata, [JSON.stringify($scope.basedata), 'admin']).then(function(res) {
+              }, function (err) {
+                console.error(err);
+              }); 
+            }
           }, function (err) {
-            console.error(err);
-          });     
+            console.error(err);       
+          });
+            
         }
-
         $scope.sellocSQL = function(){
           var query = "SELECT basedata FROM userd WHERE username = ?";
-          $cordovaSQLite.execute(db, query, [$scope.userinfo.name]).then(function(res) {
+          $cordovaSQLite.execute(db, query, ['admin']).then(function(res) {
             if(res.rows.length > 0) {
-              $scope.basedata = JSON.parse(res.rows[0]);
+              $scope.basedata = JSON.parse(res.rows[0].basedata);
             } else {
                console.log("No results found");
             }
@@ -279,23 +246,22 @@
             console.error(err);       
           });    
         }
-
+*/
         $scope.set_basedata_Firebase = function(){
           var user = firebase.auth().currentUser;
           if (user != null) {
             var userId = user.uid;
             var starCountRef ='user_data/'
             var bd = $scope.basedata;
-            var f = firebase.database().ref(starCountRef+userId+'/')
-            f.update({
-              sex : bd.sex,
-              age : bd.age,
-              height : bd.height, 
-              weight : bd.weight, 
-              BMI : bd.BMI,  
-              min_BMR : bd.min_BMR,     
-              max_BMR : bd.max_BMR,      
-            });
+            angular.forEach(bd, function(v, k){
+
+              if (k != 'plan_list' & k != 'food_list') {
+                if ( v ) {
+                  var f = firebase.database().ref(starCountRef+userId+'/'+k).set(v)
+                };
+              };
+            })
+ 
           } 
         }
         $scope.set_plan_Firebase = function(){
@@ -305,35 +271,37 @@
             var starCountRef ='user_data/'
             var planlist = $scope.basedata.plan_list
               angular.forEach(planlist, function(pval, pkey){
-                for (var i = 0; i < pval.length; i++) {
-                    firebase.database().ref(starCountRef+userId+'/plan_list/'+pkey+'/'+ i).update({
-                      pname : pval[i].pname,
-                      pdate : pval[i].pdate.getTime(),
-                      pbr_in : pval[i].pbr_in,
-                      p_total_mets : pval[i].p_total_mets,
-                    });
-                };       
+                  for (var i = 0; i < pval.length; i++) {
+                      firebase.database().ref(starCountRef+userId+'/plan_list/'+pkey+'/'+ i).update({
+                        pname : pval[i].pname,
+                        pdate : pval[i].pdate.getTime(),
+                        pbr_in : pval[i].pbr_in,
+                        p_total_mets : pval[i].p_total_mets,
+                      });
+                  };
+                       
               })  
           } 
         }
-        $scope.set_activity_Firebase = function(){
+        $scope.set_activity_Firebase = function(k, pid){
           var user = firebase.auth().currentUser;
           if (user != null) {
             var userId = user.uid;
             var starCountRef ='user_data/'
-            var psplist = $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].psplist
-            firebase.database().ref(starCountRef+userId+'/plan_list/'+$scope.key.k+'/'+ $scope.key.pid).update({
-              p_total_mets : $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].p_total_mets,
-            })
+            var totalmet = angular.copy($scope.basedata.plan_list[k][pid].p_total_mets)
+            var psplist = angular.copy($scope.basedata.plan_list[k][pid].psplist)
             for (var i = 0; i < psplist.length; i++) {
-              firebase.database().ref(starCountRef+userId+'/plan_list/'+ $scope.key.k +'/'+ $scope.key.pid +'/psplist/'+i).update({
+              firebase.database().ref(starCountRef+userId+'/plan_list/'+ k +'/'+ pid +'/psplist/'+i).update({
                 sname    : psplist[i].sname,
                 sstart   : psplist[i].sstart.getTime(),
                 send     : psplist[i].send.getTime(),
                 sfeature : psplist[i].sfeature,
                 smets    : psplist[i].smets
-              });   
-            };            
+              });  
+            };     
+            firebase.database().ref(starCountRef+userId+'/plan_list/'+k+'/'+ pid).update({
+              p_total_mets : totalmet
+            })       
           } 
         }
 
@@ -368,11 +336,14 @@
         }
         $scope.remove_activity_Firebase = function(k, pid, aid){
           var user = firebase.auth().currentUser;
-          if (user != null) {
+          if (user != null) {     
             var userId = user.uid;
             var adaRef = firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+pid+'/psplist/'+aid);
             adaRef.remove()
               .then(function() {
+                firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+ pid).update({
+                  p_total_mets : $scope.basedata.plan_list[k][pid].p_total_mets,
+                })
                 var ref = firebase.database().ref('user_data/'+userId+'/plan_list/'+k+'/'+pid+'/psplist/')
                 ref.once('value').then(function(data){
                   if(data.exists()){
@@ -396,8 +367,9 @@
 
         $scope.select_Firebase = function(){
           var user = firebase.auth().currentUser;
-          if (user != null) {
+          if (user != null) { 
             var userId =user.uid
+            var bd = $scope.basedata
             var starCountRef = firebase.database().ref('user_data/'+userId+'/'); 
             starCountRef.once('value').then(function(data){
               if( data.exists() ){
@@ -410,7 +382,7 @@
                     BMI : data.child('BMI').val(),  
                     min_BMR : data.child('min_BMR').val(),     
                     max_BMR : data.child('max_BMR').val(),
-                    plan_list : {},    
+                    plan_list : data.child('plan_list').val() || {},    
                     food_list : [] 
                   };
                   if (data.child('plan_list').exists()) {
@@ -440,8 +412,7 @@
                           }
                         };   
                       };       
-                    }) 
-                    
+                    })    
                   };
                 });
               };
@@ -482,7 +453,7 @@
                     name : user.displayName,
                     email : user.email,
                     photoURL : user.photoURL
-                  };
+                  };  
                   $scope.userinfo = info;
                   $scope.select_Firebase();
                 });
@@ -525,29 +496,11 @@
               name : '未登入帳號',
               photoURL : '/img/ionic.png'
           };
-          $scope.basedata = {
-            sex : '',          //  性別
-            age : '',          //  年齡
-            height : '',       //  身高
-            weight : '',       //  體重
-            BMI : '',          //  BMI
-            min_BMR : '',      //  基礎代謝率
-            max_BMR : '',      //
-            plan_list : {},
-            food_list : [] 
-          }
         }, function(error) {
           // An error happened.
         });
         $scope.toggleLeftSideMenu();
       }      
-
-      $scope.write = function(){
-            var v = firebase.database().ref('user_data/aa/')
-            v.on('value', function(data){
-                console.log(data.val().age)
-            })
-      }
 
     // ----------- radio but controll ------------- 
       $scope.currentChose = '';
@@ -844,7 +797,7 @@
                  okType: 'button button-calm'
               });
           }  
-          $scope.set_activity_Firebase();      
+          $scope.set_activity_Firebase($scope.key.k, $scope.key.pid);      
       };
 
       $scope.init_activity = function( k, pd, so, start, end, total) {
@@ -975,6 +928,7 @@
                         $scope.basedata.plan_list[ym] = [];
                     $scope.basedata.plan_list[ym].push(tmps);              
                   }
+
                   $scope.set_plan_Firebase();
                 }
               }
@@ -1082,6 +1036,7 @@
       };
 
     // ----------- Other ----------------------
+  
       $scope.showpbr = function($event, v) {
         var template = '<ion-popover-view style="height:150px;width:200px"><ion-content class="padding" ><p>'+ v +'</p></ion-content></ion-popover-view>';
         var popover = $ionicPopover.fromTemplate(template, {

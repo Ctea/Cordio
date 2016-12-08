@@ -13,9 +13,10 @@ angular.module('services', ['ngAnimate'])
 
   return {
     getUser: getUser,
-    setUser: setUser
+    setUser: setUser,
   };
 })
+
 
 .filter('toArray', function() { return function(obj) {
     if (!(obj instanceof Object)) return obj;
