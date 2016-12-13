@@ -5,12 +5,33 @@
 </ion-header-bar>
 
 <ion-content class="has-header padding" >
-<div class="">
-<canvas id="line" class="chart chart-line " chart-data="data"
-chart-labels="labels" chart-series="series" chart-colors="colors" chart-options="{showTooltips:false}">
-</canvas>
+<div class="card home_msg_d1 padding" >
+	
 </div>
-<button class="button" ng-click="scheduleSingleNotification()">t</button>
+<div class="card" style="padding:0;height:15%">
+	<div class="row" style="padding:0" ng-show="home_data.recent_sport">
+		<p class="col-33 center" style="margin-top:10%">{{home_data.pdate | date:'MM / dd'}}</p>
+		<div class="col-67" style="margin-top:5%">
+			<p>{{home_data.recent_sport.sstart | date:'HH：mm'}} 的 {{home_data.recent_sport.sname}} 活動</p>
+			<p>花費 {{home_data.recent_sport.sfeature.cost}} 分鐘，{{home_data.recent_sport.sname+ home_data.recent_sport.sfeature.feature}} 公尺 </p>		
+		</div>
+	</div>
+	<p class="center" style="margin-top:10%" ng-show="!home_data.recent_sport">	
+		最近沒有活動，多運動對身體有益健康喔！
+	</p>
+</div>
+<div class="">
+	
+</div>
+
+
+<!-- <ion-spinner icon="android" class="spinner-balanced"></ion-spinner>
+<button class="button" ng-click="br()">b</button>
+<p>{{fitbit_data}}</p>
+<button class="button" ng-click="addNotification()"></button>
+<button class="button" ng-click="getFit()"></button>
+<button  class="button" ng-click="facebookLogin()"></button> -->
+
 </ion-content> 
 
 

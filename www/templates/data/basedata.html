@@ -1,4 +1,4 @@
-<ion-header-bar class="bar-stable">
+<ion-header-bar align-title="center" class="bar-stable">
     <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
     <h1 class="title" >{{ title }}</h1> 
     <button class="button icon button-clear ion-edit" ui-sref="basedata_edit"></button>
@@ -11,7 +11,7 @@
 </ion-floating-menu> -->
 
 <ion-content class="has-header padding" >
-  <div ng-show="!basedata.sex">
+  <div class="center" ng-show="!basedata.sex">
     <p>您未輸入任何資料</p>
   </div>
   <div class="list" ng-show="basedata.sex">

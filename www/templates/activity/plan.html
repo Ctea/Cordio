@@ -21,9 +21,11 @@
                 <div style="padding-left:10px">
                     <h2 >{{ p.sname }}</h2>
                     <p>耗時：{{ p.sfeature.cost || '' }} &nbsp分鐘</p>
-                    <p ng-show="p.sfeature.strength === 'length'">距離：{{ p.sfeature.feature || '' }} &nbsp公尺</p>
-                    <p ng-show="p.sfeature.strength === 'Watt'">瓦數：{{ p.sfeature.feature || '' }} &nbsp瓦</p>
-                    <p ng-show="p.sfeature.strength === 'Strength'">強度：{{ p.sfeature.feature || '' }}</p>
+                    <div ng-show="p.sfeature.feature">
+                        <p ng-show="p.sfeature.strength === 'length'">距離：{{ p.sfeature.feature || '' }} &nbsp公尺</p>
+                        <p ng-show="p.sfeature.strength === 'Watt'">瓦數：{{ p.sfeature.feature || '' }} &nbsp瓦</p>
+                        <p ng-show="p.sfeature.strength === 'Strength'">強度：{{ p.sfeature.feature || '' }}</p>
+                    </div>  
                     <p>熱量消耗：{{ p.smets * basedata.weight | number:0 }} &nbsp cal</p>
                 </div>     
             </div>          

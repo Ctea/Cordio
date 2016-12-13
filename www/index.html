@@ -14,8 +14,6 @@
     <link href="css/ionic.app.css" rel="stylesheet">
     -->
 
-
-
   </head>
   <body >
     <ion-pane> 
@@ -28,7 +26,7 @@
         <ion-content class="menustyle" scroll="false">
             <div class="padding " >
               <div class="padding" style="height:100px">
-                <img src="{{userinfo.photoURL || ''}}" style="max-height:70px;margin-top:10px; border:1px solid #FAFAFA;">
+                <img src="{{userinfo.photoURL}}"  style="max-height:70px;margin-top:10px; border:1px solid #FAFAFA;">
               </div>
               <div class="padding" style="height:56px">
                 <p ng-bind="userinfo.name" style="font-size:16px"></p> 
@@ -36,7 +34,7 @@
               </div>
             </div>
         </ion-content > 
-        <ion-content style="margin-top:185px" scroll="true">
+        <ion-content style="margin-top:185px">
             <div class="list padding">
                 <button class="button-full item item-icon-left left" ui-sref="home" ng-click="toggleLeftSideMenu()">
                   <i class="icon ion-ios-home"></i>
@@ -79,6 +77,9 @@
     <!-- angular-chart -->
     <script src="lib/chart.js/dist/Chart.min.js"></script>
     <script src="lib/angular-chart.js/dist/angular-chart.min.js"></script>
+
+    <!-- ion-floating-menu -->
+    <script src="lib/angular-local-storage/dist/angular-local-storage.min.js"></script>
 
     <!-- ion-floating-menu -->
     <script src="lib/ion-floating-menu/dist/ion-floating-menu.js"></script>

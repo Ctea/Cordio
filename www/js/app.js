@@ -1,22 +1,44 @@
 (function () {
   "use strict";
   var db = null;
-  var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll', 'chart.js'])
+  var ionicApp = angular.module('mainApp', ['ionic', 'ngCordova', 'ion-floating-menu', 'ui.sortable', 'services','firebase','ngCordovaOauth' , 'angular-timeline','angular-scroll-animate', 'tabSlideBox', 'ui.scroll', 'chart.js', 'LocalStorageModule'])
   .run(function($ionicPlatform, $cordovaSQLite) {
-    $ionicPlatform.registerBackButtonAction(function(event) {
-      if (true) { // your check here
-        $ionicPopup.confirm({
-          title: 'System warning',
-          template: 'are you sure you want to exit?'
-        }).then(function(res) {
-          if (res) {
-            ionic.Platform.exitApp();
-          }
-        })
-      }
-    }, 100);
+      $ionicPlatform.registerBackButtonAction(function(e) {
+        e.preventDefault();
+        /**
+         * 退出app
+         */
+        function showConfirm() {
+            $ionicPopup.confirm({
+                title: '提示',
+                subTitle: '確定要退出程式嗎？',
+                okText: '退 出',
+                okType: 'button-positive',
+                cancelText: '取 消'
+            }).then(function(res) {
+                if (res) {
+                    ionic.Platform.exitApp();
+                } 
+            })
+        }
+
+        /**
+         *
+         * @param title 标题
+         * @param content 内容
+         */
+        // Is there a page to go back to?
+        if ($ionicHistory.backView()) {
+              $ionicHistory.goBack(-1);
+        } else {
+            // This is the last page: Show confirmation popup
+            showConfirm();
+        }
+        return false;
+    }, 101);
 
     $ionicPlatform.ready(function() {
+
       if(window.cordova && window.cordova.plugins.Keyboard) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -26,27 +48,54 @@
         // from snapping when text inputs are focused. Ionic handles this internally for
         // a much nicer keyboard experience.
         cordova.plugins.Keyboard.disableScroll(true);
+        cordova.plugins.backgroundMode.enable();
       }
       if(window.StatusBar) {
         StatusBar.styleDefault();
       }
 
-      // SQLite
       if (window.cordova) {
-        db = $cordovaSQLite.openDB({ name: "my.db" }); //device
-      }else{
-        db = window.openDatabase("my.db", '1', 'my', 1024 * 1024 * 100); // browser
+          document.addEventListener("deviceready", function() {
+            window.plugin.notification.local.onadd = ionicApp.onReminderAdd;
+            window.plugin.notification.local.onclick = ionicApp.onReminderClick;
+            window.plugin.notification.local.oncancel = ionicApp.onReminderCancel;
+            window.plugin.notification.local.ontrigger = ionicApp.onReminderTrigger;
+         }, false);
       }
-      $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS userd (id integer primary key,username text,basedata text)");
+
+      ionicApp.onReminderAdd = function(id, state, json) {
+        $timeout(function() {
+          $rootScope.$broadcast('onReminderAdded', id, state, json);
+        }, 100);
+      }
+      // SQLite
+       /* if (window.cordova) {
+          db = $cordovaSQLite.openDB({ name: "my.db" }); //device
+        }else{
+          db = window.openDatabase("my.db", '1', 'my', 1024 * 1024 * 100); // browser
+        }
+        $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS userd (id integer primary key,username text,basedata text)");*/
+    
     });
   })
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider, $urlRouterProvider, $cordovaInAppBrowserProvider) {
+      var defaultOptions = {
+        location: 'no',
+        clearcache: 'no',
+        toolbar: 'no'
+      };
+
+      document.addEventListener("deviceready", function () {
+        $cordovaInAppBrowserProvider.setDefaultOptions(options)
+      }, false);
+
       $stateProvider
           .state('home', {
               url: '/',
               templateUrl: 'templates/home.html',
               controller: function($scope) {
                   $scope.setTitle('健康管理');
+                  $scope.get_recent_date();     
               }
           })
 
@@ -121,13 +170,55 @@
           })
        $urlRouterProvider.otherwise('/');
   })
-  .controller ("mainController",['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite) {
-  $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-  $scope.series = ['Series A', 'Series B'];
-  $scope.data   = [65, 59, 80, 81, 56, 55, 40] ;
-  $scope.colors = ['#72C02C', '#3498DB', '#717984', '#F1C40F']
+  .controller ("mainController",['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite', '$cordovaInAppBrowser', 'localStorageService', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite, $cordovaInAppBrowser, localStorageService  ) {
+    $scope.addNotification = function() {
+      window.plugin.notification.local.add({
+          id: 'MYLN',
+          title:   'tit',
+          message: 'msg',
+          icon:      'ic_notification',
+          smallIcon: 'ic_notification_small',
+      });
+    }
 
+    $scope.br = function(){
+      var options = {
+        location: 'no',
+        clearcache: 'no',
+        toolbar: 'no'
+      };
 
+      document.addEventListener("deviceready", function () {
+        $cordovaInAppBrowser.open('https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=227WLD&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800',  '_self', options)
+          .then(function(event) {
+          })
+          .catch(function(event) {
+            // error
+          });
+      }, false);
+    }
+
+    $rootScope.$on('$cordovaInAppBrowser:loaderror', function(e, event){
+      var token = event.url.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
+      var url = event.url.toString();
+      $scope.fitbit_data = {
+          t: token,
+          uid : url.substring(url.indexOf('user_id=') + 8 ,url.indexOf('&',url.indexOf('user_id')))
+      }
+      $cordovaInAppBrowser.close();
+    });
+
+ 
+    $scope.getFit = function(){
+      $http.get('https://api.fitbit.com/1/user/'+ $scope.fitbit_data.uid +'/activities/date/2016-12-03.json',{
+        headers:{
+          "Authorization": 'Bearer '+$scope.fitbit_data.t
+        }
+      }).success(function(data) { 
+        console.log(data);
+      });
+    }
+    
     // ----------- base-data ----------------- 
         $scope.basedata = {
           sex : '',          //  性別
@@ -140,6 +231,24 @@
           plan_list : {},    //  計劃列表
           food_list : []     //  飲食
         }
+
+        /*
+        plan_list
+        { key : 
+          [{ pname
+             pdate
+             pbr_in
+             p_total_mets
+             psplist : [{
+                          sname
+                          start
+                          send
+                          sfeature
+                          smets
+                       }]
+          }]
+        }*/
+
         //button-style
         $scope.butsty = {
           'padding': 0,
@@ -207,12 +316,66 @@
           });
         }
             
-      }
- 
-      
+      }   
 
-    // ----------- Firebase and Sqlite -------------
-/*        $scope.savlocSQL = function(){
+    // ----------- Home function -----------------
+        $scope.get_recent_date = function(){
+          var ym = '';
+          if ((new Date().getMonth()+1) < 10) 
+              ym = new Date().getFullYear() + '-0' + (new Date().getMonth()+1)        
+          else
+              ym = new Date().getFullYear() + '-' + (new Date().getMonth()+1)  
+          var d = new Date().getDate();  
+          var plan_list = angular.copy($scope.basedata.plan_list)
+          if (plan_list[ym]) {
+            for (var i = 0; i < plan_list[ym].length; i++) { 
+              if (plan_list[ym][i].pdate.getDate() === d) {
+                $scope.home_data = {
+                    pm : ym,
+                    pname : plan_list[ym][i].pname,
+                    pdate : plan_list[ym][i].pdate,
+                    pbr_in : plan_list[ym][i].pbr_in,
+                    p_total_mets : plan_list[ym][i].p_total_mets,
+                    psplist : plan_list[ym][i].psplist,
+                    recent_sport : null
+                }
+              }else {
+                $scope.home_data = {
+                    pm : ym,
+                    pname : '',
+                    pdate : new Date(),
+                    pbr_in : '',
+                    p_total_mets : 0,
+                    psplist : [],
+                    recent_sport : null
+                }
+              }          
+            };
+          }else {
+            $scope.home_data = {
+                    pm : ym,
+                    pname : '',
+                    pdate : new Date(),
+                    pbr_in : '',
+                    p_total_mets : 0,
+                    psplist : [],
+                    recent_sport : null
+                }
+          }
+          $scope.get_recent_sport();
+        }
+
+        $scope.get_recent_sport = function(){
+          var data = $scope.home_data.psplist;
+            for (var i = 0; i < data.length; i++) {
+              var time = data[i].sstart.getTime() - new Date().getTime() 
+              if (time <= (1000 * 600) && time > (-1000*600)) {
+                $scope.home_data.recent_sport = data[i];
+              };
+            };
+        }
+
+        $scope.savlocSQL = function(){
           var query = "SELECT basedata FROM userd WHERE username = ?";
           $cordovaSQLite.execute(db, query, ['admin']).then(function(res) {
             if(res.rows.length == 0) {  
@@ -246,7 +409,7 @@
             console.error(err);       
           });    
         }
-*/
+        
         $scope.set_basedata_Firebase = function(){
           var user = firebase.auth().currentUser;
           if (user != null) {
@@ -278,11 +441,12 @@
                         pbr_in : pval[i].pbr_in,
                         p_total_mets : pval[i].p_total_mets,
                       });
-                  };
-                       
+                  };                    
               })  
           } 
         }
+
+
         $scope.set_activity_Firebase = function(k, pid){
           var user = firebase.auth().currentUser;
           if (user != null) {
@@ -415,9 +579,13 @@
                     })    
                   };
                 });
+                $scope.$apply(function(){
+                  $scope.get_recent_date();
+                })  
               };
             });                  
           } 
+
         }
 
     // ----------- sport-data ----------------- 
@@ -438,7 +606,7 @@
     // ----------- login -----------------
       $scope.userinfo = {
             name : '未登入帳號',
-            photoURL : '/img/ionic.png'
+            photoURL : './img/ionic.png'
       };
 
       firebase.auth().onAuthStateChanged(function(user) {
@@ -454,14 +622,16 @@
                     email : user.email,
                     photoURL : user.photoURL
                   };  
+                  $scope.loging = true;
                   $scope.userinfo = info;
-                  $scope.select_Firebase();
+                  $scope.select_Firebase(); 
                 });
-              }
-            $scope.loging = true;      
+              }      
           } else {
             $scope.loging = false;
           }
+          
+
       });
 
       $scope.googleLogin = function() {
@@ -490,12 +660,43 @@
           }
       }
 
+      $scope.facebookLogin = function() {
+          var provider = new firebase.auth.FacebookAuthProvider();
+          provider.addScope('email');
+          if(ionic.Platform.isWebView()){
+                return $cordovaOauth.facebook('1836055233346017', ["email"]).then(function (result) {
+                    var credential = firebase.auth.FacebookAuthProvider.credential(result.access_token);
+                    return firebase.auth().signInWithCredential(credential);
+                }, function(error) {
+                    console.log("ERROR: " + error);
+                });
+          } else{  
+              firebase.auth().signInWithRedirect(provider).then(function(result) {    
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = result.credential.accessToken;
+                // The signed-in user info.
+                var user = result.user;
+              }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+              })
+          }
+      }
+
       $scope.signOut = function() {
         firebase.auth().signOut().then(function() {
-          $scope.userinfo = {
+          $scope.$apply(function(){
+            $scope.userinfo = {
               name : '未登入帳號',
-              photoURL : '/img/ionic.png'
-          };
+              photoURL : './img/ionic.png'
+            };
+          }) 
         }, function(error) {
           // An error happened.
         });
@@ -609,7 +810,11 @@
         name : ''
       }
       $scope.modal_show = function(){
-
+          $ionicLoading.show({
+            template: '<ion-spinner icon="android" class="spinner-balanced"></ion-spinner>',
+          }).then(function(){  
+            $scope.modal.show();   
+          });
           $scope.se.k = null;
           $scope.se.m = null;
           $scope.search.name = null;
@@ -617,9 +822,11 @@
           $scope.n = {
             n : true
           }
-          $scope.modal.show();
       }
-
+      $scope.$on('modal.shown', function() {
+        $ionicLoading.hide(); 
+      });
+    
       $scope.$on('modal.hidden', function() {
         $scope.if_edit = false;
       });
@@ -646,8 +853,8 @@
       //選擇的運動項目
       $scope.sportoption = {
         s:null,
-        f:{
-          strength: null,
+        f:{ 
+          strength:null,
           feature:null,
           cost: null,
           mets: null,
@@ -681,11 +888,11 @@
       // 清除選項資料
       $scope.clearadd_sport = function(v){
         $scope.sportoption.f = {
+          strength:null,
           feature:null,
           cost: null,
           mets: null,
         }
-    
         if (v != 1) {
           $scope.sportoption.s = null;
           $scope.timedata.start = null;
@@ -746,10 +953,17 @@
       $scope.add_activity = function() {
           var t = $scope.timedata;
           var so = $scope.sportoption;  
-          if (t.start && t.end && t.total && so.s ) {
+          var equ = null;
+          if (so.s.feature === "length" || so.s.feature === "Watt")
+            equ = (t.start && t.end && t.total && so.s && so.f.feature);
+          else if (so.s.feature === "Strength")
+            equ = (t.start && t.end && t.total && so.s && $scope.sport_selectoption.f);
+          else
+            equ = (t.start && t.end && t.total && so.s);
+
+          if (equ) {
             if (!$scope.if_edit) {
-                $scope.setpid();
-                  
+                $scope.setpid();               
                   //  如果計劃不存在
                   if ($scope.key.k === null) {
                     var sp = {
@@ -776,7 +990,6 @@
                   }else{
                     $scope.init_activity($scope.key.k, $scope.key.pd, so,new Date(t.start.getTime()+ndt.getTime()), new Date(t.end.getTime()+ndt.getTime()), t.total)
                   }
-
                   $scope.modal.hide(); 
             }else{ 
                   so.f.cost = t.total;
@@ -787,9 +1000,11 @@
                     sfeature : so.f,
                     smets :　(so.f.cost/60) * so.f.mets 
                   } 
-                  $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].p_total_mets += (so.f.cost/60) * so.f.mets ; 
+                  $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].p_total_mets += (so.f.cost/60) * so.f.mets - $scope.ed.total_met; 
+                  console.log($scope.basedata.plan_list[$scope.key.k][$scope.key.pid])
                   $scope.modal.hide(); 
-            }                    
+            }   
+            $scope.set_activity_Firebase($scope.key.k, $scope.key.pid);                      
           }else {
               var alertPopup = $ionicPopup.alert({
                  template: '<h3 class=" center ">你尚未選擇輸入資料</h3>',
@@ -797,7 +1012,7 @@
                  okType: 'button button-calm'
               });
           }  
-          $scope.set_activity_Firebase($scope.key.k, $scope.key.pid);      
+           
       };
 
       $scope.init_activity = function( k, pd, so, start, end, total) {
@@ -940,6 +1155,9 @@
           var k = $scope.key.k;
           var pid = $scope.key.pid;
           var plan = $scope.basedata.plan_list[k][pid];
+          $scope.ed = {
+            total_met : angular.copy((plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets)
+          }  
           $scope.if_edit = true;
           $scope.tmp = {
               aid : aid,
@@ -971,8 +1189,7 @@
                 return true;
             };
           };
-          $scope.basedata.plan_list[k][pid].p_total_mets -= (plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets ;  
-          $scope.set_activity_Firebase();          
+                  
       };
 
       //  刪除計劃  活動
@@ -1036,9 +1253,18 @@
       };
 
     // ----------- Other ----------------------
+      $scope.$on('$viewContentLoading', function() {
+          $ionicLoading.show({
+            template: '<ion-spinner icon="android" class="spinner-balanced"></ion-spinner>',
+          }).then(function(){   
+          });
+      });
+      $scope.$on('$viewContentLoaded', function() {
+          $ionicLoading.hide();
+      });
   
       $scope.showpbr = function($event, v) {
-        var template = '<ion-popover-view style="height:150px;width:200px"><ion-content class="padding" ><p>'+ v +'</p></ion-content></ion-popover-view>';
+        var template = '<ion-popover-view style="height:150px;width:200px"><ion-content class="padding" ><p>'+ v.replace(/\n|\r\n|\r/g, '<br/>') +'</p></ion-content></ion-popover-view>';
         var popover = $ionicPopover.fromTemplate(template, {
           scope: $scope
         })
@@ -1116,8 +1342,18 @@
              okType: 'button button-calm'
           });
         }else{
-            $scope.clearadd_sport(1);
-            $scope.n.n = !$scope.n.n;
+            if (!$scope.n.n) {
+              $ionicLoading.show({
+                template: '<ion-spinner icon="lines"></ion-spinner>',
+                duration: 1000
+              }).then(function(){             
+              });
+            };   
+            $scope.n.n = !$scope.n.n;   
+            if ($scope.sportoption.s.feature != 'length') {
+                $scope.sportoption.f.feature = null;
+            };   
+            $scope.setMets();    
         }
       };     
 

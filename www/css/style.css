@@ -2,8 +2,16 @@ html, body,  h2, h4, h5 {
   height: 100%;
   font-family: '微軟正黑體';
 }
+h1 {
+  font-family: '微軟正黑體';
+}
+h3 {
+  font-family: '微軟正黑體';
+  font-size: 18px;
+}
+
 .bar-stable {
-  background-color: #61C791 !important;
+  background-color: #67D49A !important;
 }
 .bar-stable > h1 {
  color:#333745 !important;
@@ -24,13 +32,11 @@ html, body,  h2, h4, h5 {
   color: #FAFAFA ;
 }
 
-h1 {
-  font-family: '微軟正黑體';
+.home_msg_d1 {
+  height:40%;
+  margin-top: 0px;
 }
-h3 {
-  font-family: '微軟正黑體';
-  font-size: 18px;
-}
+
 .center{
     text-align: center;
 }
@@ -156,4 +162,5 @@ ion-header-bar {
   height:30px;
   font-size:10px
 }
+
 /* --------------------- */

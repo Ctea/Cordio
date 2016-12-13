@@ -26,7 +26,7 @@
 				          <h2>{{e.pname}}</h2>
 				        </timeline-heading>
 				        <div style="width:180px;padding-top:8px">
-				        	<p on-hold="showpbr($event, e.pbr_in)">{{e.pbr_in || '&nbsp'}}</p>
+				        	<p on-hold="showpbr($event, e.pbr_in)">{{e.pbr_in}}</p>
 				        	<p>活動數量：{{ e.psplist.length }}</p> 
 				        	<p>消耗熱量總計：{{ e.p_total_mets * basedata.weight || 0 | number:0 }}</p>
 				        </div>   
