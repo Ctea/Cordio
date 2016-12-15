@@ -1,36 +1,49 @@
-<ion-header-bar align-title="center"  class="bar-stable">
+<ion-header-bar align-title="center" class="bar-stable">
     <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
     <h1 class="title">{{ title }}</h1>
 </ion-header-bar>
 
-<ion-floating-button button-color="#2894FF" icon="ion-plus-round" iconColor="#fff" click="addfoodM()" >
-</ion-floating-button>
+<ion-floating-menu menu-icon="ion-plus-round" menu-open-icon="ion-minus-round">
+    <ion-floating-item icon="ion-knife" click="addeasy_food()" text="簡易食物記錄"></ion-floating-item>
+    <ion-floating-item icon="ion-spoon" click="addfoodM()" text="詳細食物記錄"></ion-floating-item>
+</ion-floating-menu>
 
-<ion-content class="has-header padding">
-    <div class="list" ng-repeat="e in basedata.food_list |  orderBy : 'fdate' track by $index  " >
-        <div class="item item-divider icon icon-left ion-home " style="margin-bottom: 8px  ; border-width: 0px;font-size: 16px">
-            {{ (e.fdate| date:'MM/dd') +'     總計卡路里 : '+e.fcaltotal}}
-        </div>
-        <div class="item " style="margin-left: 10px ; margin-bottom: 5px ;padding: 8px ; " ng-repeat=" f in e.fitem track by $index" ng-click="to_f(basedata.food_list.indexOf(e),$index)">
-            <label> {{f.name}}</label><br>
-            <label style="font-size: 16px">{{'卡路里 : '+ f.cal}}</label>
-        </div>
-    </div>
-    <!--
-    <timeline>
-        <timeline-event ng-repeat="e in basedata.food_list track by $index" ng-click="to_f($index)" side="right">
-            <timeline-badge class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
-                <span style="font-size: 16px">{{e.fdate | date:'MM/dd'}}</span>
-            </timeline-badge>
-            <timeline-panel class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
-                <timeline-heading>
-                    <p>{{e.fdate| date:'MM/dd' + " 123"}}</p>
-                </timeline-heading>
-                <div>
-                    <p>{{ '&nbsp'}}</p>
+<ion-content class="has-header ">
+    <div  style="margin: 0px 0px 8px 0px;"  ng-repeat="e in basedata.food_list |  orderBy : '-fdate' track by $index  ">
+        <p style="margin: 0px ;font-size: 16px" class="pl-item item-divider center"> {{ (e.fdate| date:'MM/dd' + ' 總計卡路里 : '+totalkcal(basedata.food_list.indexOf(e)))}}</p>
+        <ion-list style=" padding: 0px !important;">
+            <ion-item ng-repeat=" f in e.fitem track by $index" ng-click="to_f(basedata.food_list.indexOf(e),$index)" 
+            ng-if="f.fd_details">
+                <div style="margin-left: 10px ; margin-bottom: 5px ;padding: 8px ; ">
+                    <label style="font-size: 16px"> {{f.name }}</label><label style="font-size: 12px">(詳細)</label>
+                    <br>
+                    <label style="font-size: 16px">{{'卡路里 : '+ totalitemkcal(basedata.food_list.indexOf(e), $index)}}</label>
+                    <br>
+                    <label style="font-size: 16px">{{'種類 : '+ f.fd_details.length +'種'}}</label>
                 </div>
-            </timeline-panel>
-        </timeline-event>
-    </timeline> 
--->
+                <ion-option-button class="button-stable padding" ng-click="modify_food(basedata.food_list.indexOf(e),$index)">
+                    修改
+                </ion-option-button>
+                <ion-option-button class="button-assertive padding" ng-click="deletefd_item(basedata.food_list.indexOf(e),$index)">
+                    刪除
+                </ion-option-button>
+            </ion-item>
+
+            <ion-item ng-repeat=" f in e.fitem track by $index" ng-if="!f.fd_details">
+
+                <div style="margin-left: 10px ; margin-bottom: 5px ;padding: 8px ; ">
+                    <label style="font-size: 16px"> {{f.name }}</label><label style="font-size: 12px">(簡易)</label>
+                    <br>
+                    <label style="font-size: 16px">{{'卡路里 : '+ f.kcal}}</label>
+                </div>
+                <ion-option-button class="button-stable padding" ng-click="modify_easyfood(basedata.food_list.indexOf(e),$index)">
+                    修改
+                </ion-option-button>
+                <ion-option-button class="button-assertive padding" ng-click="deletefd_item(basedata.food_list.indexOf(e),$index)">
+                    刪除
+                </ion-option-button>
+            </ion-item>
+
+        </ion-list>
+    </div>
 </ion-content>

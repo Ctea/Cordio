@@ -1,22 +1,56 @@
 <ion-header-bar align-title="center" class="bar-stable">
     <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
     <h1 class="title" >{{ title }}</h1> 
-    <button class="button icon button-clear ion-settings" ui-sref="plan_list" ></button>
 </ion-header-bar>
 
-<ion-content class="has-header padding" >
-<div class="card home_msg_d1 padding" >
-	
+
+<ion-content class="has-header padding home_c" >
+<div class="card home_msg_d1" style="padding-bottom:20px" >
+	<div ng-show="home_data.pname" style="height:120px;padding-top:20px" class="padding " ng-click="to_p(home_data.pm, home_data.pid, home_data.pdate)">
+		<h3 class="center" >{{home_data.pdate | date:'MM / dd'}}</h3>
+		<p ng-bind="home_data.pname" class="center"></p>
+		
+	</div>
+	<div ng-show="!home_data.pname" class="center" style="height:120px" ng-click="add_plan()">
+		<br>
+		<h3>你今天還沒有建立計劃喔！</h3>
+		<br>
+	</div>
+	<div class="item" >	
+		<div class="row center"   >
+			<p class="col-33">建議水份</p>
+			<p class="col-33">今日飲食</p>
+			<p class="col-33">今日活動</p>
+		</div>
+		<div class="row center "  >
+			<div class="col-33" >
+				<img ng-src="img/drop.png"  height="40px" style="margin:10px"/>
+				<p > {{basedata.weight * 33 || 0}} mL</p>
+			</div>
+			<div class="col-33" >
+				<img ng-src="img/food.png"  height="40px" style="margin:10px"/>
+				<p > {{home_data.food_c || 0}} 大卡</p>
+			</div>
+			<div class="col-33" >
+				<img ng-src="img/running.png"  height="40px" style="margin:10px"/>
+				<p > {{ home_data.p_total_mets * basedata.weight || 0 | number:0 }} 大卡</p>
+			</div>
+		</div>
+	</div>
+	<div class="row center" ng-show="basedata.min_BMR">
+		<p class="col" >BMR： {{basedata.min_BMR || 0}} </p>
+	</div>
 </div>
 <div class="card" style="padding:0;height:15%">
 	<div class="row" style="padding:0" ng-show="home_data.recent_sport">
 		<p class="col-33 center" style="margin-top:10%">{{home_data.pdate | date:'MM / dd'}}</p>
-		<div class="col-67" style="margin-top:5%">
+		<div class="col-67" style="margin-top:5%" ng-click="to_p(home_data.pm, home_data.pid, home_data.pdate)">
 			<p>{{home_data.recent_sport.sstart | date:'HH：mm'}} 的 {{home_data.recent_sport.sname}} 活動</p>
-			<p>花費 {{home_data.recent_sport.sfeature.cost}} 分鐘，{{home_data.recent_sport.sname+ home_data.recent_sport.sfeature.feature}} 公尺 </p>		
+			<p>花費 {{home_data.recent_sport.sfeature.cost}} 分鐘，消耗 {{ home_data.recent_sport.smets * basedata.weight || 0 | number:0 }} 熱量 </p>	
 		</div>
 	</div>
-	<p class="center" style="margin-top:10%" ng-show="!home_data.recent_sport">	
+
+	<p class="center " style="margin-top:10%" ng-show="!home_data.recent_sport">	
 		最近沒有活動，多運動對身體有益健康喔！
 	</p>
 </div>
@@ -24,17 +58,11 @@
 	
 </div>
 
-
-<!-- <ion-spinner icon="android" class="spinner-balanced"></ion-spinner>
-<button class="button" ng-click="br()">b</button>
-<p>{{fitbit_data}}</p>
-<button class="button" ng-click="addNotification()"></button>
-<button class="button" ng-click="getFit()"></button>
-<button  class="button" ng-click="facebookLogin()"></button> -->
-
 </ion-content> 
 
 
-
+<ion-footer-bar align-title="center" class="bar padding" ng-show="!basedata.sex">
+    <p style="color:Red;">尚未輸入個人資料</p>
+</ion-footer-bar>
 
 

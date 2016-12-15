@@ -1,0 +1,47 @@
+<ion-header-bar align-title="center" class="bar-stable">
+    <button class="button icon button-clear ion-reply" ui-sref="fitbit_list"></button>
+    <h1 ng-bind="title" class="title"></h1>
+</ion-header-bar align-title="center">
+<ion-header-bar align-title="center" class="bar bar-subheader">
+    <h2 ng-bind="activities[ac].startDate | date:'MM 月 dd 日'" class="title"></h2>
+</ion-header-bar>
+<ion-content class="has-header padding">
+    <ion-list >
+        <ion-item class="animated fadeInDown item-borderless" ng-repeat="p in activities[ac].list">
+            <div class="row">
+                <div class="col col-25 center">
+                    <p>{{ p.startTime | date:'HH:mm'}}</p>
+                    <div class="pline"></div>
+                    <p>{{fitbit_endtime()| date:'HH:mm'}}</p>
+                </div>
+                <div class="col col-75 card sportconent ">
+                    <div style="padding-left:10px">
+                        <h2>{{ p.name }}</h2>
+                        <p>耗時：{{ (p.duration / 60000 )  }} 分鐘</p>
+                        <p>熱量消耗：{{ p.calories | number:0 }} cal</p>
+                    </div>
+                </div>
+            </div>
+        </ion-item>
+    </ion-list>
+</ion-content>
+
+<!-- <div class="list">
+        <div class="row padding animated fadeInDown " ng-repeat="p in basedata.plan_list[k][pid].psplist | orderBy:'send'">
+            <div class="col-25 center">
+                <p >{{ p.sstart | date:'HH:mm'}}</p>
+                <div class="pline"></div>
+                <p >{{ p.send | date:'HH:mm'}}</p>
+            </div>
+            <div class="col-75 card sportconent " >
+                <div style="padding-left:10px">
+                    <h4 >{{ p.sname }}</h4>
+                    <p>耗時：{{ p.sfeature.cost || '' }} &nbsp分鐘</p>
+                    <p ng-show="p.sfeature.strength === 'length'">距離：{{ p.sfeature.feature || '' }} &nbsp公尺</p>
+                    <p ng-show="p.sfeature.strength === 'Watt'">瓦數：{{ p.sfeature.feature || '' }} &nbsp瓦</p>
+                    <p ng-show="p.sfeature.strength === 'Strength'">強度：{{ p.sfeature.feature || '' }}</p>
+                    <p>熱量消耗：{{ p.smets * basedata.weight | number:0 }} &nbsp cal</p>
+                </div>     
+            </div>         
+        </div>  
+    </div>   -->

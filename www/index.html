@@ -35,7 +35,7 @@
             </div>
         </ion-content > 
         <ion-content style="margin-top:185px">
-            <div class="list padding">
+            <div class="list padding inmenu">
                 <button class="button-full item item-icon-left left" ui-sref="home" ng-click="toggleLeftSideMenu()">
                   <i class="icon ion-ios-home"></i>
                   <h2 style="margin-left:18px">首頁</h2>
@@ -49,14 +49,22 @@
                   <h2 style="margin-left:18px">計劃列表</h2>
                 </button>
                 <button class="button-full item item-icon-left left" ui-sref="food" ng-click="toggleLeftSideMenu()">
-                  <i class="icon"></i>
+                  <i class="icon ion-coffee"></i>
                   <h2 style="margin-left:18px">飲食管理</h2>
+                </button>        
+                <button class="button-full item item-icon-left left" ui-sref="knowti" ng-click="toggleLeftSideMenu()">
+                  <i class="icon ion-ios-lightbulb-outline"></i>
+                  <h2 style="margin-left:18px">小常識</h2>
                 </button>
-                <button ng-show="!loging" class="button-full item item-icon-left left" ng-click="googleLogin()" >
+                <button class="button-full item item-icon-left left" ng-click="br()" >
+                  <img class="icon" src="img/Fitbit_app_icon_square.png" style="height:32px;margin-top:10px">
+                  <h2 style="margin-left:18px">Fitbit</h2>
+                </button>
+                <!-- <button ng-show="!loging" class="button-full item item-icon-left left" ng-click="googleLogin()" >
                   <i class="icon ion-log-in"></i>
                   <h2 style="margin-left:18px;color:Red">登入</h2>
-                </button>
-                <button ng-show="loging" class="button-full item item-icon-left left" ng-click="signOut()"  ui-sref="home">
+                </button> -->
+                <button ng-show="loging" class="button-full item item-icon-left left" ng-click="signOut()"  ui-sref="login">
                   <i class="icon ion-log-out"></i>
                   <h2 style="margin-left:18px">登出</h2>
                 </button>

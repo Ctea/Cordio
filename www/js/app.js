@@ -117,13 +117,10 @@
 
             })
           .state('addfooditem', {
-              url: '/addfooditem',
-              templateUrl: 'templates/food/addfooditem.html',
-              controller: function($scope) {
-                  //  $scope.setTitle( $scope.basedata.food_list[$scope.fid].fname ); 
-                  $scope.setTitle('新增記錄');
-              }
-          })
+                    url: '/addfooditem',
+                    templateUrl: 'templates/food/addfooditem.html',
+                    controller: function($scope) {}
+           })
           .state('about', {
               url: '/about',
               templateUrl: 'templates/about.html',
@@ -144,7 +141,22 @@
               controller: function($scope) {
                   $scope.setTitle($scope.basedata.plan_list[$scope.key.k][$scope.key.pid].pname);
               }
-          })  
+          })
+          .state('fitbit_list', {
+                url: '/fitbit_list',
+                templateUrl: 'templates/fitbit/Fitbit_list.html',
+                controller: function($scope) {
+                    $scope.setTitle('Fitbit');
+                }
+            })
+
+            .state('fitbit_item', {
+                url: '/fitbit_item',
+                templateUrl: 'templates/fitbit/Fitbit_item.html',
+                controller: function($scope) {
+                    $scope.setTitle('Fitbit');
+                }
+            }) 
           /*.state('add_Sport', {
               url: '/add_Sport',
               templateUrl: 'templates/activity/add_Sport.html',
@@ -152,6 +164,21 @@
                   $scope.setTitle("選擇時段與活動");
               }
           })  */
+          .state('knowti', {
+              url: '/knowti',
+              templateUrl: 'templates/know/knowti.html',
+              controller: function($scope) {
+                  $scope.setTitle('小常識');
+              }
+          })
+          .state('kn-co', {
+              url: '/know-co',
+              templateUrl: 'templates/know/kn-co.html',
+              controller: function($scope) {
+                  $scope.setTitle('小常識');
+              }
+          })
+
           .state('basedata', {
               url: '/basedata',
               templateUrl: 'templates/data/basedata.html',
@@ -168,19 +195,34 @@
                   $scope.setTitle('基本資料');
               }
           })
+          .state('login', {
+              url: '/login',
+              templateUrl: 'templates/Login.html',
+              controller: function($scope) {
+    
+              }
+          })
        $urlRouterProvider.otherwise('/');
   })
-  .controller ("mainController",['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite', '$cordovaInAppBrowser', 'localStorageService', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite, $cordovaInAppBrowser, localStorageService  ) {
-    $scope.addNotification = function() {
-      window.plugin.notification.local.add({
-          id: 'MYLN',
-          title:   'tit',
-          message: 'msg',
-          icon:      'ic_notification',
-          smallIcon: 'ic_notification_small',
-      });
+  .controller ("mainController",['$scope', '$http', '$state', '$cordovaOauth', '$rootScope', '$ionicPopover', '$ionicSlideBoxDelegate', '$ionicSideMenuDelegate', '$ionicPopup', '$ionicModal', '$timeout', '$ionicLoading', '$ionicActionSheet', '$ionicTabsDelegate', '$ionicScrollDelegate', '$location', '$cordovaSQLite', '$cordovaInAppBrowser', 'localStorageService', '$interval', function($scope, $http, $state, $cordovaOauth, $rootScope, $ionicPopover, $ionicSlideBoxDelegate, $ionicSideMenuDelegate, $ionicPopup, $ionicModal, $timeout, $ionicLoading, $ionicActionSheet, $ionicTabsDelegate, $ionicScrollDelegate, $location, $cordovaSQLite, $cordovaInAppBrowser, localStorageService, $interval ) {
+    $scope.addNotification = function(hd) {
+      if (ionic.Platform.isAndroid()) {
+        var s = hd.recent_sport.sstart.getHours() + ' 點 ' + hd.recent_sport.sstart.getMinutes() ;
+        window.plugin.notification.local.add({
+            id: 'MYLN',
+            title:   '活動通知',
+            message:  s +' 的 ' + hd.recent_sport.sname+' 活動要開始了喔！',
+            icon:      'ion-android-walk',
+            smallIcon: 'ion-android-walk',
+        });
+      };
     }
-
+    
+    $interval(function(){
+      $scope.get_recent_sport();
+    }, 1000 * 300);
+            
+    /*
     $scope.br = function(){
       var options = {
         location: 'no',
@@ -217,7 +259,7 @@
       }).success(function(data) { 
         console.log(data);
       });
-    }
+    }*/
     
     // ----------- base-data ----------------- 
         $scope.basedata = {
@@ -327,54 +369,70 @@
               ym = new Date().getFullYear() + '-' + (new Date().getMonth()+1)  
           var d = new Date().getDate();  
           var plan_list = angular.copy($scope.basedata.plan_list)
+
+          var fc = null
+          if(!findValue(new Date())){
+              fc = angular.copy($scope.totalkcal($scope.fid))
+          }
+
           if (plan_list[ym]) {
             for (var i = 0; i < plan_list[ym].length; i++) { 
               if (plan_list[ym][i].pdate.getDate() === d) {
                 $scope.home_data = {
                     pm : ym,
+                    pid : i,
                     pname : plan_list[ym][i].pname,
                     pdate : plan_list[ym][i].pdate,
                     pbr_in : plan_list[ym][i].pbr_in,
                     p_total_mets : plan_list[ym][i].p_total_mets,
                     psplist : plan_list[ym][i].psplist,
-                    recent_sport : null
+                    recent_sport : null,
+                    food_c : fc
                 }
               }else {
                 $scope.home_data = {
                     pm : ym,
+                    pid : null,
                     pname : '',
                     pdate : new Date(),
                     pbr_in : '',
                     p_total_mets : 0,
                     psplist : [],
-                    recent_sport : null
+                    recent_sport : null,
+                    food_c : fc
                 }
               }          
             };
           }else {
             $scope.home_data = {
                     pm : ym,
+                    pid : null,
                     pname : '',
                     pdate : new Date(),
                     pbr_in : '',
                     p_total_mets : 0,
                     psplist : [],
-                    recent_sport : null
+                    recent_sport : null,
+                    food_c : fc
                 }
           }
           $scope.get_recent_sport();
         }
 
+
         $scope.get_recent_sport = function(){
+          if ($scope.home_data.psplist != null) {
           var data = $scope.home_data.psplist;
             for (var i = 0; i < data.length; i++) {
               var time = data[i].sstart.getTime() - new Date().getTime() 
-              if (time <= (1000 * 600) && time > (-1000*600)) {
+              if (time <= (1000 * 600) && time > (-1000*300)) {
                 $scope.home_data.recent_sport = data[i];
+                $scope.addNotification(angular.copy($scope.home_data));            
               };
             };
+          };
         }
-
+    // ----------- Friebace function -----------------
         $scope.savlocSQL = function(){
           var query = "SELECT basedata FROM userd WHERE username = ?";
           $cordovaSQLite.execute(db, query, ['admin']).then(function(res) {
@@ -468,6 +526,20 @@
             })       
           } 
         }
+        $scope.set_food_Firebase = function(id){
+          var user = firebase.auth().currentUser;
+          if (user != null) {
+            var userId = user.uid;
+            var starCountRef ='user_data/'
+            var food = angular.copy($scope.basedata.food_list[id])
+            angular.forEach(food, function(v, k){
+              var tmp = v
+              if (k === 'fdate') 
+                tmp = v.getTime();
+              firebase.database().ref(starCountRef+userId+'/food_list/'+ id +'/'+k).update(tmp)
+            })     
+          } 
+        }
 
         $scope.remove_plan_Firebase = function(k, pid){
           var user = firebase.auth().currentUser;
@@ -520,6 +592,28 @@
                           sfeature : $scope.basedata.plan_list[k][pid].psplist[i].sfeature,
                           smets    : $scope.basedata.plan_list[k][pid].psplist[i].smets
                       })
+                    };
+                  }
+                });
+              })
+              .catch(function(error) {
+              });           
+          } 
+        }
+
+        $scope.remove_food_Firebase = function(id, fid){
+            var user = firebase.auth().currentUser;
+          if (user != null) {     
+            var userId = user.uid;
+            var fitem = firebase.database().ref('user_data/'+userId+'/food_list/'+id+'/fitem/'+fid);
+            fitem.remove()
+              .then(function() {
+                var ref = firebase.database().ref('user_data/'+userId+'/food_list/'+id+'/fitem/');
+                ref.once('value').then(function(data){
+                  if(data.exists()){
+                    firebase.database().ref('user_data/'+userId+'/food_list/'+id+'/fitem').set({})
+                    for (var i = 0; i < data.val().length; i++) {
+                      firebase.database().ref('user_data/'+userId+'/food_list/'+id+'/fitem/'+i).set($scope.food_list[id].fitem[i])
                     };
                   }
                 });
@@ -585,10 +679,29 @@
               };
             });                  
           } 
+        };
 
+        $scope.select_food_Firebase = function(){
+          var user = firebase.auth().currentUser;
+          if (user != null) { 
+            var userId =user.uid
+            var starCountRef = firebase.database().ref('user_data/'+userId+'/'); 
+            starCountRef.once('value').then(function(data){
+              angular.forEach(data.val(), function(v, k){
+                if ($scope.basedata.food_list!= null) {
+                  var tmp = v;
+                  if (k === 'pdate') {
+                    tmp = new Date(v);
+                  };
+                  $scope.basedata.food_list.push(tmp)
+                };      
+              })
+            })
+          }
         }
 
-    // ----------- sport-data ----------------- 
+
+    // ----------- get data ----------------- 
 
         $scope.sl= [];       //資料列表
         $scope.sl_f= [];     //強度列表
@@ -602,11 +715,36 @@
                  $scope.s_tabs[$scope.sl[i].type] = $scope.sl[i].type;        
             };  
         });
+        $scope.fd; //食物列表
+        $scope.dsdasd = 200;
+        $http.get('food.json').success(function(data) {
+                $scope.fd = (data);
+        });
+        $scope.kn =[] ;
+        $http.get('templates/know/know.json').success(function(know) { 
+           $scope.kn = know.know
+        });
+
+        /*$http.get('http://localhost/data/json').success(function(spty) { 
+            $scope.sl = spty;
+            for (var i = 0; i < $scope.sl.length; i++) {
+                 $scope.s_tabs[$scope.sl[i].type] = $scope.sl[i].type;        
+            };
+
+        });
+        $http.get('http://localhost/data/json2').success(function(spli) { 
+            $scope.sl_f = spli;
+
+        });
+        $http.get('http://localhost/data/json3').success(function(know) { 
+            
+            $scope.kn = know;
+        });*/
            
     // ----------- login -----------------
       $scope.userinfo = {
             name : '未登入帳號',
-            photoURL : './img/ionic.png'
+            photoURL : 'img/admin.jpg'
       };
 
       firebase.auth().onAuthStateChanged(function(user) {
@@ -626,13 +764,14 @@
                   $scope.userinfo = info;
                   $scope.select_Firebase(); 
                 });
+                $state.go('home')
               }      
           } else {
             $scope.loging = false;
+            $state.go('login')
           }
-          
-
       });
+
 
       $scope.googleLogin = function() {
           var provider = new firebase.auth.GoogleAuthProvider();
@@ -694,7 +833,7 @@
           $scope.$apply(function(){
             $scope.userinfo = {
               name : '未登入帳號',
-              photoURL : './img/ionic.png'
+              photoURL : 'img/admin.jpg'
             };
           }) 
         }, function(error) {
@@ -913,8 +1052,8 @@
 
       // Set Mets
       $scope.setf = function(){
-        var f =  $scope.sportoption.f;
-        var select = $scope.sport_selectoption.f;
+        var f =  angular.copy($scope.sportoption.f);
+        var select = angular.copy($scope.sport_selectoption.f);
         var tmp = select.Remark;
         f.mets = select.Mets;
         f.feature = tmp;
@@ -922,7 +1061,7 @@
 
       $scope.setMets = function(){
           var s =  $scope.sportoption;
-          s.f.cost = $scope.timedata.total;
+          s.f.cost = angular.copy($scope.timedata.total)  ;
           s.f.strength = s.s.feature;
           if (s.f.cost != null && s.f.feature != null) {
             var x = (s.f.feature / 1000.0) / (s.f.cost / 60.0);
@@ -1001,7 +1140,6 @@
                     smets :　(so.f.cost/60) * so.f.mets 
                   } 
                   $scope.basedata.plan_list[$scope.key.k][$scope.key.pid].p_total_mets += (so.f.cost/60) * so.f.mets - $scope.ed.total_met; 
-                  console.log($scope.basedata.plan_list[$scope.key.k][$scope.key.pid])
                   $scope.modal.hide(); 
             }   
             $scope.set_activity_Firebase($scope.key.k, $scope.key.pid);                      
@@ -1032,6 +1170,7 @@
               return true;
             };
           };   
+          $scope.get_recent_sport()
       };
 
       //  新增計劃
@@ -1051,9 +1190,9 @@
             subTitle: 'Create a plan and choose a day',
             scope: $scope,
             buttons: [
-              { text: 'Cancel' },
+              { text: '取消' },
               {
-                text: '<b>Add</b>',
+                text: '<b>確認</b>',
                 type: 'button-positive',
                 onTap: function(e) {
                   $scope.init_plan($scope.selectSp );
@@ -1093,10 +1232,10 @@
                   $scope.basedata.plan_list[ym].push(sp);         
               };        
         };
-
           $scope.key.k = ym;
           $scope.key.pid = $scope.basedata.plan_list[ym].length-1;
           $scope.key.pd = sp.pdate;  
+          $scope.get_recent_date();
       };
 
       // 修改計劃 活動
@@ -1154,7 +1293,7 @@
         
           var k = $scope.key.k;
           var pid = $scope.key.pid;
-          var plan = $scope.basedata.plan_list[k][pid];
+          var plan = angular.copy($scope.basedata.plan_list[k][pid]);
           $scope.ed = {
             total_met : angular.copy((plan.psplist[aid].sfeature.cost/60) * plan.psplist[aid].sfeature.mets)
           }  
@@ -1252,7 +1391,651 @@
             $scope.init_activity(ym, date, so, new Date(t.end.getTime()+ndt.getTime()-(total*60000)), new Date(t.end.getTime()+ndt.getTime()), total);              
       };
 
+    //-------------------easy_food-------------------------
+            $scope.addeasy_food = function() {
+
+                $scope.easy_food = {
+                    fname: '',
+                    fdate: new Date(),
+                    fkcal: 0,
+                }
+
+                var easy_foodPopup = $ionicPopup.show({
+                    cssClass: '',
+                    templateUrl: 'templates/food/addeasyfood.html',
+                    title: '<h3>輸入名稱、時間、熱量</h3>',
+                    scope: $scope,
+                    buttons: [
+                        { text: '返回' }, {
+                            text: '<b>新增</b>',
+                            type: 'button-positive',
+                            onTap: function(e) {
+
+                                var t = $scope.easy_food;
+                                var name = t.fname;
+                                if (name && t.fdate && t.fkcal && findName(t.fdate, name)) {
+
+                                    t = {
+                                        fdate: t.fdate,
+                                        fitem: [{
+                                            name: name,
+                                            kcal: t.fkcal
+                                        }]
+                                    }
+
+                                    savefdlist(t);
+                                } else {
+                                    var alertPopup = $ionicPopup.alert({
+                                        title: '名稱錯誤',
+                                        template: '名稱重複或尚未輸入全部資料',
+                                        okText: '確定',
+                                        okType: 'button button-calm'
+                                    });
+
+                                    e.preventDefault();
+                                }
+                            }
+                        }
+                    ]
+                });
+            };
+
+
+            $scope.modify_easyfood = function(fid, fitemid) {
+                $scope.easy_food = {
+                    fname: $scope.basedata.food_list[fid].fitem[fitemid].name,
+                    fdate: $scope.basedata.food_list[fid].fdate,
+                    fkcal: $scope.basedata.food_list[fid].fitem[fitemid].kcal,
+                }
+
+                var easy_foodPopup = $ionicPopup.show({
+                    cssClass: '',
+                    templateUrl: 'templates/food/addeasyfood.html',
+                    title: '<h3>修改名稱、時間、熱量</h3>',
+                    scope: $scope,
+                    buttons: [
+                        { text: '返回' }, {
+                            text: '<b>確認</b>',
+                            type: 'button-positive',
+                            onTap: function(e) {
+
+                                var t = $scope.easy_food;
+                                var list = $scope.basedata.food_list[fid];
+                                var name = t.fname;
+
+                                if (name && t.fdate && t.fkcal && ((list.fdate === t.fdate && list.fitem[fitemid].name === name) || findName(t.fdate, name))) {
+
+                                    list.fitem[fitemid].name = name;
+                                    list.fitem[fitemid].kcal = $scope.easy_food.fkcal;
+                                    if (list.fdate != t.fdate)
+                                        if (list.fitem.length === 1 && findValue(t.fdate)) {
+                                            list.fdate = t.fdate;
+                                        } else {
+                                            t = {
+                                                fdate: t.fdate,
+                                                fitem: []
+                                            }
+                                            t.fitem.push(list.fitem[fitemid]);
+
+                                            savefdlist(t);
+
+                                            list.fitem.splice(fitemid, 1);
+                                            if (list.fitem.length < 1) {
+                                                $scope.basedata.food_list.splice(fid, 1);
+                                            }
+                                        }
+                                } else {
+                                    var alertPopup = $ionicPopup.alert({
+                                        title: '名稱錯誤',
+                                        template: '名稱重複或尚未輸入全部資料',
+                                        okText: '確定',
+                                        okType: 'button button-calm'
+                                    });
+
+                                    e.preventDefault();
+                                }
+                            }
+                        }
+                    ]
+                });
+            };
+
+            //-------------------detailed_food-------------------------
+            $scope.addfoodM = function() {
+
+                $scope.addfoodst = {
+                    fname: '',
+                    fdate: new Date(),
+                }
+
+                var myPopup = $ionicPopup.show({
+                    cssClass: '',
+                    templateUrl: 'templates/food/addfood.html',
+                    title: '<h3>輸入名稱與時間</h3>',
+                    scope: $scope,
+                    buttons: [
+                        { text: '返回' }, {
+                            text: '<b>新增</b>',
+                            type: 'button-positive',
+                            onTap: function(e) {
+
+                                var t = $scope.addfoodst;
+                                var name = t.fname;
+                                if (name && t.fdate && findName(t.fdate, name)) {
+
+                                    t = {
+                                        fdate: t.fdate,
+                                        fitem: []
+                                    }
+                                    appfitem(t.fitem, name);
+                                    savefdlist(t);
+                                    $scope.go_addfooditem();
+
+                                } else {
+                                    var alertPopup = $ionicPopup.alert({
+                                        title: '名稱錯誤',
+                                        template: '名稱重複或尚未輸入全部資料',
+                                        okText: '確定',
+                                        okType: 'button button-calm'
+                                    });
+
+                                    e.preventDefault();
+                                }
+                            }
+                        }
+                    ]
+                });
+            };
+
+            $scope.modify_food = function(fid, fitemid) {
+
+                $scope.addfoodst = {
+                    fname: $scope.basedata.food_list[fid].fitem[fitemid].name,
+                    fdate: $scope.basedata.food_list[fid].fdate,
+                }
+
+                var myPopup = $ionicPopup.show({
+                    cssClass: '',
+                    templateUrl: 'templates/food/addfood.html',
+                    title: '<h3>修改名稱與時間</h3>',
+                    scope: $scope,
+                    buttons: [
+                        { text: '返回' }, {
+                            text: '<b>確認</b>',
+                            type: 'button-positive',
+                            onTap: function(e) {
+                                var t = $scope.addfoodst;
+                                var list = $scope.basedata.food_list[fid];
+                                var name = t.fname;
+                                if (name && t.fdate && ((list.fdate === t.fdate && list.fitem[fitemid].name === name) || findName(t.fdate, name))) {
+
+                                    list.fitem[fitemid].name = name;
+                                    if (list.fdate != t.fdate)
+                                        if (list.fitem.length === 1) {
+                                            list.fdate = t.fdate;
+                                        } else {
+
+                                            t = {
+                                                fdate: t.fdate,
+                                                fitem: []
+                                            }
+                                            t.fitem.push(list.fitem[fitemid]);
+
+                                            savefdlist(t);
+
+                                            list.fitem.splice(fitemid, 1);
+                                            if (list.fitem.length < 1) {
+                                                $scope.basedata.food_list.splice(fid, 1);
+                                            }
+                                        }
+
+                                } else {
+                                    var alertPopup = $ionicPopup.alert({
+                                        title: '名稱錯誤',
+                                        template: '名稱重複或尚未輸入全部資料',
+                                        okText: '確定',
+                                        okType: 'button button-calm'
+                                    });
+
+                                    e.preventDefault();
+                                }
+                            }
+                        }
+                    ]
+                });
+            };
+
+            var findName = function(date, name) {
+                var boolean = true;
+
+                if (!findValue(date)) {
+                    for (var i = $scope.basedata.food_list[$scope.fid].fitem.length - 1; i >= 0; i--) {
+                        if ($scope.basedata.food_list[$scope.fid].fitem[i].name === name) {
+                            $scope.fitemid = i;
+                            boolean = false;
+                        }
+                    }
+                }
+                return boolean;
+            };
+
+            var findValue = function(date) {
+                var boolean = true; //今天沒有輸入資料
+                $scope.fid = $scope.basedata.food_list.length; //今天的id     $scope.fid
+
+                for (var i = $scope.basedata.food_list.length - 1; i >= 0; i--) {
+                    if ($scope.basedata.food_list[i].fdate.getDate() === date.getDate()) {
+                        $scope.fid = i;
+                        boolean = false; //今天有輸入資料
+                    }
+                }
+                return boolean;
+            };
+
+            var appfitem = function(farray, iname) {
+                $scope.fitemid = farray.length;
+                farray.push({
+                    name: iname,
+                    fd_details: []
+                });
+            };
+
+
+            var savefdlist = function(farray) {
+                if (findValue(farray.fdate)) {
+                    $scope.basedata.food_list.push(farray);
+                } else
+                    Array.prototype.push.apply($scope.basedata.food_list[$scope.fid].fitem, farray.fitem);
+
+                $scope.fitemid = $scope.basedata.food_list[$scope.fid].fitem.length - 1;
+            }
+
+
+            $scope.fdid = { id: null };
+            $scope.fdshow = {
+                show: true
+            }
+            $scope.searchfdname = null;
+
+            $scope.go_addfooditem = function() {
+
+                $scope.fdid = { id: null };
+                $scope.fdshow = {
+                    show: true
+                }
+                $scope.searchfdname = null;
+
+                $scope.fdetails_bank = {
+                    name: "name",
+                    basiskcal: 0,
+                    i: 1,
+                    kcal: 0
+                };
+
+                $scope.modify_id = null;
+                $scope.setTitle('新增記錄');
+
+                $state.go('addfooditem');
+            };
+
+
+            $scope.fdshow_ch = function() {
+                $scope.fdshow.show = !$scope.fdshow.show;
+            };
+
+            //----------------------addfooditem------------------------------
+            $scope.nextf = function() {
+                if ($scope.fdid.id === null) {
+                    var alertPopup = $ionicPopup.alert({
+                        template: '<h3 class=" center ">你尚未選擇食物</h3>',
+                        okText: '確定',
+                        okType: 'button button-calm'
+                    });
+                } else {
+                    $scope.fdetails_bank.i = 1;
+                    findfdid($scope.fdid.id);
+                    $scope.fdshow.show = !$scope.fdshow.show;
+                }
+            };
+
+            $scope.fdetails_bank = {
+                name: "name",
+                basiskcal: 0,
+                i: 1,
+                kcal: 0
+            };
+
+            var findfdid = function(id) {
+                angular.forEach($scope.fd, function(v_f, k_f) {
+                    angular.forEach(v_f.item, function(v_i, k_i) {
+                        if (v_i.id === id) {
+                            var t = $scope.fdetails_bank;
+                            t.name = v_i.name;
+                            t.basiskcal = v_i.kcal;
+                            t.kcal = t.basiskcal * t.i;
+                            return;
+                        }
+                    });
+                });
+            }
+
+
+            $scope.countkcal = function() {
+                var t = $scope.fdetails_bank;
+                t.kcal = t.basiskcal * t.i;
+            }
+
+            $scope.savefd_details = function() {
+                var t = $scope.fdetails_bank;
+                var item = $scope.basedata.food_list[$scope.fid].fitem[$scope.fitemid];
+                var i = item.fd_details.filter(
+                    function(value) {
+                        return value.name === t.name;
+                    }).length;
+                if (i) {
+                    if ($scope.modify_id != null && item.fd_details[$scope.modify_id].name === t.name) {
+                        item.fd_details[$scope.modify_id].kcal = t.basiskcal;
+                        item.fd_details[$scope.modify_id].Quantity = t.i;
+                        $state.go('fooditem');
+                    } else
+                        var alertPopup = $ionicPopup.alert({
+                            title: '選項重複',
+                            okText: '確定',
+                            okType: 'button button-calm'
+                        });
+
+                } else {
+                    if ($scope.modify_id === null) {
+                        item.fd_details.push({
+                            name: t.name,
+                            kcal: t.basiskcal,
+                            Quantity: t.i
+                        });
+                    } else {
+                        item.fd_details.splice($scope.modify_id, 1, {
+                            name: t.name,
+                            kcal: t.basiskcal,
+                            Quantity: t.i
+                        });
+                    }
+                    $state.go('fooditem');
+                }
+            }
+
+
+            $scope.totalitemkcal = function(fid, fitemid) {
+                var t = 0;
+                angular.forEach($scope.basedata.food_list[fid].fitem[fitemid].fd_details, function(v, k) {
+                    t += (v.kcal * v.Quantity);
+                });
+
+                return t;
+            }
+
+            $scope.totalkcal = function(fid) {
+                var t = 0;
+                angular.forEach($scope.basedata.food_list[fid].fitem, function(v, k) {
+                    if (v.fd_details)
+                        angular.forEach(v.fd_details, function(v, k) {
+                            t += (v.kcal * v.Quantity);
+                        });
+                    else
+                        t += v.kcal;
+                });
+                return t;
+            }
+
+            $scope.deletefd_details = function(name) {
+                var id = find_detailsid(name);
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '刪除警告',
+                    template: '確定要刪除此項目嗎？',
+                    okType: 'button-assertive'
+                });
+                confirmPopup.then(function(res) {
+                    if (res) {
+                        $scope.basedata.food_list[$scope.fid].fitem[$scope.fitemid].fd_details.splice(id, 1);
+                    }
+                });
+            };
+
+            $scope.deletefd_item = function(fid, fitemid) {
+
+                var confirmPopup = $ionicPopup.confirm({
+                    title: '刪除警告',
+                    template: '確定要刪除此項目嗎？',
+                    okType: 'button-assertive'
+                });
+                confirmPopup.then(function(res) {
+                    if (res) {
+                        $scope.basedata.food_list[fid].fitem.splice(fitemid, 1);
+                        if ($scope.basedata.food_list[fid].fitem.length < 1) {
+                            $scope.basedata.food_list.splice(fid, 1);
+                        }
+                    }
+                });
+            };
+
+            /*
+                {   fdate:  ,
+                    fitem: [{
+                        name: ,
+                        fd_details: [{
+                            name: ,
+                            kcal: ,
+                            Quantity :
+                        }]
+                        kcal:
+                    }]
+                }
+             */
+
+            $scope.modify_fooditem = function(name) {
+
+                var id = find_detailsid(name);
+
+                $scope.fdid = { id: null };
+                $scope.fdshow = {
+                    show: false
+                }
+                $scope.searchfdname = null;
+                $scope.modify_id = id;
+
+                var details = $scope.basedata.food_list[$scope.fid].fitem[$scope.fitemid].fd_details[id];
+
+                $scope.fdetails_bank = {
+                    name: details.name,
+                    basiskcal: details.kcal,
+                    i: details.Quantity,
+                    kcal: details.kcal * details.Quantity
+                };
+
+                $scope.setTitle('修改記錄');
+                $state.go('addfooditem');
+            };
+
+            var find_detailsid = function(name) {
+                var id = 0;
+
+                for (var i = 0; i < $scope.basedata.food_list[$scope.fid].fitem[$scope.fitemid].fd_details.length; i++) {
+                    if ($scope.basedata.food_list[$scope.fid].fitem[$scope.fitemid].fd_details[i].name === name) {
+                        id = i
+                        return id;
+                    }
+                }
+                return id;
+            }
+
+            $scope.to_f = function(fid, fitemid) {
+                $scope.fid = fid;
+                $scope.fitemid = fitemid;
+                $state.go('fooditem');
+            }
+
+            $scope.goto = function(name) {
+                $state.go(name);
+            }
+
+
+
+            // ----------- angular-scroll-animate -----------
+            $scope.animateElementIn = function($el) {
+                $el.removeClass('timeline-hidden');
+                $el.addClass('bounce-in');
+            };
+
+            $scope.animateElementOut = function($el) {
+                $el.addClass('timeline-hidden');
+                $el.removeClass('bounce-in');
+            };
+
+            // ----------- fitbit -----------   
+
+            $scope.br = function() {
+                var options = {
+                  location: 'no',
+                  clearcache: 'no',
+                  toolbar: 'no'
+                };
+
+                document.addEventListener("deviceready", function () {
+                  $cordovaInAppBrowser.open('https://www.fitbit.com/oauth2/authorize?response_type=token&client_id=227WLD&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800',  '_self', options)
+                    .then(function(event) {
+                    })
+                    .catch(function(event) {
+                      // error
+                    });
+                }, false);
+                $scope.toggleLeftSideMenu();
+                $scope.br2();
+                $state.go('fitbit_list');
+            }
+
+            $rootScope.$on('$cordovaInAppBrowser:loaderror', function(e, event){
+              var token = event.url.match(/\#(?:access_token)\=([\S\s]*?)\&/)[1];
+              var url = event.url.toString();
+              $scope.fitbit_data = {
+                  t: token,
+                  uid : url.substring(url.indexOf('user_id=') + 8 ,url.indexOf('&',url.indexOf('user_id')))
+              }
+              $cordovaInAppBrowser.close();
+            });
+
+
+            $scope.activities = [];
+            $scope.ac = 0;
+            $scope.li = 0;
+            /*
+                        $scope.activities = [{
+                            startDate: new Date(),
+                            list: [{
+                                name: 'A',
+                                calories: 220,
+                                startTime: new Date(),
+                                duration: 10000,
+                            }]
+                        }];
+            */
+
+            $scope.br2 = function() {
+                var nowday = new Date();
+
+                for (var i = 0; i < 10; i++, nowday = new Date(nowday.getTime() - 86400000)) {
+
+                    var day = nowday.getFullYear() + '-' + (nowday.getMonth() + 1) + '-' + nowday.getDate();
+
+                    $http.get('https://api.fitbit.com/1/user/' + $scope.fitbit.user_id + '/activities/date/' + day + '.json', {
+                        headers: {
+                            "Authorization": 'Bearer ' + $scope.fitbit.token
+                        }
+                    }).success(function(data) {
+                        if (data.activities.length > 0) {
+                            angular.forEach(data.activities, function(value, key) {
+                                if (!findacdate(value.startDate)) {
+                                    console.log(value.startDate);
+                                    $scope.activities.push({
+                                        startDate: value.startDate,
+                                        list: []
+                                    });
+                                }
+                                $scope.activities[$scope.acid ].list.push({
+                                    name: value.name,
+                                    calories: value.calories,
+                                    startTime: value.startTime,
+                                    duration: value.duration,
+                                });
+                            });
+
+                        }
+                    });
+                }
+
+                var findacdate = function(date) {
+                    var activities_id = 0;
+                    $scope.acid =0;
+                    if ($scope.activities != null) {
+                        $scope.acid = $scope.activities.length;
+                        for (var i = $scope.activities.length - 1; i >= 0; i--) {
+                            if ($scope.activities.startDate === date) {
+                                $scope.acid =i;
+                                activities_id = i;
+                                return activities_id;
+                            }
+                        }
+                    }
+                    return activities_id;
+                }
+
+
+
+                /*  
+                var nowday = new Date();
+
+                for (var i = 0; i < 30; i++, nowday = new Date(nowday.getTime() - 86400000)) {
+
+                    var day = nowday.getFullYear() + '-' + (nowday.getMonth() + 1) + '-' + nowday.getDate();
+
+                }
+
+                $http.get('https://api.fitbit.com/1/user/' + $scope.fitbit.user_id + '/activities/date/2016-12-03.json', {
+                    headers: {
+                        "Authorization": 'Bearer ' + $scope.fitbit.token
+                    }
+                }).success(function(data) {
+                    console.log(data);
+                });
+
+                $http.get('https://api.fitbit.com/1/user/' + $scope.fitbit.user_id + '/activities/date/2016-12-03.json', {
+                    headers: {
+                        "Authorization": 'Bearer ' + $scope.fitbit.token
+                    }
+                }).success(function(data) {
+                    console.log(data);
+                });
+
+                */
+            }
+
+            
+
+            $scope.to_fitbit = function(ac, li) {
+                $scope.ac = ac;
+                $scope.li = li;
+                $state.go('fitbit_item');
+            }
+
+            $scope.fitbit_endtime = function() {
+                var dateString = $scope.activities[$scope.ac].startDate + " " + $scope.activities[$scope.ac].list[$scope.li].startTime + ":00";
+                var time = new Date(dateString.replace(/-/g, "/"));
+
+                return new Date(time.getTime() + $scope.activities[$scope.ac].list[$scope.li].duration);
+            }
+
     // ----------- Other ----------------------
+      $scope.slideboxChanged = function() {
+          return $ionicSlideBoxDelegate.currentIndex();
+      };
       $scope.$on('$viewContentLoading', function() {
           $ionicLoading.show({
             template: '<ion-spinner icon="android" class="spinner-balanced"></ion-spinner>',
@@ -1357,74 +2140,27 @@
         }
       };     
 
+    //----------- knowlegde-------------
 
-            //-------------------Food-------------------------
-            //
-            $scope.addfoodM = function() {
+      $scope.kn_co =null;
 
-                if ($scope.findValue(new Date())) {
-                    $scope.basedata.food_list.push({
-                        fdate: new Date(),
-                        fcaltotal: 0,
-                        fitem: []
-                    })
-                }
+      $scope.knowcontent = function(con) {
 
-                $scope.appfitem($scope.fid, '便當');
-                $scope.appfdetails($scope.fid, $scope.fitemid, '青菜', 100);
-                $scope.appfdetails($scope.fid, $scope.fitemid, '白飯', 200);
-
-                $scope.appfitem($scope.fid, '晚餐-便當');
-                $scope.appfdetails($scope.fid, $scope.fitemid, '白飯', 200);
-                $scope.appfdetails($scope.fid, $scope.fitemid, '雞腿', 400);
-
-            };
-
-            $scope.findValue = function(date) {
-                var boolean = true;
-
-                $scope.fid = $scope.basedata.food_list.length;
-
-                for (var i = $scope.basedata.food_list.length - 1; i >= 0; i--) {
-                    if ($scope.basedata.food_list[i].fdate.getDate() === date.getDate()) {
-                        $scope.fid = i;
-                        boolean = false;
-                    }
-                }
-                return boolean;
-            };
-
-            $scope.appfcaltotal = function(fid, cal) {
-                $scope.basedata.food_list[fid].fcaltotal += cal;
-            };
-
-            $scope.appfitemcal = function(fid, fitemid, cal) {
-                $scope.basedata.food_list[fid].fitem[fitemid].cal += cal;
-                $scope.appfcaltotal($scope.fid, cal);
-            };
-
-            $scope.appfitem = function(fid, iname) {
-                $scope.fitemid = $scope.basedata.food_list[fid].fitem.length;
-                $scope.basedata.food_list[fid].fitem.push({
-                    name: iname,
-                    cal: 0,
-                    fdetails: []
-                });
-            };
-
-            $scope.appfdetails = function(fid, fitemid, iname, ical) {
-                $scope.basedata.food_list[fid].fitem[fitemid].fdetails.push({
-                    name: iname,
-                    cal: ical,
-                });
-                $scope.appfitemcal(fid, fitemid, ical);
-            };
-
-            $scope.to_f = function(fid, fitemid) {
-                $scope.fid = fid;
-                $scope.fitemid = fitemid;
-                $state.go('fooditem');
+        $scope.kn_co = con.content;
+        
+        var showPopup = $ionicPopup.show({
+          title: '<p class ="center knti">'+con.title+'</p>',
+          scope:$scope,
+          buttons:[{
+            text: 'OK',
+            type: 'button-positive',
+            onTap: function(e) {
+            return true;
             }
+          }],
+          templateUrl: 'templates/know/kn-co.html'
+        });
+      }
 
     // ----------- angular-scroll-animate -----------
         $scope.animateElementIn = function($el) {
