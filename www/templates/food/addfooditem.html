@@ -1,24 +1,22 @@
 <ion-modal-view style="height:70%">
     <ion-header-bar align-title="center" class="bar-stable">
         <h1 class="title ">{{ title }}</h1>
-        <button class="button icon button-clear ion-close-round" ng-click="goto('food')"></button>
+        <button class="button icon button-clear ion-close-round" ng-click="goto(fdback)"></button>
     </ion-header-bar>
     <div ng-switch on="fdshow.show">
         <ion-content ng-switch-when="true">
             <label class="item item-input">
                 <i class="icon ion-search placeholder-icon"></i>
-                <input type="text" placeholder="Search" ng-model="searchfdname">
+                <input type="text" placeholder="Search" ng-model="searchfdname.name" ng-change="searchfd()">
             </label>
             <ion-content class="has-header has-footer" style="margin-bottom:20px">
-                <ion-list ng-if="searchfdname">
-                    <ling-item ng-repeat="t in fd " ng-if="!t.length">
-                        <ion-radio ng-repeat="s in t.item |  filter:{ name: searchfdname }" ng-model="fdid.id" ng-value="s.id" style="color:#000" class="adds">
-                            <label style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</label>
-                        </ion-radio>
-                        </ion-item>
+                <ion-list ng-if="searchfdname.name">
+                    <ion-radio ng-repeat="s in searchfdarray track by $index " ng-model="fdid.id" ng-value="s.id" style="color:#000" class="adds">
+                        <label style="text-align:left;margin-left:30px;color:#fff">{{s.name}}</label>
+                    </ion-radio>
                 </ion-list>
             </ion-content>
-            <tab-slide-box tab="0" ng-show="!searchfdname">
+            <tab-slide-box tab="0" ng-show="!searchfdname.name">
                 <div class="tsb-icons">
                     <div class="tsb-ic-wrp">
                         <ion-scroll direction="x" class="scroll-set tsb-hscroll">
@@ -26,7 +24,7 @@
                         </ion-scroll>
                     </div>
                 </div>
-                <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)">
+                <ion-slide-box show-pager="false" on-slide-changed="slideHasChanged($index)" slide-interval="4000">
                     <ion-slide ng-repeat="t in fd ">
                         <ion-scroll scrollbar-y="false" direction="y" style="height:100%;" ng-if="$index >= (slideboxChanged()-1) && $index <= (slideboxChanged()+1)">
                             <ion-list>
@@ -41,24 +39,28 @@
         </ion-content>
         <ion-content ng-switch-when="false" class=" padding" style=" padding:0px;margin: 0px;margin-bottom:20px">
             <div class="list" style="padding:0px;margin: 0px ;border-width: 0px; font-size: 16px">
-                <label  class="item item-divider">
+                <label class="item item-divider">
                     食物
-                </label >
-                <label  class="item" ng-click="fdshow_ch()" style="font-size: 16px"> {{fdetails_bank.name}}</label >
-                <label  class="item item-divider">
-                    熱量
-                </label >
-                <label class="item" style="font-size: 16px"> {{fdetails_bank.kcal}}</label>
-                <label  class="item item-divider">
-                    份量
-                </label >
-                <label class="item item-input " style="font-size: 16px ">
-                    <input  type="number" placeholder="份量 " min="0 " ng-model="fdetails_bank.i " ng-change="countkcal() ">
                 </label>
-                <label  class="item item-divider ">
+                <label class="item" ng-click="fdshow_ch()" style="font-size: 16px"> {{fdetails_bank.name}}</label>
+                <label class="item item-divider">
+                    熱量
+                </label>
+                <label class="item" style="font-size: 16px"> {{fdetails_bank.kcal | number:2 }}</label>
+                <label class="item item-divider">
+                    水分
+                </label>
+                <label class="item" style="font-size: 16px"> {{fdetails_bank.water | number:2}}</label>
+                <label class="item item-divider">
+                    份量
+                </label>
+                <label class="item item-input " style="font-size: 16px ">
+                    <input type="number" placeholder="份量 " min="0 " ng-model="fdetails_bank.i " ng-change="countkcal() ">
+                </label>
+                <label class="item item-divider ">
                     備註：如何計算份量 (每份/100克)
-                </label >
-                <label  class="item " style="padding:0px 0px 0px 16px;font-size: 16px;white-space:pre-wrap; ">
+                </label>
+                <label class="item " style="padding:0px 0px 0px 16px;font-size: 16px;white-space:pre-wrap; ">
                     <br> 1杯＝16湯匙、1湯匙＝3茶匙、1茶匙＝5公克、1公克＝1cc
                     <br> 1盎司≒30公克、1杯＝240公克、1兩＝37.5公克
                     <br> 1碗滿滿的飯≒200g
@@ -66,7 +68,7 @@
                     <br> 肉類＝37.5g瘦肉（雞肉、豬肉、牛肉、魚肉）＝2/3~1個掌心大小
                     <br> 青菜＝熟重25~30g＝自助餐1格＝半個一般碗的量＝1個普通人的2/3~1個拳頭大小
                     <br>
-                </label >
+                </label>
             </div>
         </ion-content>
     </div>

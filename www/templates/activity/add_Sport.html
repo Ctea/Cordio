@@ -76,7 +76,7 @@
               </label>
               <label class="item-input item-select l_bottom" ng-if="sportoption.s.feature === 'Strength'">
                 <span class="input-label lable_sty">強度</span>
-                <select ng-model="sport_selectoption.f" ng-options="sf.Remark for sf in sl_f | filter:sportoption.s.name" ng-Blur="setf()" >
+                <select ng-model="sport_selectoption.f" ng-options="sf.Remark for sf in sl_f | filter:sportoption.s.name" ng-change="setf()" >
                    
                 </select>  
               </label>

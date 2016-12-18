@@ -1,0 +1,8 @@
+<ion-header-bar align-title="center" class="bar-stable">
+    <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
+    <h1 class="title">{{ title }}</h1>
+    <button class="button icon button-clear ion-edit" ui-sref="food"></button>
+</ion-header-bar>
+<ion-content>
+    <canvas class="chart chart-line" chart-data="food_chartjs.data" chart-labels="food_chartjs.labels" chart-series="food_chartjs.series" chart-colors="food_chartjs.colors"></canvas>
+</ion-content>

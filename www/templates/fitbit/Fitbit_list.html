@@ -2,29 +2,32 @@
     <button class="button icon button-clear ion-navicon-round" ng-click="toggleLeftSideMenu()"></button>
     <h1 class="title">{{ title }}</h1>
 </ion-header-bar>
-<ion-content class="has-header padding">
-    <ion-content class="has-header" >
-        <div ng-repeat="ac in activities track by $index ">
-            <timeline>
-                <ion-list style=" padding: 0px !important">
-                    <ion-item ng-repeat=" e in ac.list track by $index  " ng-click="to_fitbit( activities.indexOf(ac),$index)" class="item-remove-animate item-borderless">
-                        <timeline-event side="alternate">
-                            <timeline-badge class="info" when-visible="animateElementIn" when-not-visible="animateElementOut">
-                                <span style="font-size: 16px">{{ac.startDate | date:'MM/dd'}}</span>
-                            </timeline-badge>
-                            <timeline-panel style="margin-top:10px;" class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
-                                <timeline-heading>
-                                    <p>Fitbit</p>
-                                </timeline-heading>
-                                <div style="width:180px;padding-top:8px">
-                                    <p>活動數量：{{ac.list.length || '&nbsp'}}</p>
-                                    <p>消耗熱量總計：{{ e.calories || 0 | number:0 }}</p>
-                                </div>
-                            </timeline-panel>
-                        </timeline-event>
-                    </ion-item>
-                </ion-list>
-            </timeline>
-        </div>
-    </ion-content>
+<ion-content class="has-header padding" style="padding: 0px">
+    <div ng-if="!activities.length">
+        <button class="button button-full button-positive" ng-click="br2()">
+            同步
+        </button>
+    </div>
+    <div ng-repeat="ac in activities track by $index " ng-if="activities.length">
+        <timeline>
+            <ion-list style=" padding: 0px !important">
+                <ion-item ng-repeat=" e in ac.list track by $index  " ng-click="to_fitbit( activities.indexOf(ac),$index)" class="item-remove-animate item-borderless">
+                    <timeline-event side="alternate">
+                        <timeline-badge class="info" when-visible="animateElementIn" when-not-visible="animateElementOut">
+                            <span style="font-size: 16px">{{ac.startDate | date:'MM/dd'}}</span>
+                        </timeline-badge>
+                        <timeline-panel style="margin-top:10px;" class="success" when-visible="animateElementIn" when-not-visible="animateElementOut">
+                            <timeline-heading>
+                                <p>Fitbit</p>
+                            </timeline-heading>
+                            <div style="width:180px;padding-top:8px">
+                                <p>活動數量：{{ac.list.length || '&nbsp'}}</p>
+                                <p>消耗熱量總計：{{ e.calories || 0 | number:0 }}</p>
+                            </div>
+                        </timeline-panel>
+                    </timeline-event>
+                </ion-item>
+            </ion-list>
+        </timeline>
+    </div>
 </ion-content>

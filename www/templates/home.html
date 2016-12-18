@@ -3,12 +3,11 @@
     <h1 class="title" >{{ title }}</h1> 
 </ion-header-bar>
 
-
 <ion-content class="has-header padding home_c" >
-<div class="card home_msg_d1" style="padding-bottom:20px" >
-	<div ng-show="home_data.pname" style="height:120px;padding-top:20px" class="padding " ng-click="to_p(home_data.pm, home_data.pid, home_data.pdate)">
-		<h3 class="center" >{{home_data.pdate | date:'MM / dd'}}</h3>
-		<p ng-bind="home_data.pname" class="center"></p>
+<div class="card home_msg_d1" style="padding-bottom:0px" >
+	<div ng-show="home_data.pname" style="height:120px;padding-top:30px" class="padding " ng-click="to_p(home_data.pm, home_data.pid, home_data.pdate)">
+		<h3 class="center" style="font-size:24px">{{home_data.pdate | date:'MM / dd'}}</h3>
+		<p style="font-size:18px" ng-bind="home_data.pname" class="center"></p>
 		
 	</div>
 	<div ng-show="!home_data.pname" class="center" style="height:120px" ng-click="add_plan()">
@@ -18,27 +17,33 @@
 	</div>
 	<div class="item" >	
 		<div class="row center"   >
-			<p class="col-33">建議水份</p>
+			<p class="col-33">今日飲水</p>
 			<p class="col-33">今日飲食</p>
 			<p class="col-33">今日活動</p>
 		</div>
 		<div class="row center "  >
-			<div class="col-33" >
+			<div class="col-33" ui-sref="food">
 				<img ng-src="img/drop.png"  height="40px" style="margin:10px"/>
-				<p > {{basedata.weight * 33 || 0}} mL</p>
+				<p > {{home_data.food_w || 0 | number:0}} mL</p>
 			</div>
-			<div class="col-33" >
+			<div class="col-33" ui-sref="food">
 				<img ng-src="img/food.png"  height="40px" style="margin:10px"/>
-				<p > {{home_data.food_c || 0}} 大卡</p>
+				<p > {{home_data.food_c || 0 | number:0}} 大卡</p>
 			</div>
-			<div class="col-33" >
+			<div class="col-33" ui-sref="plan_list">
 				<img ng-src="img/running.png"  height="40px" style="margin:10px"/>
 				<p > {{ home_data.p_total_mets * basedata.weight || 0 | number:0 }} 大卡</p>
 			</div>
 		</div>
 	</div>
-	<div class="row center" ng-show="basedata.min_BMR">
-		<p class="col" >BMR： {{basedata.min_BMR || 0}} </p>
+	<div class="row center item" >
+		<!-- <p class="col" >BMR： {{basedata.min_BMR || 0}} </p> -->
+		<p class="col" ng-show="(basedata.min_BMR + (home_data.p_total_mets * basedata.weight) -  home_data.food_c) > 0 ">建議您還需攝取 {{basedata.min_BMR + (home_data.p_total_mets * basedata.weight) -  home_data.food_c | number:0}} 大卡來維持平衡喔！</p>
+		<p class="col" ng-show="(basedata.min_BMR + (home_data.p_total_mets * basedata.weight) -  home_data.food_c) < 0 ">建議您透過運動來消耗 {{home_data.food_c  - basedata.min_BMR + (home_data.p_total_mets * basedata.weight)| number:0}} 大卡喔！</p>
+	</div>
+	<div class="row center item" ng-show="((basedata.weight * 33) > home_data.food_w )">
+		<!-- <p class="col" >BMR： {{basedata.min_BMR || 0}} </p> -->
+		<p class="col" >水分補充不足。建議再喝 {{basedata.weight * 33 - home_data.food_w | number:0}} mL</p>
 	</div>
 </div>
 <div class="card" style="padding:0;height:15%">
